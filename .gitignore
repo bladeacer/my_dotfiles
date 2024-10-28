@@ -1,0 +1,10 @@
+*
+!.bashrc
+!.vimrc
+!.tmux.conf
+!.config/
+!.tmux/
+!.gitignore
+.tmux/plugins/tpm/
+*.swp
+
