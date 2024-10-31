@@ -1,4 +1,3 @@
-
 set ignorecase
 set wildmenu
 set number
@@ -21,8 +20,9 @@ autocmd FileType css set omnifunc=csscomplete#CompleteTags
 autocmd FileType js set omnifunc=javascriptcomplete#CompleteTags
 autocmd FileType py set omnifunc=pythoncomplete#CompleteTags
 
-set shiftwidth=4
 set expandtab
+set shiftwidth=2
+set tabstop=2
 set spell spelllang=en_gb
 
 highlight SpellBad ctermfg=white ctermbg=red

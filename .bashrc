@@ -120,7 +120,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-alias vf='find -type f| fzf --bind "enter:execute(vim {})" --preview "vim {}"'
+alias vf='find -type f | fzf --bind "enter:execute(vim {})" --preview vim'
+alias vg='rg --files -g "!node_modules/" --no-ignore --hidden | fzf --bind "enter:execute(vim {})" --preview vim'
 
 eval "$(zoxide init bash)"
 alias cd='z'
