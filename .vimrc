@@ -1,15 +1,3 @@
-set ignorecase
-set wildmenu
-set number
-hi LineNr ctermfg=cyan
-set relativenumber
-set noerrorbells
-
-inoremap <F12> <C-X><C-K>
-inoremap <F10> <C-X><C-O>
-
-let g:airline_theme = 'violet'
-
 setlocal omnifunc=syntaxcomplete#Complete
 set completeopt=menuone,noselect
 filetype on
@@ -49,7 +37,7 @@ set noerrorbells
 inoremap <F12> <C-X><C-K>
 inoremap <F10> <C-X><C-O>
 
-let g:airline_theme = 'violet'
+let g:airline_theme = 'papercolor'
 
 setlocal omnifunc=syntaxcomplete#Complete
 set completeopt=menuone,noselect
