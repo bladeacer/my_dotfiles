@@ -3,6 +3,7 @@ set shiftwidth=2
 set tabstop=2
 set spell spelllang=en_gb
 set nocompatible
+hi LineNr ctermbg=black
 
 highlight SpellBad ctermfg=white ctermbg=red
 highlight SpellCap ctermfg=white ctermbg=blue
@@ -17,7 +18,7 @@ highlight MarkdownBold ctermfg=white ctermbg=none
 
 syntax match MarkdownUnderline /_\(.*\)_/
 highlight MarkdownUnderline ctermfg=white ctermbg=none
-syntax match MarkdownItalic /\*\(.*\)\*/ 
+syntax match MarkdownItalic /\*\(.*\)\*/
 highlight MarkdownItalic ctermfg=white ctermbg=none
 
 inoremap 2{ {}<Esc>ha
@@ -31,21 +32,19 @@ set noshowmode
 set ignorecase
 set wildmenu
 set number
-hi LineNr ctermfg=cyan
 set relativenumber
 set noerrorbells
 
-inoremap <F12> <C-X><C-K>
-inoremap <F10> <C-X><C-O>
 
 map gn :bnext<cr>
 map gp :bprevious<cr>
-map gd :bdelete<cr>  
+map gd :bdelete<cr>
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline_exclude_preview = 1
 "au User AirlineAfterInit let g:airline_section_z = airline#section#create(['%l:%v ', 'linenr', '%p%%'])
+
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -63,12 +62,42 @@ let g:airline_symbols.spell = 'SPELL'
 let g:airline_symbols.notexists = '!EXIST'
 let g:airline_symbols.whitespace = 'Errors:'
 
+let g:PaperColor_Theme_Options = {
+    \   'theme': {
+    \     'default': {
+    \       'transparent_background': 0
+    \     }
+    \   }
+    \ }
+
+let t:is_transparent = 0                     
+function! ToggleTransparency()                      
+    if t:is_transparent == 0                  
+      hi Normal guibg=#1c1c1c ctermbg=black
+      hi LineNr guibg=#1c1c1c ctermbg=black
+      let t:is_transparent = 1
+    else
+      hi Normal guibg=NONE ctermbg=NONE                    
+      hi LineNr guibg=NONE ctermbg=NONE
+      let t:is_transparent = 0                        
+    endif                    
+endfunction     
+
+inoremap <F10> <C-X><C-O>
+nnoremap <F12> :call ToggleTransparency()<CR><ESC>
+let g:apc_trigger = "\<c-x>\<c-k>"
+let g:apc_enable_ft = {'*': 1}
+
+
 set noshowmode
 set background=dark
+let g:airline_theme='papercolor'
 colorscheme PaperColor
 
 setlocal omnifunc=syntaxcomplete#Complete
-set completeopt=menuone,noselect
+set completeopt=menu,menuone,noselect
+set shortmess+=c
+
 filetype on
 filetype plugin on
 
