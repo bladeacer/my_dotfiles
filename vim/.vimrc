@@ -27,6 +27,7 @@ inoremap 2[ []<Esc>ha
 inoremap 2" ""<Esc>ha
 inoremap 2' ''<Esc>ha
 inoremap 3` ```<Esc>o```<Esc>ka
+inoremap 3~ ~~~<Esc>o~~~<Esc>ka
 
 set noshowmode
 set ignorecase
@@ -36,9 +37,14 @@ set relativenumber
 set noerrorbells
 
 
-map gn :bnext<cr>
-map gp :bprevious<cr>
-map gd :bdelete<cr>
+nnoremap <silent>gn :bnext<cr>
+nnoremap <silent>gp :bprevious<cr>
+nnoremap <silent>gd :bdelete<cr>
+
+nnoremap <silent>tn :tabnext<CR>
+nnoremap <silent>tp :tabprevious<CR>
+nnoremap <silent>td :tabclose<CR>
+
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
@@ -84,7 +90,7 @@ function! ToggleTransparency()
 endfunction     
 
 inoremap <F10> <C-X><C-O>
-nnoremap <F12> :call ToggleTransparency()<CR><ESC>
+nnoremap <silent><F12> :call ToggleTransparency()<CR><Esc>
 let g:apc_trigger = "\<c-x>\<c-k>"
 let g:apc_enable_ft = {'*': 1}
 
