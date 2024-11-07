@@ -1,9 +1,0 @@
-*
-!.bashrc
-!.vimrc
-!.tmux.conf
-!.config/
-!.gitignore
-!.tmux-session/
-*.swp
-
