@@ -111,6 +111,9 @@ let g:ale_completion_enabled = 1
 
 inoremap <F10> <C-X><C-K>
 inoremap <F9> <C-X><C-S>
+nnoremap <F10> a<C-X><C-K>
+nnoremap <F9> a<C-X><C-S>
+inoremap <silent><F12> <Esc>:call ToggleTransparency()<CR>a
 nnoremap <silent><F12> :call ToggleTransparency()<CR>
 let g:apc_trigger = "\<c-x>\<c-o>"
 let g:apc_enable_ft = {'*':1, 'text':0, 'markdown':0, 'php':0 }
