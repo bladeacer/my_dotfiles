@@ -120,8 +120,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-alias vf='find -type f | fzf --bind "enter:execute(vim {})"'
-alias vg='rg --files -g "!node_modules/" --no-ignore --hidden | fzf --bind "enter:execute(vim {})"'
+alias vf='find -type f | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})" --color "fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
+alias vg='rg --files -g "!node_modules/" --no-ignore --hidden | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})" --color "fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899"'
 
 eval "$(zoxide init bash)"
 alias cd='z'
@@ -129,3 +129,10 @@ alias cf='zi'
 set -o vi
 
 export EDITOR=vim
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export FZF_CTRL_T_OPTS="
+  --walker-skip .git,node_modules,target
+    --preview 'batcat -n --color=always {}'
+      --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+export BAT_THEME="Coldark-Dark"

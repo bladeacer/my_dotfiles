@@ -46,8 +46,17 @@ inoremap 6# ######<Space>
 
 inoremap `mas >[!question]- My Answer<CR>
 inoremap `sas >[!question]- Suggested Answer<CR>
+inoremap `nwp - [ ] UXDMT Lecture slides<CR><Backspace><Backspace> - [ ] UXDMT Lecture video<CR><Backspace><Backspace> - [ ] OSA Lecture slides<CR><Backspace><Backspace> - [ ] OSA Lecture video<CR><Backspace><Backspace> - [ ] OSA Tutorial<CR><Backspace><Backspace> - [ ] AS Lecture slides<CR><Backspace><Backspace> - [ ] AS Lecture video<CR><Backspace><Backspace> - [ ] AS Tutorial<CR><Backspace><Backspace> - [ ] EDP Lecture<CR><Backspace> [ ] EDP Practical<CR><Backspace> [ ] MAD Lecture<CR><Backspace> [ ] MAD Practical<CR><Backspace> [ ] MRTT Lecture<CR><Backspace> [ ] MRTT Lecture video<Esc>V12k4<
+
+inoremap `chbx - [ ]
+
 inoremap :skl 💀
 inoremap :nerd 🤓
+
+map gn :bnext<cr>
+map gp :bprevious<cr>
+map gd :bdelete<cr>
+map gd :bdelete<cr>
 
 nnoremap f> <Esc>I><Space><Esc>
 nnoremap t> <Esc>I><Space>
@@ -62,6 +71,9 @@ set noerrorbells
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
       endif
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
 let g:airline_symbols.colnr = ':'
 let g:airline_symbols.crypt = '🔒'
@@ -149,3 +161,20 @@ aut FileType * set omnifunc=ale#completion#OmniFunc
 au FileType text set omnifunc=syntaxcomplete#Complete
 au FileType md set omnifunc=syntaxcomplete#Complete
 au FileType php set omnifunc=syntaxcomplete#Complete
+
+set shell=/bin/bash
+set rtp+=~/.fzf
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
