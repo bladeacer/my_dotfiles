@@ -1,9 +1,24 @@
 set expandtab
-set autoindent
-set shiftwidth=2
-set tabstop=2
+set shiftwidth=4
+set tabstop=4
 set spell spelllang=en_gb
 set nocompatible
+
+set autoindent
+set smartindent
+set smartcase
+set pumheight=10
+set showmatch
+set laststatus=2
+set cmdheight=1
+
+set clipboard=unnamedplus "Linux
+
+" delete single character without copying into register
+nnoremap x "_x
+nnoremap <Space> <Nop>
+vnoremap <Space> <Nop>
+
 highlight SpellBad ctermfg=white ctermbg=red
 highlight SpellCap ctermfg=white ctermbg=blue
 highlight SpellLocal ctermfg=white ctermbg=yellow
@@ -26,40 +41,55 @@ syntax match MarkdownItalic /\*\(.*\)\*/
 highlight MarkdownItalic ctermfg=white ctermbg=none
 
 inoremap 2{ {}<Esc>i
+inoremap 2e{ {<CR><CR>}<Esc>ki
+
 inoremap 2( ()<Esc>i
-inoremap 2[ []<Esc>i
-inoremap 2< \< \><Esc>i
-inoremap 2$ $$<Esc>i
-inoremap 4$ $$$$<Esc>hi
-inoremap 2" ""<Esc>i
-inoremap 2' ''<Esc>i
-inoremap 2` ``<Esc>i
-inoremap 2* **<Esc>i
-inoremap 4* ****<Esc>hi
-inoremap 3` ```<CR>```<Esc>kA
-inoremap 3~ ~~~<CR>~~~<Esc>kA
-inoremap 2# ##<Space>
-inoremap 3# ###<Space>
-inoremap 4# ####<Space>
-inoremap 5# #####<Space>
-inoremap 6# ######<Space>
+inoremap 2e( (<CR><Tab><CR>)<Esc>ki
 
-inoremap `mas >[!question]- My Answer<CR>
-inoremap `sas >[!question]- Suggested Answer<CR>
-inoremap `nwp - [ ] UXDMT Lecture slides<CR><Backspace><Backspace> - [ ] UXDMT Lecture video<CR><Backspace><Backspace> - [ ] OSA Lecture slides<CR><Backspace><Backspace> - [ ] OSA Lecture video<CR><Backspace><Backspace> - [ ] OSA Tutorial<CR><Backspace><Backspace> - [ ] AS Lecture slides<CR><Backspace><Backspace> - [ ] AS Lecture video<CR><Backspace><Backspace> - [ ] AS Tutorial<CR><Backspace><Backspace> - [ ] EDP Lecture<CR><Backspace> [ ] EDP Practical<CR><Backspace> [ ] MAD Lecture<CR><Backspace> [ ] MAD Practical<CR><Backspace> [ ] MRTT Lecture<CR><Backspace> [ ] MRTT Lecture video<Esc>V12k4<
+inoremap  2[ []<Esc>i
+inoremap  2e[ [<CR><CR>]<Esc>ki
+inoremap  2$ $$<Esc>i
+inoremap  4$ $$$$<Esc>hi
+inoremap  4e$ $$<CR>$$<Esc>kA
+inoremap  2" ""<Esc>i
+inoremap  2' ''<Esc>i
+inoremap  2` ``<Esc>i
+inoremap  2* **<Esc>i
+inoremap  4* ****<Esc>hi
+inoremap  3` ```<CR><CR>```<Esc>kA
+inoremap  3~ ~~~<CR>~~~<Esc>
 
-inoremap `chbx - [ ]
+iabbrev 2# ##
+iabbrev 3# ###
+iabbrev 4# ####
+iabbrev 5# #####
+iabbrev 6# ######
 
-inoremap :skl 💀
-inoremap :nerd 🤓
+iabbrev iih Insert image here
+iabbrev OSA Operating systems and administration
+iabbrev AS Applications Security
 
-map gn :bnext<cr>
-map gp :bprevious<cr>
-map gd :bdelete<cr>
-map gd :bdelete<cr>
+iabbrev mas >[!question]- My Answer<CR>
+iabbrev sas >[!question]- Suggested Answer<CR>
+inoremap `nwp - [ ] UXDMT Lecture slides<CR> - [ ] UXDMT Lecture video<CR> - [ ] OSA Lecture slides<CR> - [ ] OSA Lecture video<CR> - [ ] OSA Tutorial<CR> - [ ] AS Lecture slides<CR> - [ ] AS Lecture video<CR> - [ ] AS Tutorial<CR> - [ ] EDP Lecture<CR> - [ ] EDP Practical<CR> - [ ] MAD Lecture<CR> - [ ] MAD Practical<CR> - [ ] MRTT Lecture<CR> - [ ] MRTT Lecture video<Esc>V12k9<
 
-nnoremap f> <Esc>I><Space><Esc>
-nnoremap t> <Esc>I><Space>
+iabbrev prop ---<CR>alias:<CR>Week:<CR>Course:<CR>Semester:<CR>Year:<CR>Topic:<CR>---<ESC>6kA
+iabbrev nend ___<CR>## Summary<CR><CR>### Questions<CR><CR>### Tutorial
+iabbrev chbx - [ ]
+iabbrev skl 💀
+iabbrev nerd 🤓
+
+autocmd FileType html,javascript
+      \ iabbrev html <html></html><Esc>2ba
+
+map gn :bnext<CR>
+map gp :bprevious<CR>
+map gd :bdelete<CR>
+map gd :bdelete<CR>
+
+nnoremap ft <Esc>{jzt<C-O>
+nnoremap fm <Esc>{jzz<C-O>
+nnoremap fb <Esc>{jzb<C-O>
 
 set noshowmode
 set ignorecase
@@ -70,7 +100,7 @@ set noerrorbells
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
-      endif
+endif
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
@@ -88,12 +118,12 @@ let g:airline_symbols.notexists = '!EXIST'
 let g:airline_symbols.whitespace = 'Errors:'
 
 let g:PaperColor_Theme_Options = {
-    \   'theme': {
-    \     'default': {
-    \       'transparent_background': 1
-    \     }
-    \   }
-    \ }
+      \   'theme': {
+        \     'default': {
+          \       'transparent_background': 1
+          \     }
+          \   }
+          \ }
 
 function! SetBgOpaque()
   hi Normal guibg=#1c1c1c ctermbg=black
@@ -102,31 +132,37 @@ function! SetBgOpaque()
 endfunction
 
 function! SetBgTransparent()
-    hi Normal guibg=NONE ctermbg=NONE
-    hi LineNr guibg=NONE ctermbg=NONE
-    hi SignColumn guibg=NONE ctermbg=NONE
+  hi Normal guibg=NONE ctermbg=NONE
+  hi LineNr guibg=NONE ctermbg=NONE
+  hi SignColumn guibg=NONE ctermbg=NONE
 endfunction
 
 let t:is_transparent = g:PaperColor_Theme_Options.theme.default.transparent_background
 function! ToggleTransparency()
-    if t:is_transparent == 0
-      call SetBgTransparent()
-      let t:is_transparent = 1
-    else
-      call SetBgOpaque()
-      let t:is_transparent = 0
-    endif
+  if t:is_transparent == 0
+    call SetBgTransparent()
+    let t:is_transparent = 1
+  else
+    call SetBgOpaque()
+    let t:is_transparent = 0
+  endif
 endfunction
 
 let g:airline#extensions#ale#enabled = 1
 let g:ale_completion_enabled = 1
 
-inoremap <F10> <C-X><C-K>
-inoremap <F9> <C-X><C-S>
-nnoremap <F10> a<C-X><C-K>
-nnoremap <F9> a<C-X><C-S>
 inoremap <silent><F12> <Esc>:call ToggleTransparency()<CR>a
 nnoremap <silent><F12> :call ToggleTransparency()<CR>
+inoremap <F10> <Esc><Esc>]szza<C-X><C-S>
+inoremap <F9> <C-X><C-K>
+inoremap <F8> <C-X><C-S>
+nnoremap <F10> <Esc>]szza<C-X><C-S>
+nnoremap <F9> a<C-X><C-K>
+nnoremap <silent><F8> a<C-X><C-S>
+
+nnoremap n nzz
+nnoremap N Nzz
+
 let g:apc_trigger = "\<c-x>\<c-o>"
 let g:apc_enable_ft = {'*':1, 'text':0, 'markdown':0, 'php':0 }
 set cpt=.,k,w,b
@@ -138,8 +174,8 @@ colorscheme PaperColor
 hi SignColumn guibg=NONE ctermbg=NONE
 
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\}
+      \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \}
 
 let g:ale_fix_on_save = 1
 let g:ale_echo_msg_error_str = 'E'
@@ -147,10 +183,10 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_sign_column_always = 1
 let g:ale_filetype_opt = {
-\ 'markdown': { 'enable': 0 },
-\ 'php': {'enable': 0},
-\ 'text': {'enable': 0}
-\}
+      \ 'markdown': { 'enable': 0 },
+      \ 'php': {'enable': 0},
+      \ 'text': {'enable': 0}
+      \}
 
 set completeopt=menu,menuone,noselect
 set shortmess+=c
@@ -165,16 +201,16 @@ au FileType php set omnifunc=syntaxcomplete#Complete
 set shell=/bin/bash
 set rtp+=~/.fzf
 let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+      \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+\ 'hl+':     ['fg', 'Statement'],
+\ 'info':    ['fg', 'PreProc'],
+\ 'border':  ['fg', 'Ignore'],
+\ 'prompt':  ['fg', 'Conditional'],
+\ 'pointer': ['fg', 'Exception'],
+\ 'marker':  ['fg', 'Keyword'],
+\ 'spinner': ['fg', 'Label'],
+\ 'header':  ['fg', 'Comment'] }
