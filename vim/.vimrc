@@ -16,8 +16,6 @@ set clipboard=unnamedplus "Linux
 
 " delete single character without copying into register
 nnoremap x "_x
-nnoremap <Space> <Nop>
-vnoremap <Space> <Nop>
 
 highlight SpellBad ctermfg=white ctermbg=red
 highlight SpellCap ctermfg=white ctermbg=blue
@@ -56,14 +54,23 @@ inoremap  2' ''<Esc>i
 inoremap  2` ``<Esc>i
 inoremap  2* **<Esc>i
 inoremap  4* ****<Esc>hi
-inoremap  3` ```<CR><CR>```<Esc>kA
+inoremap  3` ```<CR><CR>```<Esc>kcc
+inoremap  js` ```js<CR><CR>```<Esc>kcc
+inoremap  cs` ```cs<CR><CR>```<Esc>kcc
 inoremap  3~ ~~~<CR>~~~<Esc>
 
-iabbrev 2# ##
-iabbrev 3# ###
-iabbrev 4# ####
-iabbrev 5# #####
-iabbrev 6# ######
+inoremap 3_ ___<Esc><<1O<Esc>2j
+inoremap 3- ---<Esc><<1O<Esc>2j
+
+iabbrev i- <Esc>cc-<Space>
+iabbrev 1i- <Esc>cc<Tab>-<Space>
+iabbrev 2i- <Esc>cc<Tab><Tab>-<Space>
+
+iabbrev 2# <Esc>cc##
+iabbrev 3# <Esc>cc###
+iabbrev 4# <Esc>cc####
+iabbrev 5# <Esc>cc#####
+iabbrev 6# <Esc>cc######
 
 iabbrev iih Insert image here
 iabbrev OSA Operating systems and administration
@@ -71,7 +78,7 @@ iabbrev AS Applications Security
 
 iabbrev mas >[!question]- My Answer<CR>
 iabbrev sas >[!question]- Suggested Answer<CR>
-inoremap `nwp - [ ] UXDMT Lecture slides<CR> - [ ] UXDMT Lecture video<CR> - [ ] OSA Lecture slides<CR> - [ ] OSA Lecture video<CR> - [ ] OSA Tutorial<CR> - [ ] AS Lecture slides<CR> - [ ] AS Lecture video<CR> - [ ] AS Tutorial<CR> - [ ] EDP Lecture<CR> - [ ] EDP Practical<CR> - [ ] MAD Lecture<CR> - [ ] MAD Practical<CR> - [ ] MRTT Lecture<CR> - [ ] MRTT Lecture video<Esc>V12k9<
+inoremap `nwp - [ ] UXDMT Lecture slides<CR>[ ] UXDMT Lecture video<CR>[ ] OSA Lecture slides<CR>[ ] OSA Lecture video<CR>[ ] OSA Tutorial<CR>[ ] AS Lecture slides<CR>[ ] AS Lecture video<CR>[ ] AS Tutorial<CR>[ ] EDP Lecture<CR>[ ] EDP Practical<CR>[ ] MAD Lecture<CR>[ ] MAD Practical<CR>[ ] MRTT Lecture<CR>[ ] MRTT Lecture video
 
 iabbrev prop ---<CR>alias:<CR>Week:<CR>Course:<CR>Semester:<CR>Year:<CR>Topic:<CR>---<ESC>6kA
 iabbrev nend ___<CR>## Summary<CR><CR>### Questions<CR><CR>### Tutorial
@@ -81,6 +88,12 @@ iabbrev nerd 🤓
 
 autocmd FileType html,javascript
       \ iabbrev html <html></html><Esc>2ba
+
+      \ iabbrev body <body></body><Esc>2ba
+
+      \ iabbrev scriptsrc <script src=""></script><Esc>2bla
+
+      \ iabbrev script <script></script><Esc>2ba
 
 map gn :bnext<CR>
 map gp :bprevious<CR>
@@ -148,23 +161,24 @@ function! ToggleTransparency()
   endif
 endfunction
 
-let g:airline#extensions#ale#enabled = 1
-let g:ale_completion_enabled = 1
-
 inoremap <silent><F12> <Esc>:call ToggleTransparency()<CR>a
 nnoremap <silent><F12> :call ToggleTransparency()<CR>
+
 inoremap <F10> <Esc><Esc>]szza<C-X><C-S>
-inoremap <F9> <C-X><C-K>
-inoremap <F8> <C-X><C-S>
 nnoremap <F10> <Esc>]szza<C-X><C-S>
+
+inoremap <F9> <C-X><C-K>
 nnoremap <F9> a<C-X><C-K>
-nnoremap <silent><F8> a<C-X><C-S>
+
+inoremap <F8> <C-X><C-S>
+nnoremap <F8> a<C-X><C-S>
 
 nnoremap n nzz
 nnoremap N Nzz
 
+let g:apc_enable_ft = {'*':1}
 let g:apc_trigger = "\<c-x>\<c-o>"
-let g:apc_enable_ft = {'*':1, 'text':0, 'markdown':0, 'php':0 }
+
 set cpt=.,k,w,b
 
 set noshowmode
@@ -173,32 +187,13 @@ let g:airline_theme='papercolor'
 colorscheme PaperColor
 hi SignColumn guibg=NONE ctermbg=NONE
 
-let g:ale_fixers = {
-      \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-      \}
-
-let g:ale_fix_on_save = 1
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_sign_column_always = 1
-let g:ale_filetype_opt = {
-      \ 'markdown': { 'enable': 0 },
-      \ 'php': {'enable': 0},
-      \ 'text': {'enable': 0}
-      \}
-
 set completeopt=menu,menuone,noselect
 set shortmess+=c
 
 filetype on
 filetype plugin on
-aut FileType * set omnifunc=ale#completion#OmniFunc
-au FileType text set omnifunc=syntaxcomplete#Complete
-au FileType md set omnifunc=syntaxcomplete#Complete
-au FileType php set omnifunc=syntaxcomplete#Complete
+set omnifunc=syntaxcomplete#Complete
 
-set shell=/bin/bash
 set rtp+=~/.fzf
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
@@ -206,11 +201,11 @@ let g:fzf_colors =
       \ 'hl':      ['fg', 'Comment'],
       \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
       \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-\ 'hl+':     ['fg', 'Statement'],
-\ 'info':    ['fg', 'PreProc'],
-\ 'border':  ['fg', 'Ignore'],
-\ 'prompt':  ['fg', 'Conditional'],
-\ 'pointer': ['fg', 'Exception'],
-\ 'marker':  ['fg', 'Keyword'],
-\ 'spinner': ['fg', 'Label'],
-\ 'header':  ['fg', 'Comment'] }
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
