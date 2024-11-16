@@ -3,6 +3,7 @@ set shiftwidth=4
 set tabstop=4
 set spell spelllang=en_gb
 set nocompatible
+set smartcase
 
 set autoindent
 set smartindent
@@ -61,7 +62,7 @@ autocmd bufenter *.md inoremap  3~ ~~~<CR>~~~<Esc>
 
 autocmd bufenter *.md inoremap 3_ ___<Esc><<1O<Esc>2j
 autocmd bufenter *.md inoremap 3- ---<Esc><<1O<Esc>2j
-    
+
 iabbrev i- <Esc>cc-<Space>
 iabbrev 1i- <Esc>cc<Tab>-<Space>
 iabbrev 2i- <Esc>cc<Tab><Tab>-<Space>
@@ -76,8 +77,9 @@ autocmd bufenter *.md iabbrev iih Insert image here
 autocmd bufenter *.md iabbrev OSA Operating systems and administration
 autocmd bufenter *.md iabbrev AS Applications Security
 
-iabbrev mas >[!question]- My Answer<CR>
-iabbrev sas >[!question]- Suggested Answer<CR>
+inoremap mans >[!question]- My Answer<CR>
+inoremap nans >[!question]- My Answer<CR>
+inoremap sans >[!question]- Suggested Answer<CR>
 inoremap `nwp - [ ] UXDMT Lecture slides<CR>[ ] UXDMT Lecture video<CR>[ ] OSA Lecture slides<CR>[ ] OSA Lecture video<CR>[ ] OSA Tutorial<CR>[ ] AS Lecture slides<CR>[ ] AS Lecture video<CR>[ ] AS Tutorial<CR>[ ] EDP Lecture<CR>[ ] EDP Practical<CR>[ ] MAD Lecture<CR>[ ] MAD Practical<CR>[ ] MRTT Lecture<CR>[ ] MRTT Lecture video
 
 autocmd bufenter *.md iabbrev prop ---<CR>alias:<CR>Week:<CR>Course:<CR>Semester:<CR>Year:<CR>Topic:<CR>---<ESC>6kA
@@ -171,6 +173,7 @@ nnoremap <F8> a<C-X><C-S>
 
 nnoremap n nzz
 nnoremap N Nzz
+nnoremap <silent> gg=G gg=G2<C-O>
 
 let g:apc_enable_ft = {'*':1}
 let g:apc_trigger = "\<c-x>\<c-o>"
