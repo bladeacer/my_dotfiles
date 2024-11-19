@@ -123,6 +123,7 @@ export NVM_DIR="$HOME/.nvm"
 alias vf='find -type f | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
 alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
+alias aic='ascii-image-converter'
 
 eval "$(zoxide init bash)"
 alias cd='z'
@@ -137,3 +138,5 @@ export FZF_CTRL_T_OPTS="
 --preview 'batcat -n --color=always {}'
 --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 export BAT_THEME="Coldark-Dark"
+export STARSHIP_CONFIG=~/dotfiles/.config/starship/starship.toml
+eval "$(starship init bash)"
