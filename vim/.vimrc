@@ -77,10 +77,10 @@ autocmd bufenter *.md iabbrev iih Insert image here
 autocmd bufenter *.md iabbrev OSA Operating systems and administration
 autocmd bufenter *.md iabbrev AS Applications Security
 
-inoremap mans >[!question]- My Answer<CR>
-inoremap nans >[!question]- My Answer<CR>
-inoremap sans >[!question]- Suggested Answer<CR>
-inoremap `nwp - [ ] UXDMT Lecture slides<CR>[ ] UXDMT Lecture video<CR>[ ] OSA Lecture slides<CR>[ ] OSA Lecture video<CR>[ ] OSA Tutorial<CR>[ ] AS Lecture slides<CR>[ ] AS Lecture video<CR>[ ] AS Tutorial<CR>[ ] EDP Lecture<CR>[ ] EDP Practical<CR>[ ] MAD Lecture<CR>[ ] MAD Practical<CR>[ ] MRTT Lecture<CR>[ ] MRTT Lecture video
+autocmd bufenter *.md inoremap mans >[!question]- My Answer<CR>
+autocmd bufenter *.md inoremap nans >[!question]- My Answer<CR>
+autocmd bufenter *.md inoremap sans >[!question]- Suggested Answer<CR>
+autocmd bufenter *.md inoremap `nwp - [ ] UXDMT Lecture slides<CR>[ ] UXDMT Lecture video<CR>[ ] OSA Lecture slides<CR>[ ] OSA Lecture video<CR>[ ] OSA Tutorial<CR>[ ] AS Lecture slides<CR>[ ] AS Lecture video<CR>[ ] AS Tutorial<CR>[ ] EDP Lecture<CR>[ ] EDP Practical<CR>[ ] MAD Lecture<CR>[ ] MAD Practical<CR>[ ] MRTT Lecture<CR>[ ] MRTT Lecture video
 
 autocmd bufenter *.md iabbrev prop ---<CR>alias:<CR>Week:<CR>Course:<CR>Semester:<CR>Year:<CR>Topic:<CR>---<ESC>6kA
 autocmd bufenter *.md abbrev nend ___<CR>## Summary<CR><CR>### Questions<CR><CR>### Tutorial
@@ -101,6 +101,9 @@ map gd :bdelete<CR>
 nnoremap ft <Esc>{jzt<C-O>
 nnoremap fm <Esc>{jzz<C-O>
 nnoremap fb <Esc>{jzb<C-O>
+nnoremap { {ft
+nnoremap } }ft
+nnoremap % %zz
 
 set noshowmode
 set ignorecase
