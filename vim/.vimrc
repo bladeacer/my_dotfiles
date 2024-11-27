@@ -4,6 +4,9 @@ set tabstop=4
 set spell spelllang=en_gb
 set nocompatible
 set smartcase
+set foldcolumn=3
+
+let loaded_netrwPlugin = 1
 
 set autoindent
 set smartindent
@@ -12,16 +15,18 @@ set pumheight=10
 set showmatch
 set laststatus=2
 set cmdheight=1
+set cursorline
+filetype plugin indent on
 
 set clipboard=unnamedplus "Linux
 
 " delete single character without copying into register
 nnoremap x "_x
 
-highlight SpellBad ctermfg=white ctermbg=red
-highlight SpellCap ctermfg=white ctermbg=blue
-highlight SpellLocal ctermfg=white ctermbg=yellow
-highlight SpellRare ctermfg=none ctermbg=none
+highlight SpellBad ctermfg=lightgrey ctermbg=lightred
+highlight SpellCap ctermfg=lightgrey ctermbg=lightcyan
+highlight SpellLocal ctermfg=lightgrey ctermbg=lightyellow
+highlight SpellRare ctermfg=lightgrey ctermbg=none
 
 syntax on
 set encoding=UTF-8
@@ -67,11 +72,17 @@ iabbrev i- <Esc>cc-<Space>
 iabbrev 1i- <Esc>cc<Tab>-<Space>
 iabbrev 2i- <Esc>cc<Tab><Tab>-<Space>
 
-autocmd bufenter *.md iabbrev 2# <Esc>cc##
-autocmd bufenter *.md iabbrev 3# <Esc>cc###
-autocmd bufenter *.md iabbrev 4# <Esc>cc####
-autocmd bufenter *.md iabbrev 5# <Esc>cc#####
-autocmd bufenter *.md iabbrev 6# <Esc>cc######
+autocmd bufenter *.md iabbrev 22# <Esc>cc##
+autocmd bufenter *.md iabbrev 33# <Esc>cc###
+autocmd bufenter *.md iabbrev 44# <Esc>cc####
+autocmd bufenter *.md iabbrev 55# <Esc>cc#####
+autocmd bufenter *.md iabbrev 66# <Esc>cc######
+
+autocmd bufenter *.md iabbrev 2# ##
+autocmd bufenter *.md iabbrev 3# ###
+autocmd bufenter *.md iabbrev 4# ####
+autocmd bufenter *.md iabbrev 5# #####
+autocmd bufenter *.md iabbrev 6# ######
 
 autocmd bufenter *.md iabbrev iih Insert image here
 autocmd bufenter *.md iabbrev OSA Operating systems and administration
@@ -134,7 +145,7 @@ let g:airline_symbols.whitespace = 'Errors:'
 let g:PaperColor_Theme_Options = {
       \   'theme': {
         \     'default': {
-          \       'transparent_background': 1
+          \       'transparent_background': 0
           \     }
           \   }
           \ }
@@ -174,6 +185,9 @@ nnoremap <F9> a<C-X><C-K>
 inoremap <F8> <C-X><C-S>
 nnoremap <F8> a<C-X><C-S>
 
+inoremap <silent><F7> <Esc>:set number! relativenumber!<CR>a
+nnoremap <silent><F7> <Esc>:set number! relativenumber!<CR>
+
 nnoremap n nzz
 nnoremap N Nzz
 nnoremap <silent> gg=G gg=G2<C-O>
@@ -211,3 +225,29 @@ let g:fzf_colors =
       \ 'marker':  ['fg', 'Keyword'],
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
+
+" DrChip's additional man.vim stuff
+syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
+syn match manSectionNumber "^\s\+[0-9]\+\.[0-9]*" contained
+syn region manDQString start='[^a-zA-Z"]"[^", )]'lc=1 end='"' contains=manSQString
+syn region manSQString start="[ \t]'[^', )]"lc=1 end="'"
+syn region manSQString start="^'[^', )]"lc=1 end="'"
+syn region manBQString start="[^a-zA-Z`]`[^`, )]"lc=1 end="[`']"
+syn region manBQSQString start="``[^),']" end="''"
+syn match manBulletZone transparent "^\s\+o\s" contains=manBullet
+syn case match
+syn keyword manBullet contained o
+syn match manBullet contained "\[+*]"
+syn match manSubSectionStart "^\*" skipwhite nextgroup=manSubSection
+syn match manSubSection ".*$" contained
+
+hi link manSectionNumber Number
+hi link manDQString String
+hi link manSQString String
+hi link manBQString String
+hi link manBQSQString String
+hi link manBullet Special
+hi manSubSectionStart term=NONE cterm=NONE gui=NONE ctermfg=black ctermbg=black guifg=navyblue guibg=navyblue
+hi manSubSection term=underline cterm=underline gui=underline ctermfg=green guifg=green
+
+set ts=8

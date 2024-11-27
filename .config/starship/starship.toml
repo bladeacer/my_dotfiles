@@ -1,3 +1,6 @@
+command_timeout = 99999
+follow_symlinks = false
+
 [aws]
 symbol = "  "
 
@@ -84,9 +87,14 @@ symbol = " "
 
 [nodejs]
 symbol = " "
+format = '[$symbol($version )]($style)'
 
 [ocaml]
 symbol = " "
+
+[os]
+format = "$symbol "
+# disabled = false
 
 [os.symbols]
 Alpaquita = " "
@@ -147,6 +155,7 @@ symbol = " "
 
 [python]
 symbol = " "
+format = '[$symbol($version )]($style)'
 
 [rlang]
 symbol = "󰟔 "

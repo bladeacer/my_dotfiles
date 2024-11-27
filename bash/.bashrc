@@ -125,6 +125,9 @@ alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --
 alias gla='git log --oneline -a'
 alias aic='ascii-image-converter'
 
+export STARSHIP_CONFIG=~/dotfiles/.config/starship/starship.toml
+eval "$(starship init bash)"
+
 eval "$(zoxide init bash)"
 alias cd='z'
 alias cf='zi'
@@ -138,5 +141,12 @@ export FZF_CTRL_T_OPTS="
 --preview 'batcat -n --color=always {}'
 --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 export BAT_THEME="Coldark-Dark"
-export STARSHIP_CONFIG=~/dotfiles/.config/starship/starship.toml
-eval "$(starship init bash)"
+
+vman() {
+    export MANPAGER="col -b" # for FreeBSD/MacOS
+
+    # Make it read-only
+    eval 'man $@ | vim -MR +"set filetype=man" -'
+
+    unset MANPAGER
+}
