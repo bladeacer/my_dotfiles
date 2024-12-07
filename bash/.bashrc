@@ -124,6 +124,8 @@ alias vf='find -type f | fzf --layout reverse --info inline --border --preview "
 alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
 alias aic='ascii-image-converter'
+alias py='python3'
+alias python='python3'
 
 export STARSHIP_CONFIG=~/dotfiles/.config/starship/starship.toml
 eval "$(starship init bash)"
@@ -143,10 +145,17 @@ export FZF_CTRL_T_OPTS="
 export BAT_THEME="Coldark-Dark"
 
 vman() {
-    export MANPAGER="col -b" # for FreeBSD/MacOS
+    # export MANPAGER="col -b" # for FreeBSD/MacOS
 
     # Make it read-only
     eval 'man $@ | vim -MR +"set filetype=man" -'
 
     unset MANPAGER
 }
+
+alias ls='eza --icons -w 120 --group-directories-first'
+alias la='eza --icons -w 120 --group-directories-first -a'
+alias cdc='cd /mnt/c/'
+alias vtop="vtop --theme brew"
+alias v='vim'
+alias man='vman'
