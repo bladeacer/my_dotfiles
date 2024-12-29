@@ -153,9 +153,19 @@ vman() {
     unset MANPAGER
 }
 
-alias ls='eza --icons -w 120 --group-directories-first'
-alias la='eza --icons -w 120 --group-directories-first -a'
+alias ls='eza --icons --group-directories-first'
+alias la='eza --icons --group-directories-first -a'
 alias cdc='cd /mnt/c/'
 alias vtop="vtop --theme brew"
 alias v='vim'
-alias man='vman'
+alias powershell='powershell.exe'
+alias wgit='git.exe'
+alias bat="bat --color=always --style=numbers"
+batdiff() {
+    git diff --name-only --relative --diff-filter=d | xargs bat --diff
+}
+
+alias bathelp='bat --plain --language=help'
+help() {
+    "$@" --help 2>&1 | bathelp
+}

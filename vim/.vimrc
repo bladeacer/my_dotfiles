@@ -34,9 +34,9 @@ highlight SpellLocal ctermfg=lightgrey ctermbg=lightyellow
 highlight SpellRare ctermfg=lightgrey ctermbg=none
 
 syntax on
-set encoding=UTF-8
+set encoding=utf8
 set re=0
-set redrawtime=100000
+set redrawtime=10000
 
 syntax match MarkdownBold /\*\*\(.*\)\*\*/
 highlight MarkdownBold ctermfg=white ctermbg=none
@@ -56,6 +56,7 @@ autocmd bufenter * inoremap 2( ()<Esc>i
 autocmd bufenter * inoremap 2e( (<CR><Tab><CR>)<Esc>ki
 
 autocmd bufenter * inoremap  2[ []<Esc>i
+autocmd bufenter * inoremap  4[ [[]]<Esc>hi
 autocmd bufenter *.md inoremap  2e[ [<CR><CR>]<Esc>ki
 autocmd bufenter *.md inoremap  2$ $$<Esc>i
 autocmd bufenter *.md inoremap  4$ $$$$<Esc>hi
@@ -77,11 +78,11 @@ iabbrev i <Esc>cc-<Space>
 iabbrev 1i <Esc>cc<Tab>-<Space>
 iabbrev 2i <Esc>cc<Tab><Tab>-<Space>
 
-autocmd bufenter *.md iabbrev 2## <Esc>cc##
-autocmd bufenter *.md iabbrev 3## <Esc>cc###
-autocmd bufenter *.md iabbrev 4## <Esc>cc####
-autocmd bufenter *.md iabbrev 5## <Esc>cc#####
-autocmd bufenter *.md iabbrev 6## <Esc>cc######
+autocmd bufenter *.md nnoremap <leader>2# <Esc>I##<Space>
+autocmd bufenter *.md nnoremap <leader>3# <Esc>I###<Space>
+autocmd bufenter *.md nnoremap <leader>4# <Esc>I####<Space>
+autocmd bufenter *.md nnoremap <leader>5# <Esc>I#####<Space>
+autocmd bufenter *.md nnoremap <leader>6# <Esc>I######<Space>
 
 autocmd bufenter *.md iabbrev 2# ##
 autocmd bufenter *.md iabbrev 3# ###
@@ -108,6 +109,8 @@ autocmd bufenter *.html iabbrev html <html></html><Esc>2ba
 autocmd bufenter *.html iabbrev body <body></body><Esc>2ba
 autocmd bufenter *.html iabbrev scriptsrc <script src=""></script><Esc>2bla
 autocmd bufenter *.html iabbrev script <script></script><Esc>2ba
+autocmd bufenter *.html iabbrev div <div></div><Esc>2ba
+autocmd bufenter *.jsx iabbrev div <div></div><Esc>2ba
 
 nnoremap <silent> <leader>n :bnext<CR>
 nnoremap <silent> <leader>p :bprevious<CR>
@@ -129,6 +132,7 @@ set relativenumber
 set noerrorbells
 
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#ycm#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 let g:PaperColor_Theme_Options = {
@@ -164,12 +168,12 @@ function! ToggleTransparency()
   endif
 endfunction
 
-nnoremap <leader>t :call ToggleTransparency()<CR>
+nnoremap <silent><leader>t :call ToggleTransparency()<CR>
 nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
 
 nnoremap n nzz
 nnoremap N Nzz
-nnoremap <silent> gg=G gg=G2<C-O>
+nnoremap <silent> <leader>= gg=G2<C-O>zz
 
 set cpt=.,k,w,b
 
@@ -201,8 +205,7 @@ let g:fzf_colors =
       \ 'marker':  ['fg', 'Keyword'],
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
-nnoremap <silent> <leader>f :FZF <CR>
-inoremap <silent> <leader>f <Esc> :FZF <CR>
+nnoremap <silent> <leader>f :FZF!<CR>
 
 " DrChip's additional man.vim stuff
 syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
@@ -230,7 +233,7 @@ hi manSubSection term=underline cterm=underline gui=underline ctermfg=green guif
 
 set ts=8
 
-nnoremap <silent> <leader>g :Goyo <CR>
+nnoremap <silent> <leader>g :Goyo<CR>
 
 function! s:goyo_enter()
   if executable('tmux') && strlen($TMUX)
@@ -255,15 +258,33 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 command! -bang -nargs=? FZFMru call fzf_mru#actions#mru(<q-args>,
     \{
-        \'window': {'width': 0.9, 'height': 0.8},
+        \'window': {'width': 1, 'height': 1},
         \'options': [
             \'--preview', 'bat --style=numbers --color=always {}',
-            \'--preview-window', 'up:60%',
+            \'--preview-window', 'right:60%',
             \'--bind', 'ctrl-_:toggle-preview'
         \]
     \}
 \)
-
 nnoremap <silent> <Leader>r :FZFMru<CR>
 nnoremap <silent> <Leader>v :so ~/.vimrc<CR>
 nnoremap <silent> <Leader>a :!git add -A<CR>
+
+let g:ycm_filetype_blacklist = {'text':1, 'markdown':1, 'php':1}
+let g:apc_enable_ft = {'text':1, 'markdown':1, 'php':1}
+
+" source for dictionary, current or other loaded buffers, see ':help cpt'
+set cpt=.,k,w,b
+
+" don't select the first item.
+set completeopt=menu,menuone,noselect
+
+" suppress annoy messages.
+set shortmess+=c
+
+let g:apc_trigger="\<c-x>\<c-k>"
+nnoremap <silent> <leader>gt :YcmCompleter GoTo<CR>
+let g:ycm_enable_semantic_highlighting=1
+let g:airline_skip_empty_sections = 1
+let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
+imap <c-b> <plug>(YCMComplete)

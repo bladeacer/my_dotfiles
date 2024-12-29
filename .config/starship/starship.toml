@@ -94,7 +94,7 @@ symbol = " "
 
 [os]
 format = "$symbol "
-# disabled = false
+disabled = false
 
 [os.symbols]
 Alpaquita = " "
