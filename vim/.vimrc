@@ -1,3 +1,40 @@
+call plug#begin() 
+      Plug 'ap/vim-css-color'
+      Plug 'pbogut/fzf-mru.vim'
+      Plug 'sheerun/vim-polyglot'
+      Plug 'junegunn/goyo.vim'
+      Plug 'ryanoasis/vim-devicons'
+      Plug 'skywind3000/vim-auto-popmenu'
+      Plug 'skywind3000/vim-dict'
+      Plug 'tpope/vim-commentary'
+      Plug 'tpope/vim-sensible'
+      Plug 'itchyny/lightline.vim'
+      Plug 'gkeep/iceberg-dark'
+      Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
+      Plug 'junegunn/fzf.vim'
+call plug#end()
+
+let g:lightline = { 
+      \ 'colorscheme': 'icebergDark',
+      \ 'mode_map': {
+            \ 'n' : 'NOR',
+            \ 'i' : 'INS',
+            \ 'R' : 'REP',
+            \ 'v' : 'V',
+            \ 'V' : 'VL',
+            \ "\<C-v>": 'VB',
+            \ 'c' : 'CMD',
+            \ 's' : 'S',
+            \ 'S' : 'SL',
+            \ "\<C-s>": 'SB',
+            \ 't': 'T',
+      \ },
+      \ 'tabline_separator': { 'left': '', 'right': '' },
+      \ 'tabline_subseparator': { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '\ue0bb', 'right': '\ue0bd' }
+\}
+
+set background=dark
 set expandtab
 set shiftwidth=2
 set tabstop=2
@@ -23,7 +60,23 @@ set laststatus=2
 set cmdheight=1
 filetype plugin indent on
 
+set noshowmode
+set ignorecase
+set wildmenu
+set number
+set relativenumber
+set noerrorbells
+
+syntax on
+set encoding=UTF-8
+set re=0
+set redrawtime=10000
+
 set clipboard=unnamedplus "Linux
+
+filetype on
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
 
 " delete single character without copying into register
 nnoremap x "_x
@@ -32,11 +85,6 @@ highlight SpellBad ctermfg=lightgrey ctermbg=lightred
 highlight SpellCap ctermfg=lightgrey ctermbg=lightcyan
 highlight SpellLocal ctermfg=lightgrey ctermbg=lightyellow
 highlight SpellRare ctermfg=lightgrey ctermbg=none
-
-syntax on
-set encoding=utf8
-set re=0
-set redrawtime=10000
 
 syntax match MarkdownBold /\*\*\(.*\)\*\*/
 highlight MarkdownBold ctermfg=white ctermbg=none
@@ -124,51 +172,6 @@ nnoremap <leader>fb <Esc>{jzb<C-O>
 nnoremap % %zz
 nnoremap <leader>fv 0ma}b:'a,.j<CR>120 ?  *<Esc>dwi<CR><Esc>
 
-set noshowmode
-set ignorecase
-set wildmenu
-set number
-set relativenumber
-set noerrorbells
-
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#ycm#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-
-let g:PaperColor_Theme_Options = {
-      \   'theme': {
-      \     'default': {
-      \       'transparent_background': 0
-      \     }
-      \   }
-      \ }
-
-function! SetBgOpaque()
-  hi Normal guibg=#1c1c1c ctermbg=black
-  hi LineNr guibg=#1c1c1c ctermbg=black
-  hi SignColumn guibg=#1c1c1c ctermbg=black
-  hi foldcolumn guibg=#1c1c1c ctermbg=black
-endfunction
-
-function! SetBgTransparent()
-  hi Normal guibg=NONE ctermbg=NONE
-  hi LineNr guibg=NONE ctermbg=NONE
-  hi SignColumn guibg=NONE ctermbg=NONE
-  hi foldcolumn guibg=NONE ctermbg=NONE
-endfunction
-
-let g:is_transparent = g:PaperColor_Theme_Options.theme.default.transparent_background
-function! ToggleTransparency()
-  if g:is_transparent == 0
-    call SetBgTransparent()
-    let g:is_transparent = 1
-  else
-    call SetBgOpaque()
-    let g:is_transparent = 0
-  endif
-endfunction
-
-nnoremap <silent><leader>t :call ToggleTransparency()<CR>
 nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
 
 nnoremap n nzz
@@ -177,20 +180,10 @@ nnoremap <silent> <leader>= gg=G2<C-O>zz
 
 set cpt=.,k,w,b
 
-set noshowmode
-set background=dark
-let g:airline_theme='papercolor'
-colorscheme PaperColor
-hi SignColumn guibg=NONE ctermbg=NONE
-
+colorscheme iceberg
 set completeopt=menu,menuone,noselect
 set shortmess+=c
 
-filetype on
-filetype plugin on
-set omnifunc=syntaxcomplete#Complete
-
-set rtp+=~/.fzf
 let g:fzf_colors =
       \ { 'fg':    ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -205,7 +198,9 @@ let g:fzf_colors =
       \ 'marker':  ['fg', 'Keyword'],
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
-nnoremap <silent> <leader>f :FZF!<CR>
+nnoremap <silent> <leader>f :Files!<CR>
+nnoremap <silent> <leader>i :PlugInstall<CR>
+let g:fzf_preview_window = ['right:60%', 'ctrl-/']
 
 " DrChip's additional man.vim stuff
 syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
@@ -236,39 +231,39 @@ set ts=8
 nnoremap <silent> <leader>g :Goyo<CR>
 
 function! s:goyo_enter()
-  if executable('tmux') && strlen($TMUX)
-    set nonumber
-    set norelativenumber
-    silent !tmux set status off
-    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-  endif
+      if executable('tmux') && strlen($TMUX)
+            set nonumber
+            set norelativenumber
+            silent !tmux set status off
+            silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+      endif
 endfunction
 
 function! s:goyo_leave()
-  if executable('tmux') && strlen($TMUX)
-    set number
-    set relativenumber
-    silent !tmux set status on
-    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-  endif
+      if executable('tmux') && strlen($TMUX)
+            set number
+            set relativenumber
+            silent !tmux set status on
+            silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+      endif
 endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 command! -bang -nargs=? FZFMru call fzf_mru#actions#mru(<q-args>,
-    \{
-        \'window': {'width': 1, 'height': 1},
-        \'options': [
-            \'--preview', 'bat --style=numbers --color=always {}',
-            \'--preview-window', 'right:60%',
-            \'--bind', 'ctrl-_:toggle-preview'
-        \]
-    \}
-\)
+                  \{
+                  \'window': {'width': 1, 'height': 1},
+                  \'options': [
+                  \'--preview', 'bat --style=numbers --color=always {}',
+                  \'--preview-window', 'right:60%',
+                  \'--bind', 'ctrl-_:toggle-preview'
+                  \]
+                  \}
+                  \)
 nnoremap <silent> <Leader>r :FZFMru<CR>
 nnoremap <silent> <Leader>v :so ~/.vimrc<CR>
-nnoremap <silent> <Leader>a :!git add -A<CR>
+
 
 let g:ycm_filetype_blacklist = {'text':1, 'markdown':1, 'php':1}
 let g:apc_enable_ft = {'text':1, 'markdown':1, 'php':1}
@@ -285,6 +280,4 @@ set shortmess+=c
 let g:apc_trigger="\<c-x>\<c-k>"
 nnoremap <silent> <leader>gt :YcmCompleter GoTo<CR>
 let g:ycm_enable_semantic_highlighting=1
-let g:airline_skip_empty_sections = 1
-let g:airline_section_z = airline#section#create(['windowswap', '%3p%% ', 'linenr', ':%3v'])
 imap <c-b> <plug>(YCMComplete)
