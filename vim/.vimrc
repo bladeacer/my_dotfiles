@@ -1,20 +1,20 @@
-call plug#begin() 
+call plug#begin()
       Plug 'ap/vim-css-color'
-      Plug 'pbogut/fzf-mru.vim'
       Plug 'sheerun/vim-polyglot'
       Plug 'junegunn/goyo.vim'
       Plug 'ryanoasis/vim-devicons'
-      Plug 'skywind3000/vim-auto-popmenu'
-      Plug 'skywind3000/vim-dict'
       Plug 'tpope/vim-commentary'
       Plug 'tpope/vim-sensible'
       Plug 'itchyny/lightline.vim'
       Plug 'gkeep/iceberg-dark'
       Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
       Plug 'junegunn/fzf.vim'
+      Plug 'dense-analysis/ale'
+      Plug 'maximbaz/lightline-ale'
+      Plug 'lifepillar/vim-mucomplete'
 call plug#end()
 
-let g:lightline = { 
+let g:lightline = {
       \ 'colorscheme': 'icebergDark',
       \ 'mode_map': {
             \ 'n' : 'NOR',
@@ -30,9 +30,34 @@ let g:lightline = {
             \ 't': 'T',
       \ },
       \ 'tabline_separator': { 'left': '', 'right': '' },
-      \ 'tabline_subseparator': { 'left': '', 'right': '' },
+      \ 'tabline_subseparator': { 'left': ''},
       \ 'subseparator': { 'left': '\ue0bb', 'right': '\ue0bd' }
 \}
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_infos': 'lightline#ale#infos',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \     'linter_checking': 'right',
+      \     'linter_infos': 'right',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'right',
+      \ }
+let g:lightline.active = {
+            \ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+            \            [ 'lineinfo' ],
+	    \            [ 'percent' ],
+	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
+
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_infos = "\uf129"
+let g:lightline#ale#indicator_warnings = "\uf071"
+let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_ok = "\uf00c"
 
 set background=dark
 set expandtab
@@ -198,8 +223,9 @@ let g:fzf_colors =
       \ 'marker':  ['fg', 'Keyword'],
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
-nnoremap <silent> <leader>f :Files!<CR>
+nnoremap <silent> <leader>f :Files<CR>
 nnoremap <silent> <leader>i :PlugInstall<CR>
+nnoremap <silent> <leader>c :PlugClean<CR>
 let g:fzf_preview_window = ['right:60%', 'ctrl-/']
 
 " DrChip's additional man.vim stuff
@@ -251,22 +277,9 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
-command! -bang -nargs=? FZFMru call fzf_mru#actions#mru(<q-args>,
-                  \{
-                  \'window': {'width': 1, 'height': 1},
-                  \'options': [
-                  \'--preview', 'bat --style=numbers --color=always {}',
-                  \'--preview-window', 'right:60%',
-                  \'--bind', 'ctrl-_:toggle-preview'
-                  \]
-                  \}
-                  \)
-nnoremap <silent> <Leader>r :FZFMru<CR>
+nnoremap <silent> <Leader>r :History<CR>
 nnoremap <silent> <Leader>v :so ~/.vimrc<CR>
 
-
-let g:ycm_filetype_blacklist = {'text':1, 'markdown':1, 'php':1}
-let g:apc_enable_ft = {'text':1, 'markdown':1, 'php':1}
 
 " source for dictionary, current or other loaded buffers, see ':help cpt'
 set cpt=.,k,w,b
@@ -277,7 +290,24 @@ set completeopt=menu,menuone,noselect
 " suppress annoy messages.
 set shortmess+=c
 
-let g:apc_trigger="\<c-x>\<c-k>"
-nnoremap <silent> <leader>gt :YcmCompleter GoTo<CR>
-let g:ycm_enable_semantic_highlighting=1
-imap <c-b> <plug>(YCMComplete)
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\}
+let g:ale_linters = {
+\   'javascriptreact': ['']
+\}
+let g:ale_completion_enabled = 1
+let g:ale_completion_autoimport = 1
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+let g:ale_set_highlights = 0
+let g:mucomplete#enable_auto_at_startup = 1
+
+let g:mucomplete#chains = {}
+let g:mucomplete#chains.default  = ['path', 'omni', 'dict', 'uspl']
+let g:mucomplete#chains.markdown = ['path', 'dict', 'uspl']
+imap <expr> <down> mucomplete#extend_fwd("\<down>")
+let g:ale_virtualtext_cursor = 'disabled'
+nnoremap <silent> <leader>j <Plug>(ale_previous_wrap)
+nnoremap <silent> <leader>k <Plug>(ale_next_wrap)
+let g:ale_hover_cursor = 1
