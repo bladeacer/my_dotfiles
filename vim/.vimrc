@@ -2,17 +2,25 @@ call plug#begin()
       Plug 'ap/vim-css-color'
       Plug 'sheerun/vim-polyglot'
       Plug 'junegunn/goyo.vim'
-      Plug 'ryanoasis/vim-devicons'
       Plug 'tpope/vim-commentary'
       Plug 'tpope/vim-sensible'
       Plug 'itchyny/lightline.vim'
       Plug 'gkeep/iceberg-dark'
       Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
       Plug 'junegunn/fzf.vim'
-      Plug 'dense-analysis/ale'
-      Plug 'maximbaz/lightline-ale'
-      Plug 'lifepillar/vim-mucomplete'
+      Plug 'raimondi/delimitmate'
+      Plug 'ervandew/supertab'
+
+      " Plug 'dense-analysis/ale'
+      " Plug 'maximbaz/lightline-ale'
+      " Plug 'lifepillar/vim-mucomplete'
+
 call plug#end()
+
+if has("gui_running")
+      set guifont=CaskadiaCove\ NFM
+      au VimEnter * colorscheme iceberg
+endif
 
 let g:lightline = {
       \ 'colorscheme': 'icebergDark',
@@ -33,31 +41,31 @@ let g:lightline = {
       \ 'tabline_subseparator': { 'left': ''},
       \ 'subseparator': { 'left': '\ue0bb', 'right': '\ue0bd' }
 \}
-let g:lightline.component_expand = {
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_infos': 'lightline#ale#infos',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
-      \ }
-let g:lightline.component_type = {
-      \     'linter_checking': 'right',
-      \     'linter_infos': 'right',
-      \     'linter_warnings': 'warning',
-      \     'linter_errors': 'error',
-      \     'linter_ok': 'right',
-      \ }
-let g:lightline.active = {
-            \ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
-            \            [ 'lineinfo' ],
-	    \            [ 'percent' ],
-	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
+" let g:lightline.component_expand = {
+"       \  'linter_checking': 'lightline#ale#checking',
+"       \  'linter_infos': 'lightline#ale#infos',
+"       \  'linter_warnings': 'lightline#ale#warnings',
+"       \  'linter_errors': 'lightline#ale#errors',
+"       \  'linter_ok': 'lightline#ale#ok',
+"       \ }
+" let g:lightline.component_type = {
+"       \     'linter_checking': 'right',
+"       \     'linter_infos': 'right',
+"       \     'linter_warnings': 'warning',
+"       \     'linter_errors': 'error',
+"       \     'linter_ok': 'right',
+"       \ }
+" let g:lightline.active = {
+"             \ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+"             \            [ 'lineinfo' ],
+" 	    \            [ 'percent' ],
+" 	    \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
 
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_infos = "\uf129"
-let g:lightline#ale#indicator_warnings = "\uf071"
-let g:lightline#ale#indicator_errors = "\uf05e"
-let g:lightline#ale#indicator_ok = "\uf00c"
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_infos = "\uf129"
+" let g:lightline#ale#indicator_warnings = "\uf071"
+" let g:lightline#ale#indicator_errors = "\uf05e"
+" let g:lightline#ale#indicator_ok = "\uf00c"
 
 set background=dark
 set expandtab
@@ -82,14 +90,13 @@ set smartcase
 set pumheight=10
 set showmatch
 set laststatus=2
-set cmdheight=1
-filetype plugin indent on
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
 
 set noshowmode
 set ignorecase
 set wildmenu
-set number
-set relativenumber
+set number relativenumber
 set noerrorbells
 
 syntax on
@@ -101,51 +108,14 @@ set clipboard=unnamedplus "Linux
 
 filetype on
 filetype plugin on
-set omnifunc=syntaxcomplete#Complete
 
 " delete single character without copying into register
 nnoremap x "_x
 
-highlight SpellBad ctermfg=lightgrey ctermbg=lightred
-highlight SpellCap ctermfg=lightgrey ctermbg=lightcyan
-highlight SpellLocal ctermfg=lightgrey ctermbg=lightyellow
+highlight SpellBad ctermfg=lightred ctermbg=none
+highlight SpellCap ctermfg=lightcyan ctermbg=none
+highlight SpellLocal ctermfg=lightyellow ctermbg=none
 highlight SpellRare ctermfg=lightgrey ctermbg=none
-
-syntax match MarkdownBold /\*\*\(.*\)\*\*/
-highlight MarkdownBold ctermfg=white ctermbg=none
-
-syntax match MarkdownBold /\*\*\(.*\)\*\*/
-syntax match MarkdownUnderline /_\(.*\)_/
-
-syntax match MarkdownBold /\*\*\(.*\)\*\*/
-highlight MarkdownUnderline ctermfg=white ctermbg=none
-syntax match MarkdownItalic /\*\(.*\)\*/
-highlight MarkdownItalic ctermfg=white ctermbg=none
-
-autocmd bufenter * inoremap 2{ {}<Esc>i
-autocmd bufenter * inoremap 2e{ {<CR><CR>}<Esc>ki
-
-autocmd bufenter * inoremap 2( ()<Esc>i
-autocmd bufenter * inoremap 2e( (<CR><Tab><CR>)<Esc>ki
-
-autocmd bufenter * inoremap  2[ []<Esc>i
-autocmd bufenter * inoremap  4[ [[]]<Esc>hi
-autocmd bufenter *.md inoremap  2e[ [<CR><CR>]<Esc>ki
-autocmd bufenter *.md inoremap  2$ $$<Esc>i
-autocmd bufenter *.md inoremap  4$ $$$$<Esc>hi
-autocmd bufenter *.md inoremap  4e$ $$<CR>$$<Esc>kA
-autocmd bufenter * inoremap  2" ""<Esc>i
-autocmd bufenter * inoremap  2' ''<Esc>i
-autocmd bufenter *.md inoremap  2` ``<Esc>i
-autocmd bufenter *.md inoremap  2* **<Esc>i
-autocmd bufenter *.md inoremap  4* ****<Esc>hi
-autocmd bufenter *.md inoremap  3` ```<CR><CR>```<Esc>kcc
-autocmd bufenter *.md inoremap  `js ```js<CR><CR>```<Esc>kcc
-autocmd bufenter *.md inoremap  `cs ```cs<CR><CR>```<Esc>kcc
-autocmd bufenter *.md inoremap  3~ ~~~<CR>~~~<Esc>
-
-autocmd bufenter *.md inoremap 3- ---
-autocmd bufenter *.md inoremap 3_ ___
 
 iabbrev i <Esc>cc-<Space>
 iabbrev 1i <Esc>cc<Tab>-<Space>
@@ -163,39 +133,16 @@ autocmd bufenter *.md iabbrev 4# ####
 autocmd bufenter *.md iabbrev 5# #####
 autocmd bufenter *.md iabbrev 6# ######
 
-autocmd bufenter *.md iabbrev iih Insert image here
-autocmd bufenter *.md iabbrev OSA Operating systems and administration
-autocmd bufenter *.md iabbrev AS Applications Security
-
-autocmd bufenter *.md inoremap mans >[!question]- My Answer<CR>
-autocmd bufenter *.md inoremap nans >[!question]- My Answer<CR>
-autocmd bufenter *.md inoremap sans >[!question]- Suggested Answer<CR>
-autocmd bufenter *.md inoremap `nwp - [ ] UXDMT Lecture slides<CR>[ ] UXDMT Lecture video<CR>[ ] OSA Lecture slides<CR>[ ] OSA Lecture video<CR>[ ] OSA Tutorial<CR>[ ] AS Lecture slides<CR>[ ] AS Lecture video<CR>[ ] AS Tutorial<CR>[ ] EDP Lecture<CR>[ ] EDP Practical<CR>[ ] MAD Lecture<CR>[ ] MAD Practical<CR>[ ] MRTT Lecture<CR>[ ] MRTT Lecture video
-
-autocmd bufenter *.md iabbrev prop ---<CR>alias:<CR>Week:<CR>Course:<CR>Semester:<CR>Year:<CR>Topic:<CR>tags:<CR>---<ESC>7kA
-autocmd bufenter *.md iabbrev nend ___<CR>## Summary<CR><CR>### Questions<CR><CR>### Tutorial<Esc>4kA
-autocmd bufenter *.md iabbrev chbx - [ ]
-autocmd bufenter *.md iabbrev skl 💀
-autocmd bufenter *.md iabbrev nerd 🤓
-
-autocmd bufenter *.html iabbrev html <html></html><Esc>2ba
-autocmd bufenter *.html iabbrev body <body></body><Esc>2ba
-autocmd bufenter *.html iabbrev scriptsrc <script src=""></script><Esc>2bla
-autocmd bufenter *.html iabbrev script <script></script><Esc>2ba
-autocmd bufenter *.html iabbrev div <div></div><Esc>2ba
-autocmd bufenter *.jsx iabbrev div <div></div><Esc>2ba
-
 nnoremap <silent> <leader>n :bnext<CR>
 nnoremap <silent> <leader>p :bprevious<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
-nnoremap <leader>ft <Esc>{jzt<C-O>
+" nnoremap <leader>ft <Esc>{jzt<C-O>
 nnoremap } }zz
 nnoremap { {zz
-nnoremap <leader>fz <Esc>{jzz<C-O>
-nnoremap <leader>fb <Esc>{jzb<C-O>
+" nnoremap <leader>fz <Esc>{jzz<C-O>
+" nnoremap <leader>fb <Esc>{jzb<C-O>
 nnoremap % %zz
-nnoremap <leader>fv 0ma}b:'a,.j<CR>120 ?  *<Esc>dwi<CR><Esc>
 
 nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
 
@@ -206,7 +153,6 @@ nnoremap <silent> <leader>= gg=G2<C-O>zz
 set cpt=.,k,w,b
 
 colorscheme iceberg
-set completeopt=menu,menuone,noselect
 set shortmess+=c
 
 let g:fzf_colors =
@@ -284,30 +230,16 @@ nnoremap <silent> <Leader>v :so ~/.vimrc<CR>
 " source for dictionary, current or other loaded buffers, see ':help cpt'
 set cpt=.,k,w,b
 
-" don't select the first item.
-set completeopt=menu,menuone,noselect
+set completeopt=menu,menuone,noselect,preview
 
-" suppress annoy messages.
-set shortmess+=c
+" let g:mucomplete#enable_auto_at_startup = 1
+" let g:mucomplete#chains = {}
+" let g:mucomplete#chains.default  = ['path', 'omni', 'keyn', 'dict', 'uspl']
+" let g:mucomplete#chains.markdown = ['path', 'keyn', 'dict', 'uspl']
+" imap <expr> <down> mucomplete#extend_fwd("\<down>")
 
-let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\}
-let g:ale_linters = {
-\   'javascriptreact': ['']
-\}
-let g:ale_completion_enabled = 1
-let g:ale_completion_autoimport = 1
-let g:ale_sign_error = '>>'
-let g:ale_sign_warning = '--'
-let g:ale_set_highlights = 0
-let g:mucomplete#enable_auto_at_startup = 1
-
-let g:mucomplete#chains = {}
-let g:mucomplete#chains.default  = ['path', 'omni', 'dict', 'uspl']
-let g:mucomplete#chains.markdown = ['path', 'dict', 'uspl']
-imap <expr> <down> mucomplete#extend_fwd("\<down>")
-let g:ale_virtualtext_cursor = 'disabled'
-nnoremap <silent> <leader>j <Plug>(ale_previous_wrap)
-nnoremap <silent> <leader>k <Plug>(ale_next_wrap)
-let g:ale_hover_cursor = 1
+set updatetime=300
+imap <script><silent> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
+imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
+let g:SuperTabMappingForward = '<s-tab>'
+let g:SuperTabMappingBackward = '<tab>'

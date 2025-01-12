@@ -159,8 +159,9 @@ alias cdc='cd /mnt/c/'
 alias vtop="vtop --theme brew"
 alias v='vim'
 alias powershell='powershell.exe'
+alias pwsh='pwsh.exe'
 alias wgit='git.exe'
-alias bat="bat --color=always --style=numbers"
+alias bat="bat --color=always --style=numbers,changes"
 batdiff() {
     git diff --name-only --relative --diff-filter=d | xargs bat --diff
 }
@@ -168,4 +169,7 @@ batdiff() {
 alias bathelp='bat --plain --language=help'
 help() {
     "$@" --help 2>&1 | bathelp
+}
+batdiff() {
+    git diff --name-only --relative --diff-filter=d | xargs bat --diff
 }
