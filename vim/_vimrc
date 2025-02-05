@@ -1,0 +1,210 @@
+call plug#begin()
+Plug 'ap/vim-css-color'
+Plug 'sheerun/vim-polyglot'
+Plug 'junegunn/goyo.vim'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-sensible'
+Plug 'itchyny/lightline.vim'
+Plug 'gkeep/iceberg-dark'
+Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
+Plug 'junegunn/fzf.vim'
+" Plug 'dense-analysis/ale'
+Plug 'maximbaz/lightline-ale'
+Plug 'lifepillar/vim-mucomplete'
+call plug#end()
+
+if has("gui_running")
+  set guifont=CaskaydiaCove\ NFM
+  au VimEnter * colorscheme iceberg
+endif
+let g:lightline = {
+      \ 'colorscheme': 'icebergDark',
+      \ 'mode_map': {
+      \ 'n' : 'NOR',
+      \ 'i' : 'INS',
+      \ 'R' : 'REP',
+      \ 'v' : 'V',
+      \ 'V' : 'VL',
+      \ "\<C-v>": 'VB',
+      \ 'c' : 'CMD',
+      \ 's' : 'S',
+      \ 'S' : 'SL',
+      \ "\<C-s>": 'SB',
+      \ 't': 'T',
+      \ },
+      \ 'tabline_separator': { 'left': '', 'right': '' },
+      \ 'tabline_subseparator': { 'left': ''},
+      \ 'subseparator': { 'left': '\ue0bb', 'right': '\ue0bd' }
+      \}
+" let g:lightline.component_expand = {
+"       \  'linter_checking': 'lightline#ale#checking',
+"       \  'linter_infos': 'lightline#ale#infos',
+"       \  'linter_warnings': 'lightline#ale#warnings',
+"       \  'linter_errors': 'lightline#ale#errors',
+"       \  'linter_ok': 'lightline#ale#ok',
+"       \ }
+" let g:lightline.component_type = {
+"       \     'linter_checking': 'right',
+"       \     'linter_infos': 'right',
+"       \     'linter_warnings': 'warning',
+"       \     'linter_errors': 'error',
+"       \     'linter_ok': 'right',
+"       \ }
+" let g:lightline.active = {
+"       \ 'right': [ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_infos', 'linter_ok' ],
+"       \            [ 'lineinfo' ],
+"       \            [ 'percent' ],
+"       \            [ 'fileformat', 'fileencoding', 'filetype'] ] }
+
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_infos = "\uf129"
+" let g:lightline#ale#indicator_warnings = "\uf071"
+" let g:lightline#ale#indicator_errors = "\uf05e"
+" let g:lightline#ale#indicator_ok = "\uf00c"
+
+set termguicolors
+set background=dark
+set expandtab
+set shiftwidth=2
+set tabstop=2
+set spell spelllang=en_gb
+set nocompatible
+set smartcase
+set belloff=all 
+
+let loaded_netrwPlugin = 1
+let mapleader=";"
+
+nnoremap <silent> <tab> >>
+nnoremap <silent> <s-tab> <<
+vnoremap <silent> <tab> >
+vnoremap <silent> <s-tab> <
+
+set autoindent
+set smartindent
+set smartcase
+set pumheight=10
+set showmatch
+set laststatus=2
+set cmdheight=1
+filetype plugin indent on
+
+set noshowmode
+set ignorecase
+set wildmenu
+set number
+set relativenumber
+set noerrorbells
+
+syntax on
+set encoding=UTF-8
+set re=0
+set redrawtime=10000
+" set clipboard=unnamedplus "Linux
+
+filetype on
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
+
+" delete single character without copying into register
+nnoremap x "_x
+
+highlight SpellBad ctermfg=lightgrey ctermbg=lightred
+highlight SpellCap ctermfg=lightgrey ctermbg=lightcyan
+highlight SpellLocal ctermfg=lightgrey ctermbg=lightyellow
+highlight SpellRare ctermfg=lightgrey ctermbg=none
+highlight Normal guibg=NONE
+
+syntax match MarkdownBold /\*\*\(.*\)\*\*/
+highlight MarkdownBold ctermfg=white ctermbg=none
+
+syntax match MarkdownBold /\*\*\(.*\)\*\*/
+syntax match MarkdownUnderline /_\(.*\)_/
+
+syntax match MarkdownBold /\*\*\(.*\)\*\*/
+highlight MarkdownUnderline ctermfg=white ctermbg=none
+syntax match MarkdownItalic /\*\(.*\)\*/
+highlight MarkdownItalic ctermfg=white ctermbg=none
+
+autocmd bufenter *.md iabbrev 2# ##
+autocmd bufenter *.md iabbrev 3# ###
+autocmd bufenter *.md iabbrev 4# ####
+autocmd bufenter *.md iabbrev 5# #####
+autocmd bufenter *.md iabbrev 6# ######
+
+nnoremap <silent> <leader>n :bnext<CR>
+nnoremap <silent> <leader>p :bprevious<CR>
+nnoremap <silent> <leader>d :bdelete<CR>
+
+nnoremap <leader>ft <Esc>{jzt<C-O>
+nnoremap } }zz
+nnoremap { {zz
+nnoremap <leader>fz <Esc>{jzz<C-O>
+nnoremap <leader>fb <Esc>{jzb<C-O>
+nnoremap % %zz
+nnoremap <leader>fv 0ma}b:'a,.j<CR>120 ?  *<Esc>dwi<CR><Esc>
+
+nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
+
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap <silent> <leader>= gg=G2<C-O>zz
+
+set cpt=.,k,w,b
+
+colorscheme iceberg
+set completeopt=menu,menuone,noselect
+set shortmess+=c
+
+let g:fzf_colors =
+      \ { 'fg':    ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
+nnoremap <silent> <leader>f :Files<CR>
+nnoremap <silent> <leader>i :PlugInstall<CR>
+nnoremap <silent> <leader>c :PlugClean<CR>
+nnoremap <silent> <leader>r :History<CR>
+nnoremap <silent> <leader>g :Goyo<CR>
+nnoremap <silent> <leader>v :so %<CR>
+let g:mucomplete#chains = {}
+let g:mucomplete#chains.default  = ['path', 'keyn', 'omni', 'dict', 'uspl']
+let g:mucomplete#chains.markdown = ['path', 'dict', 'uspl']
+imap <expr> <down> mucomplete#extend_fwd("\<down>")
+" let g:ale_virtualtext_cursor = 'disabled'
+" nnoremap <silent> <leader>j <Plug>(ale_previous_wrap)
+" nnoremap <silent> <leader>k <Plug>(ale_next_wrap)
+" let g:ale_hover_cursor = 1
+
+" source for dictionary, current or other loaded buffers, see ':help cpt'
+set cpt=.,k,w,b
+"
+" don't select the first item.
+set completeopt=menu,menuone,noselect
+
+" suppress annoy messages.
+set shortmess+=c
+" let g:ale_fixers = {
+"       \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+"       \}
+" let g:ale_linters = {
+"       \   'javascriptreact': ['']
+"       \}
+" let g:ale_completion_enabled = 1
+" let g:ale_completion_autoimport = 1
+" let g:ale_sign_error = '>>'
+" let g:ale_sign_warning = '--'
+" let g:ale_set_highlights = 0
+let g:mucomplete#enable_auto_at_startup = 1
+let &t_SI.="\e[2 q" "SI = INSERT mode
+let &t_SR.="\e[4 q" "SR = REPLACE mode
+let &t_EI.="\e[2 q" "EI = NORMAL mode (ELSE)
