@@ -67,6 +67,7 @@ let g:lightline = {
 " let g:lightline#ale#indicator_errors = "\uf05e"
 " let g:lightline#ale#indicator_ok = "\uf00c"
 
+set termguicolors
 set background=dark
 set expandtab
 set shiftwidth=2
