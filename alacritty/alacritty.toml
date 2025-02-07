@@ -1,0 +1,46 @@
+[general]
+working_directory = "/users/wgnic"
+
+[window]
+opacity = 0.925
+dynamic_padding=true
+
+[font]
+normal = {family="CaskaydiaCove NFM", style="Regular"}
+size = 14.5
+
+[colors]
+transparent_background_colors=true
+
+[colors.primary]
+background='0x16171E'
+foreground='0xD1D2D3'
+
+[colors.normal]
+black = '0x000000'
+red = '0xE68E8E'
+green = '0x83AC8E'
+yellow = '0xF5B78A'
+blue = '0x9BB8DC'
+magenta = '0xBAACE2'
+cyan = '0x00C5C7'
+white = '0xC7C7C7'
+
+[colors.bright]
+black = '0x676767'
+red = '0xFF6D67'
+green = '0x5FF967'
+yellow = '0xFEFB67'
+blue = '0x6871FF'
+magenta = '0xFF76FF'
+cyan = '0x5FFDFF'
+white = '0xFEFFFF'
+
+
+[terminal]
+shell="pwsh.exe"
+# shell="C:\\windows\\system32\\wsl.exe -d ArchLinux" 
+
+[mouse]
+hide_when_typing=true
+
