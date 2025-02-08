@@ -1,4 +1,5 @@
 call plug#begin()
+      Plug 'cocopon/iceberg.vim'
       Plug 'ap/vim-css-color'
       Plug 'sheerun/vim-polyglot'
       Plug 'junegunn/goyo.vim'
@@ -243,4 +244,5 @@ set updatetime=300
 imap <script><silent> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
 imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
 let g:SuperTabMappingForward = '<s-tab>'
-let g:SuperTabMappingBackward = '<tab>'
+let g:SuperTabMappingBackward = '<tab>' 
+
