@@ -5,6 +5,7 @@ call plug#begin()
       Plug 'tpope/vim-commentary'
       Plug 'tpope/vim-sensible'
       Plug 'itchyny/lightline.vim'
+      Plug 'cocopon/iceberg.vim'
       Plug 'gkeep/iceberg-dark'
       Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
       Plug 'junegunn/fzf.vim'
