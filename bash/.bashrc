@@ -173,3 +173,4 @@ help() {
 batdiff() {
     git diff --name-only --relative --diff-filter=d | xargs bat --diff
 }
+export PATH="$PATH:/home/test/.dotnet.tools"
