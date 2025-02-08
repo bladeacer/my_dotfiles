@@ -120,14 +120,14 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-alias vf='find -type f | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
-alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "batcat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
+alias vf='find -type f | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
+alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
 alias aic='ascii-image-converter'
 alias py='python3'
 alias python='python3'
 
-export STARSHIP_CONFIG=~/dotfiles/.config/starship/starship.toml
+export STARSHIP_CONFIG=~/my_dotfiles/.config/starship/starship.toml
 eval "$(starship init bash)"
 
 eval "$(zoxide init bash)"
@@ -140,7 +140,7 @@ export EDITOR=vim
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_CTRL_T_OPTS="
 --walker-skip .git,node_modules,target
---preview 'batcat -n --color=always {}'
+--preview 'bat -n --color=always {}'
 --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 export BAT_THEME="Coldark-Dark"
 
