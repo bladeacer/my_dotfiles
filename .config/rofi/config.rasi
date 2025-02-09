@@ -1,0 +1,4 @@
+configuration {
+	combi-modes: [window, drun];
+	show-icons: true;
+}
