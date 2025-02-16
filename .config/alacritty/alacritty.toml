@@ -4,17 +4,17 @@
 
 [window]
 dimensions = { columns = 90, lines = 30 }
-opacity = 0.875
+opacity = 0.9
 dynamic_padding=true
 padding = { x = 20, y = 5 }
-# decorations="None"
-# decorations_theme_variant="Dark"
+decorations="None"
 
 [font]
 # normal = {family="CaskaydiaCove NFM", style="Regular"}
 normal = {family="imWritingMono Nerd Font Mono", style="Regular"}
 size = 14.5
 # offset = { x = 1}
+builtin_box_drawing = false
 
 [colors]
 transparent_background_colors=true
