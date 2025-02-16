@@ -19,7 +19,7 @@ call plug#begin()
 call plug#end()
 
 if has("gui_running")
-      set guifont=CaskadiaCove\ NFM
+      " set guifont=CaskadiaCove\ NFM
       au VimEnter * colorscheme iceberg
 endif
 
