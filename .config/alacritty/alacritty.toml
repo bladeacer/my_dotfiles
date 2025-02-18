@@ -3,10 +3,10 @@
 # working_directory = "~"
 
 [window]
-dimensions = { columns = 90, lines = 30 }
-opacity = 0.9
-dynamic_padding=true
-padding = { x = 20, y = 5 }
+dimensions = { columns = 90, lines = 35 }
+opacity = 0.925
+# dynamic_padding=true
+# padding = { x = 20, y = 5 }
 decorations="None"
 
 [font]
