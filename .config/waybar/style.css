@@ -1,0 +1,57 @@
+@define-color bg-1 #1e2132;
+@define-color bg-2 #2e3244;
+@define-color fg-1 #c6c8d1;
+@define-color fg-2 #454b68;
+
+* {
+  min-height: 0;
+  padding: 0;
+  border: none;
+  margin: 0;
+  font-family: "imWritingDuo Nerd Font";
+  font-size: 16px;
+}
+
+window#waybar {
+  background: @bg-1; 
+  border: 0.5px solid #c6c8d1;
+  border-radius: 10px;
+  margin-right: 20px;
+  margin-left: 20px;
+}
+window#waybar > box {
+  background-color: transparent;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 1);
+  margin: 2px;
+}
+
+tooltip {
+  background: @bg-1;
+  border-radius: 7px;
+  border: 1px solid @fg-2;
+}
+
+tooltip label {
+color: @fg-1;
+font-weight: normal;
+margin: -1.5px 3px;
+}
+
+#clock.date {
+  background: @bg-2;
+}
+#clock.date:hover {
+  color: @fg-2;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+#clock,
+#custom-media,
+#network,
+#custom-keyboard {
+  padding: 5px 5px 5px 7px;
+  margin: 3px 0px 3px 3px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
