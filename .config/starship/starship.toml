@@ -25,11 +25,8 @@ $scala\
 [](fg:#454b68 bg:#06969A)\
 $docker_context\
 [](fg:#06969A bg:#2e3244)\
-$git_metrics\
-[ ](fg:#1e2132)\
+[ ](fg:#2e3244)\
 """
-
-right_format = """$all"""
 
 [username]
 show_always = true
@@ -89,12 +86,6 @@ format = '[$all_status$ahead_behind ]($style)'
 
 [git_commit]
 tag_symbol = '  '
-
-[git_metrics]
-added_style = "bg:#2e3244 fg:#454b68"
-deleted_style = "fg:#2e3244 bg:#1e2132"
-format = '[ +$added ]($added_style)(fg:"#2e3244")[ -$deleted ]($deleted_style)'
-disabled = false
 
 [golang]
 symbol = " "

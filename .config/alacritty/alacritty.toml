@@ -1,13 +1,14 @@
 [general]
+working_directory = "~"
 # working_directory = "/users/wgnic"
 # working_directory = "~"
 
 [window]
 dimensions = { columns = 90, lines = 35 }
-opacity = 0.925
+opacity = 0.95
 # dynamic_padding=true
 # padding = { x = 20, y = 5 }
-decorations="None"
+# decorations="None"
 
 [font]
 # normal = {family="CaskaydiaCove NFM", style="Regular"}
