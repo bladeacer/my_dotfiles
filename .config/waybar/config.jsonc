@@ -35,8 +35,10 @@
   "hyprland/window": {
     "format": "{}",
     "rewrite": {
-      "^bladeacer.*$": "Alacritty"
+      "^bladeacer.*$": "Alacritty",
+      "^.*Gwenview$": "Gwenview"
     },
+    "max-length": 50,
     "separate-outputs": true,
   },
   "clock": {
