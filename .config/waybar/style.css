@@ -2,6 +2,12 @@
 @define-color bg-2 #2e3244;
 @define-color fg-1 #c6c8d1;
 @define-color fg-2 #454b68;
+/* .stub { */
+/* color: #c6c8d1; */
+/* color: #454b68; */
+/* color: #2e3244; */
+/* color: #1e2132; */
+/* } */
 
 * {
   min-height: 0;
@@ -13,45 +19,75 @@
 }
 
 window#waybar {
-  background: @bg-1; 
-  border: 0.5px solid #c6c8d1;
-  border-radius: 10px;
+  background-color: @bg-1;
+  border: none;
   margin-right: 20px;
   margin-left: 20px;
 }
 window#waybar > box {
-  background-color: transparent;
-  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 1);
-  margin: 2px;
+  /* margin: 2px; */
+  border: none;
 }
 
-tooltip {
-  background: @bg-1;
-  border-radius: 7px;
-  border: 1px solid @fg-2;
-}
-
-tooltip label {
-color: @fg-1;
-font-weight: normal;
-margin: -1.5px 3px;
-}
-
-#clock.date {
-  background: @bg-2;
-}
 #clock.date:hover {
   color: @fg-2;
-  text-shadow: none;
-  box-shadow: none;
 }
 
-#clock,
+#temperature,
 #custom-media,
-#network,
+#memory,
+#battery,
 #custom-keyboard {
+  background: @bg-2;
+  color: @fg-1;
   padding: 5px 5px 5px 7px;
-  margin: 3px 0px 3px 3px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  margin: 3px 0px 3px 0px;
 }
+
+#network,
+#clock,
+#cpu {
+  background: @fg-2;
+  color: @fg-1;
+  padding: 5px 5px 5px 7px;
+  margin: 3px 0px 3px 0px;
+}
+
+#custom-left1 {
+  background: @fg-2;
+  color: @bg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.75rem;
+}
+
+#custom-left2 {
+  background: @bg-2;
+  color: @fg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.75rem;
+}
+#custom-left3 {
+  background: @bg-1;
+  color: @fg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.75rem;
+}
+
+#custom-right1 {
+  background: @bg-1;
+  color: @bg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.8rem;
+}
+
+
+/* .stub { */
+/* color: #c6c8d1; */
+/* color: #454b68; */
+/* color: #2e3244; */
+/* color: #1e2132; */
+/* } */
