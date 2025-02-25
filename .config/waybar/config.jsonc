@@ -2,14 +2,22 @@
   "layer": "top",
   // "modules-left": ["clock", "hyprland/language", "hyprland/workspaces" ],
   // "modules-center": ["hyprland/window"],
-  "modules-left": ["custom/media"],
+  "modules-left": [
+    "custom/media",
+    "custom/right1"
+  ],
   "modules-right": [
-    "custom/keyboard",
+    "custom/left3",
     "network",
+    "custom/left1",
     "battery",
+    "custom/left2",
     "clock",
+    "custom/left1",
     "temperature",
+    "custom/left2",
     "cpu",
+    "custom/left1",
     "memory"
   ],
 
@@ -25,18 +33,15 @@
       "warning": 30,
       "critical": 15
     },
-    "bat":"BAT1",
     "format": "{icon} {capacity}%",
     "format-charging": " {capacity}%",
     "format-plugged": " {capacity}%",
-    "format-discharging": " {capacity}%",
     "format-alt": "{icon} {time}",
     "format-icons": ["", "", "", "", ""]
   },
   "network": {
     "format": "{ifname}",
     "format-wifi": " {essid}",
-    "format-ethernet": " {ifname}",
     "format-disconnected": "",
     "tooltip-format-wifi": "{signalStrength}%",
     "max-length": 20
@@ -46,24 +51,101 @@
     "interval": 1,
     "exec": "$HOME/.config/waybar/get_media.sh"
   },
-  "custom/keyboard": {
-    "format": " {} ",
-    "interval": 1,
-    "exec": "$HOME/.config/waybar/get_kbdlayout.sh"
-  },
+  // "custom/keyboard": {
+    //  "format": " {} ",
+    // "interval": 1,
+    // "exec": "$HOME/.config/waybar/get_kbdlayout.sh"
+    //},
 
-  "cpu": {
-    "format": " CPU {usage}%",
-    "interval": 1
-  },
-  "memory": {
-    "format": " 󰍛 {}% ",
-    "interval": 1,
-  },
-  "temperature": {
-    "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
-    "critical-threshold": 80,
-    "format": " {temperatureC}°C",
-    "interval": 1,
-  }
+    "cpu": {
+      "format": "CPU {usage}%",
+      "interval": 1
+    },
+    "memory": {
+      "format":  "󰍛 {}% ",
+      "interval": 1,
+    },
+    "temperature": {
+      "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+      "critical-threshold": 80,
+      "format": " {temperatureC}°C",
+      "interval": 1,
+    },
+
+    // == Left Arrows ==
+
+    "custom/left1": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left2": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left3": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left4": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left5": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left6": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left7": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/left8": {
+      "format": "",
+      "tooltip": false
+    },
+
+    // == Right Arrows ==
+
+    "custom/right1": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/right2": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/right3": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/right4": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/right5": {
+      "format": "",
+      "tooltip": false
+    },
+
+    // == Left Inverse ==
+
+    "custom/leftin1": {
+      "format": "",
+      "tooltip": false
+    },
+    "custom/leftin2": {
+      "format": "",
+      "tooltip": false
+    },
+
+    // == Right Inverse ==
+
+    "custom/rightin1": {
+      "format": "",
+      "tooltip": false
+    }
+}
 }
