@@ -9,7 +9,8 @@ opacity = 0.95
 # opacity = 0.1
 # dynamic_padding=true
 # padding = { x = 20, y = 5 }
-# decorations="None"
+# startup_mode = "Maximized"
+decorations="None"
 
 [font]
 # normal = {family="CaskaydiaCove NFM", style="Regular"}
@@ -53,3 +54,10 @@ white = '0xFEFFFF'
 [mouse]
 hide_when_typing=true
 
+[keyboard]
+bindings=[
+  {key="F", mods="Super", action="ToggleMaximized"},
+  {key="M", mods="Super", action="Minimize"},
+  {key="F11", action="ToggleFullscreen"},
+  {key="N", mods="Control|Shift", action="CreateNewWindow"}
+]

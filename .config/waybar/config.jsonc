@@ -1,11 +1,16 @@
 {
   "layer": "top",
-  // "modules-left": ["clock", "hyprland/language", "hyprland/workspaces" ],
-  // "modules-center": ["hyprland/window"],
   "modules-left": [
+    "clock",
+    "custom/right2",
+    "hyprland/language",
+    "custom/right1",
+    "hyprland/workspaces",
+    "custom/right4",
     "custom/media",
-    "custom/right1"
+    "custom/right3"
   ],
+  "modules-center": ["hyprland/window"],
   "modules-right": [
     "custom/left3",
     "network",
@@ -20,7 +25,20 @@
     "custom/left1",
     "memory"
   ],
-
+  "hyprland/workspaces": {
+    "format": " {name} "
+  },
+  "hyprland/language": {
+    "format": " {} ",
+    "format-en": "en-UK"
+  },
+  "hyprland/window": {
+    "format": "{}",
+    "rewrite": {
+      "^bladeacer.*$": "Alacritty"
+    },
+    "separate-outputs": true,
+  },
   "clock": {
     "format": "{:%H:%M}",
     "format-alt": "{:%a %b %d}",
@@ -33,17 +51,17 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "{icon} {capacity}%",
-    "format-charging": " {capacity}%",
-    "format-plugged": " {capacity}%",
-    "format-alt": "{icon} {time}",
+    "format": "{icon} {capacity}% ",
+    "format-charging": " {capacity}% ",
+    "format-plugged": " {capacity}% ",
+    "format-alt": "{icon} {time} ",
     "format-icons": ["", "", "", "", ""]
   },
   "network": {
-    "format": "{ifname}",
-    "format-wifi": " {essid}",
+    "format": "{ifname} ",
+    "format-wifi": " {essid} ",
     "format-disconnected": "",
-    "tooltip-format-wifi": "{signalStrength}%",
+    "tooltip-format-wifi": "{signalStrength}% ",
     "max-length": 20
   },
   "custom/media": {
@@ -58,7 +76,7 @@
     //},
 
     "cpu": {
-      "format": "CPU {usage}%",
+      "format": "CPU {usage}% ",
       "interval": 1
     },
     "memory": {
@@ -68,7 +86,7 @@
     "temperature": {
       "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
       "critical-threshold": 80,
-      "format": " {temperatureC}°C",
+      "format": " {temperatureC}°C ",
       "interval": 1,
     },
 

@@ -37,6 +37,7 @@ window#waybar > box {
 #custom-media,
 #memory,
 #battery,
+#language,
 #custom-keyboard {
   background: @bg-2;
   color: @fg-1;
@@ -46,11 +47,16 @@ window#waybar > box {
 
 #network,
 #clock,
+#workspaces,
 #cpu {
   background: @fg-2;
   color: @fg-1;
   padding: 5px 5px 5px 7px;
   margin: 3px 0px 3px 0px;
+}
+
+#workspaces button.active{
+  font-weight: bold;
 }
 
 #custom-left1 {
@@ -61,13 +67,14 @@ window#waybar > box {
   font-size: 1.75rem;
 }
 
-#custom-left2 {
+#custom-left2{
   background: @bg-2;
   color: @fg-2;
   padding: 0px;
   margin: 3px 0px 3px 0px;
   font-size: 1.75rem;
 }
+
 #custom-left3 {
   background: @bg-1;
   color: @fg-2;
@@ -77,6 +84,22 @@ window#waybar > box {
 }
 
 #custom-right1 {
+  background: @fg-2;
+  color: @bg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.8rem;
+}
+
+#custom-right2 {
+  background: @bg-2;
+  color: @fg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.8rem;
+}
+
+#custom-right3 {
   background: @bg-1;
   color: @bg-2;
   padding: 0px;
@@ -84,10 +107,10 @@ window#waybar > box {
   font-size: 1.8rem;
 }
 
-
-/* .stub { */
-/* color: #c6c8d1; */
-/* color: #454b68; */
-/* color: #2e3244; */
-/* color: #1e2132; */
-/* } */
+#custom-right4 {
+  background: @bg-2;
+  color: @fg-2;
+  padding: 0px;
+  margin: 3px 0px 3px 0px;
+  font-size: 1.8rem;
+}
