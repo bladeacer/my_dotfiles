@@ -1,8 +1,6 @@
 {
   "layer": "top",
   "modules-left": [
-    "clock",
-    "custom/right2",
     "hyprland/language",
     "custom/right1",
     "hyprland/workspaces",

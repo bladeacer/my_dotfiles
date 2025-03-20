@@ -77,8 +77,7 @@ symbol = " "
 [git_branch]
 symbol = " "
 style = "bg:#1e2132"
-only_attached = true
-format = '[ $symbol $branch ]($style)'
+format = '[ $symbol $branch (:$remote_branch) ]($style)'
 
 [git_status]
 style = "bg:#1e2132"
