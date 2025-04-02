@@ -1,6 +1,6 @@
 fastfetch -c examples/20
 Invoke-Expression (&starship init powershell)
-  $ENV:STARSHIP_CONFIG = "$HOME\starship\starship.toml"
+  $ENV:STARSHIP_CONFIG = "$HOME\my_dotfiles\.config\starship\starship.toml"
   Set-Alias v "vim"
 # Check if the alias exists
   $aliasExists = Get-Alias ls | Where-Object {$_.Definition -eq "Get-ChildItem"}
