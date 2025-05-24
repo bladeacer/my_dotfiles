@@ -1,12 +1,14 @@
 ## My dotfiles
 
-In this repository, you can find the dotfiles in my work.
+In this repository, you can find the dotfiles I use. WIP.
 
 #### Configurations included
 
 - `tmux`
 - `.vimrc`
 - `fzf` and `rg` aliases
+- `waybar`
+- `hyprland`
 
 #### Installation
 
@@ -23,6 +25,15 @@ stow .config
 
 #### Vim on Windows
 
+- Git clone as usual
 - Enable 64 bit support
 - Symlink files to your preference
+
+```md
+cmd.exe > mklink C:\Users\example\_vimrc C:\Users\example\<your_dotfiles_path>\_vimrc
+```
+
+Ensure both files do not exist before symbolic linking.
+> Copy over file content from _temp_vimrc to the first file in the command above.
+
 - Need admin on `cmd.exe`
