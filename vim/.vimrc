@@ -45,7 +45,6 @@ let g:lightline = {
 	\ },
 \}
 
-
 " Use autocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
@@ -251,3 +250,6 @@ else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
+" let g:coc_node_path = "C:\\Users\\wgnic\\scoop\\apps\\nodejs\\current\\node.exe"
+
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-biome', 'coc-css']
