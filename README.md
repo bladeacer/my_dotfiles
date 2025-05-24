@@ -1,12 +1,15 @@
 ## My dotfiles
+
 In this repository, you can find the dotfiles in my work.
 
 #### Configurations included
+
 - `tmux`
 - `.vimrc`
 - `fzf` and `rg` aliases
 
 #### Installation
+
 Run the following in your home directory
 
 ```bash
@@ -17,3 +20,9 @@ stow tmux
 stow bash
 stow .config
 ```
+
+#### Vim on Windows
+
+- Enable 64 bit support
+- Symlink files to your preference
+- Need admin on `cmd.exe`

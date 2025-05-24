@@ -39,7 +39,3 @@ function restart([Parameter(ValueFromRemainingArguments = $true)]$params) {
 function vf([Parameter(ValueFromRemainingArguments = $true)]$params) {
   & vim $(fzf)
 }
-
-function arch([Parameter(ValueFromRemainingArguments = $true)]$params) {
-  & wsl -d ArchLinux
-}
