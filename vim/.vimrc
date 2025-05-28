@@ -88,7 +88,7 @@ set encoding=UTF-8
 set re=0
 set redrawtime=10000
 
-set clipboard=unnamedplus "Linux
+set clipboard=unnamed,unnamedplus
 
 filetype on
 filetype plugin on
