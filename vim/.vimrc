@@ -88,7 +88,7 @@ set encoding=UTF-8
 set re=0
 set redrawtime=10000
 
-set clipboard=unnamedplus "Linux
+set clipboard=unnamed,unnamedplus
 
 filetype on
 filetype plugin on
@@ -253,3 +253,11 @@ endif
 " let g:coc_node_path = "C:\\Users\\wgnic\\scoop\\apps\\nodejs\\current\\node.exe"
 
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-biome', 'coc-css']
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
+nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
+
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
