@@ -101,10 +101,6 @@ highlight SpellCap ctermfg=lightcyan ctermbg=none
 highlight SpellLocal ctermfg=lightyellow ctermbg=none
 highlight SpellRare ctermfg=lightgrey ctermbg=none
 
-iabbrev i <Esc>cc-<Space>
-iabbrev 1i <Esc>cc<Tab>-<Space>
-iabbrev 2i <Esc>cc<Tab><Tab>-<Space>
-
 autocmd bufenter *.md nnoremap <leader>2# <Esc>I##<Space>
 autocmd bufenter *.md nnoremap <leader>3# <Esc>I###<Space>
 autocmd bufenter *.md nnoremap <leader>4# <Esc>I####<Space>
