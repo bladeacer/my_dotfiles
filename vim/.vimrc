@@ -10,11 +10,11 @@ call plug#begin()
       Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
       Plug 'junegunn/fzf.vim'
       Plug 'raimondi/delimitmate'
-      Plug 'neoclide/coc.nvim'
+      Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
 call plug#end()
 
 if has("gui_running")
-      " set guifont=CaskadiaCove\ NFM
+      set guifont=CaskadiaCove\ NFM
       au VimEnter * colorscheme iceberg
 endif
 
@@ -58,6 +58,7 @@ set spell spelllang=en_gb
 set nocompatible
 set smartcase
 set foldcolumn=2
+set mouse=a
 
 let loaded_netrwPlugin = 1
 let mapleader=";"
@@ -88,7 +89,7 @@ set encoding=UTF-8
 set re=0
 set redrawtime=10000
 
-set clipboard=unnamed,unnamedplus
+set clipboard+=unnamed,unnamedplus
 
 filetype on
 filetype plugin on
@@ -250,7 +251,7 @@ else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
-" let g:coc_node_path = "C:\\Users\\wgnic\\scoop\\apps\\nodejs\\current\\node.exe"
+let g:coc_node_path = "/usr/local/bin/node"
 
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-prettier', 'coc-css']
 " Use `[g` and `]g` to navigate diagnostics

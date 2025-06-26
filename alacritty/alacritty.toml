@@ -1,5 +1,5 @@
-[general]
-working_directory = "/users/wgnic"
+# [general]
+# working_directory = "/users/wgnic"
 
 [window]
 opacity = 0.925
@@ -9,7 +9,7 @@ dynamic_padding=true
 # normal = {family="CaskaydiaCove NFM", style="Regular"}
 normal = {family="DepartureMono Nerd Font", style="Regular"}
 size = 14.5
-offset = { x = 1}
+# offset = { x = 1}
 # builtin_box_drawing = true
 
 [colors]
@@ -40,8 +40,8 @@ cyan = '0x5FFDFF'
 white = '0xFEFFFF'
 
 
-[terminal]
-shell="pwsh.exe"
+# [terminal]
+# shell="pwsh.exe"
 # shell="C:\\windows\\system32\\wsl.exe -d ArchLinux" 
 
 [mouse]
