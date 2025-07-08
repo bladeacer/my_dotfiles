@@ -1,0 +1,1 @@
+.config/waybar/get_kbdlayout.sh
