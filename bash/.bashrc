@@ -129,6 +129,8 @@ alias python='python3'
 
 export STARSHIP_CONFIG=~/my_dotfiles/.config/starship/starship.toml
 eval "$(starship init bash)"
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
 
 eval "$(zoxide init bash)"
 alias cd='z'
