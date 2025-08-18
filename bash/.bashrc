@@ -31,9 +31,9 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+# if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+#     debian_chroot=$(cat /etc/debian_chroot)
+# fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
@@ -116,16 +116,14 @@ if ! shopt -oq posix; then
     fi
 fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 alias vf='find -type f | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
 alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
 alias aic='ascii-image-converter'
-alias py='python3'
-alias python='python3'
 
 export STARSHIP_CONFIG=~/my_dotfiles/.config/starship/starship.toml
 eval "$(starship init bash)"
@@ -157,12 +155,7 @@ vman() {
 
 alias ls='eza --icons --group-directories-first'
 alias la='eza --icons --group-directories-first -a'
-alias cdc='cd /mnt/c/'
-alias vtop="vtop --theme brew"
 alias v='vim'
-alias powershell='powershell.exe'
-alias pwsh='pwsh.exe'
-alias wgit='git.exe'
 alias bat="bat --color=always --style=numbers,changes"
 batdiff() {
     git diff --name-only --relative --diff-filter=d | xargs bat --diff
@@ -172,7 +165,3 @@ alias bathelp='bat --plain --language=help'
 help() {
     "$@" --help 2>&1 | bathelp
 }
-batdiff() {
-    git diff --name-only --relative --diff-filter=d | xargs bat --diff
-}
-export PATH="$PATH:/home/test/.dotnet.tools"

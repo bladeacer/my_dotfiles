@@ -11,6 +11,7 @@ call plug#begin()
       Plug 'junegunn/fzf.vim'
       Plug 'raimondi/delimitmate'
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
+      Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
 
 if has("gui_running")
@@ -251,7 +252,7 @@ else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
-let g:coc_node_path = "/usr/local/bin/node"
+let g:coc_node_path = "/usr/bin/node"
 
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-prettier', 'coc-css']
 " Use `[g` and `]g` to navigate diagnostics
