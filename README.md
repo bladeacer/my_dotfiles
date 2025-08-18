@@ -23,6 +23,9 @@ stow bash
 stow .config
 ```
 
+### Custom Fastfetch
+Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
+
 #### Vim on Windows
 
 - Git clone as usual
