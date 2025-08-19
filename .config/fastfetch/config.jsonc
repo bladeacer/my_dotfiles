@@ -60,11 +60,16 @@
 		},
 		"break",
 		// One entry for every partition
-		// {
-		// 	"type": "disk",
-		// 	"key": "├─",
-		// 	"keyColor": "green"
-		// },
+		{
+			"type": "terminal",
+			"key": "╭─",
+			"keyColor": "green"
+		},
+		{
+			"type": "disk",
+			"key": "├─",
+			"keyColor": "green"
+		},
 		// {
 		// 	"type": "brightness",
 		// 	"key": "├─󰃞",
@@ -95,11 +100,6 @@
 		// 	"key": "╰─",
 		// 	"keyColor": "green"
 		// },
-		{
-			"type": "terminal",
-			"key": "╭─",
-			"keyColor": "green"
-		},
 		{
 			"type": "terminalfont",
 			"key": "├─",
