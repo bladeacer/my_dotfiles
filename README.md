@@ -21,10 +21,13 @@ stow vim
 stow tmux
 stow bash
 stow .config
+stow <other_dirs>
 ```
 
-### Custom Fastfetch
+### Fastfetch and wallpaper
 Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
+
+For the wallpaper on Linux, symlink or copy to `/usr/share`
 
 #### Vim on Windows
 
