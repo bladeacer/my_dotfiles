@@ -38,21 +38,21 @@
 			"key": "├─",
 			"keyColor": "magenta"
 		},
-		{
-			"type": "wm",
-			"key": "├─",
-			"keyColor": "magenta"
-		},
-		{
-			"type": "lm",
-			"key": "├─󰧨",
-			"keyColor": "magenta"
-		},
-		{
-			"type": "theme",
-			"key": "├─󰉼",
-			"keyColor": "magenta"
-		},
+		// {
+		// 	"type": "wm",
+		// 	"key": "├─",
+		// 	"keyColor": "magenta"
+		// },
+		// {
+		// 	"type": "lm",
+		// 	"key": "├─󰧨",
+		// 	"keyColor": "magenta"
+		// },
+		// {
+		// 	"type": "theme",
+		// 	"key": "├─󰉼",
+		// 	"keyColor": "magenta"
+		// },
 		{
 			"type": "icons",
 			"key": "╰─󰀻",
@@ -70,16 +70,16 @@
 			"key": "├─",
 			"keyColor": "green"
 		},
-		// {
-		// 	"type": "brightness",
-		// 	"key": "├─󰃞",
-		// 	"keyColor": "green"
-		// },
-		// {
-		// 	"type": "battery",
-		// 	"key": "├─",
-		// 	"keyColor": "green"
-		// },
+		{
+			"type": "brightness",
+			"key": "├─󰃞",
+			"keyColor": "green"
+		},
+		{
+			"type": "battery",
+			"key": "├─",
+			"keyColor": "green"
+		},
 		// {
 		// 	"type": "poweradapter",
 		// 	"key": "├─",
@@ -90,21 +90,21 @@
 		// 	"key": "├─",
 		// 	"keyColor": "green"
 		// },
-		// {
-		// 	"type": "bluetooth",
-		// 	"key": "├─",
-		// 	"keyColor": "green"
-		// },
+		{
+			"type": "bluetooth",
+			"key": "├─",
+			"keyColor": "green"
+		},
 		// {
 		// 	"type": "sound",
 		// 	"key": "╰─",
 		// 	"keyColor": "green"
 		// },
-		{
-			"type": "terminalfont",
-			"key": "├─",
-			"keyColor": "green"
-		},
+		// {
+		// 	"type": "terminalfont",
+		// 	"key": "├─",
+		// 	"keyColor": "green"
+		// },
 		{
 			"type": "shell",
 			"key": "╰─",
