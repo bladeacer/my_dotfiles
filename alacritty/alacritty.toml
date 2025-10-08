@@ -1,16 +1,16 @@
-# [general]
-# working_directory = "/users/wgnic"
-
 [window]
 opacity = 0.925
 dynamic_padding=true
 
+[env]
+WINIT_X11_SCALE_FACTOR="1.0"
+
 [font]
 # normal = {family="CaskaydiaCove NFM", style="Regular"}
-normal = {family="DepartureMono Nerd Font", style="Regular"}
-size = 14.5
+normal = {family="DepartureMono Nerd Font Mono", style="Regular"}
+size = 11
 # offset = { x = 1}
-# builtin_box_drawing = true
+builtin_box_drawing = false
 
 [colors]
 transparent_background_colors=true
@@ -39,11 +39,8 @@ magenta = '0xFF76FF'
 cyan = '0x5FFDFF'
 white = '0xFEFFFF'
 
-
-# [terminal]
-# shell="pwsh.exe"
-# shell="C:\\windows\\system32\\wsl.exe -d ArchLinux" 
+[selection]
+save_to_clipboard = true
 
 [mouse]
 hide_when_typing=true
-
