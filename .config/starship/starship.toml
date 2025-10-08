@@ -1,7 +1,7 @@
 command_timeout = 99999
 follow_symlinks = false
 format = """
-[](#454b68)\
+[](fg:#454b68)\
 $os\
 $username\
 [](bg:#2e3244 fg:#454b68)\
@@ -32,7 +32,7 @@ $docker_context\
 show_always = true
 style_user = "bg:#454b68"
 style_root = "bg:#454b68"
-format = '[$user ]($style)'
+format = '[ $user ]($style)'
 disabled = false
 
 [aws]
@@ -161,7 +161,7 @@ read_only = " 󰌾"
 
 [os]
 style = "bg:#454b68"
-disabled = true
+disabled = false
 
 [os.symbols]
 Alpaquita = " "
@@ -175,7 +175,7 @@ CentOS = " "
 Debian = " "
 DragonFly = " "
 Emscripten = " "
-EndeavourOS = " "
+EndeavourOS = "  "
 Fedora = " "
 FreeBSD = " "
 Garuda = "󰛓 "

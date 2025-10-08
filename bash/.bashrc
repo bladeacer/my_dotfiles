@@ -132,7 +132,6 @@ eval "$(fzf --bash)"
 
 eval "$(zoxide init bash)"
 alias cd='z'
-alias cf='zi'
 set -o vi
 
 export EDITOR=vim
@@ -169,3 +168,4 @@ help() {
 export PATH="~/go/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="~/Desktop/projects/seiri/target/release:$PATH"
+export PATH="~/Desktop/projects/mnemosync:$PATH"

@@ -7,16 +7,15 @@ working_directory = "~"
 dimensions = { columns = 90, lines = 35 }
 opacity = 0.95
 # opacity = 0.1
-# dynamic_padding=true
+dynamic_padding=true
 padding = { x = 5, y = 0 }
 # startup_mode = "Maximized"
 decorations="None"
 
 [font]
-# normal = {family="CaskaydiaCove NFM", style="Regular"}
-normal = {family="imWritingMono Nerd Font Mono", style="Regular"}
+normal = {family="CaskaydiaCove NFM", style="Regular"}
+# normal = {family="imWritingMono Nerd Font Mono", style="Regular"}
 size = 14.5
-# offset = { x = 1}
 builtin_box_drawing = false
 
 [colors]

@@ -100,11 +100,11 @@
 		// 	"key": "╰─",
 		// 	"keyColor": "green"
 		// },
-		// {
-		// 	"type": "terminalfont",
-		// 	"key": "├─",
-		// 	"keyColor": "green"
-		// },
+		{
+			"type": "font",
+			"key": "├─",
+			"keyColor": "green"
+		},
 		{
 			"type": "shell",
 			"key": "╰─",
