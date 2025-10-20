@@ -161,12 +161,6 @@ batdiff() {
     git diff --name-only --relative --diff-filter=d | xargs bat --diff
 }
 
-for func in $(declare -F | awk '{print $NF}'); do
-    if ! complete -p "$func" 2>/dev/null | grep -q ' -F '; then
-        complete -f "$func"
-    fi
-done
-
 function fzf_man_search() {
     man -k . | fzf \
         --height=100% \
