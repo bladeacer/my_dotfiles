@@ -10,7 +10,8 @@ WINIT_X11_SCALE_FACTOR="1.0"
 normal = {family="DepartureMono Nerd Font Mono", style="Regular"}
 size = 11
 # offset = { x = 1}
-builtin_box_drawing = false
+glyph_offset = { y=12}
+builtin_box_drawing = true
 
 [colors]
 transparent_background_colors=true

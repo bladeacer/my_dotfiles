@@ -156,16 +156,75 @@ alias ls='eza --icons --group-directories-first'
 alias la='eza --icons --group-directories-first -a'
 alias v='vim'
 alias bat="bat --color=always --style=numbers,changes"
+
 batdiff() {
     git diff --name-only --relative --diff-filter=d | xargs bat --diff
 }
 
-alias bathelp='bat --plain --language=help'
-help() {
-    "$@" --help 2>&1 | bathelp
+for func in $(declare -F | awk '{print $NF}'); do
+    if ! complete -p "$func" 2>/dev/null | grep -q ' -F '; then
+        complete -f "$func"
+    fi
+done
+
+function fzf_man_search() {
+    man -k . | fzf \
+        --height=100% \
+        --layout=reverse \
+        --border \
+        --prompt="MAN PAGE > " \
+        --ansi \
+        --preview-window="right:60%" \
+        --preview '
+            # Extract the command name, which is the first word before the space
+            CMD=$(echo {} | awk "{print \$1}")
+            
+            # Use TTY-safe man command that forces text output and pipe to less -R
+            # The env PAGER=cat ensures man prints to stdout without using a pager
+            # col -b removes troff/nroff bolding codes, and head limits the preview
+            env PAGER=cat man "$CMD" 2>/dev/null | col -b | less -R
+        ' | \
+    awk '{print $1}' | \
+    xargs -r man
 }
+
+function fzf_tldr_search() {
+    if ! command -v tldr &> /dev/null; then
+        echo "Error: 'tldr' command not found. Please install it."
+        return 1
+    fi
+    
+    tldr --list | fzf \
+        --height=100% \
+        --layout=reverse \
+        --border \
+        --prompt="TLDR PAGE > " \
+        --ansi \
+        --preview-window="right:60%" \
+        --preview 'tldr {} | less -R' | \
+    xargs -r tldr
+}
+
+alias fm='fzf_man_search'
+alias ft='fzf_tldr_search'
 
 export PATH="~/go/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-export PATH="~/Desktop/projects/seiri/target/release:$PATH"
 export PATH="~/Desktop/projects/mnemosync:$PATH"
+
+conda-init() {
+    # >>> conda initialize >>>
+    # !! Contents within this block are managed by 'conda init' !!
+    __conda_setup="$('/home/data/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+        eval "$__conda_setup"
+    else
+        if [ -f "/home/data/anaconda3/etc/profile.d/conda.sh" ]; then
+            . "/home/data/anaconda3/etc/profile.d/conda.sh"
+        else
+            export PATH="/home/data/anaconda3/bin:$PATH"
+        fi
+    fi
+    unset __conda_setup
+    # <<< conda initialize <<<
+}
