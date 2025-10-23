@@ -202,9 +202,17 @@ function fzf_tldr_search() {
 alias fm='fzf_man_search'
 alias ft='fzf_tldr_search'
 
+activate-venv() {
+    source ./.venv/bin/activate
+}
+
 export PATH="~/go/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="~/Desktop/projects/mnemosync:$PATH"
+
+pacQi() {
+    pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
+}
 
 conda-init() {
     # >>> conda initialize >>>
