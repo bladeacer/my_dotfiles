@@ -126,6 +126,8 @@ alias gla='git log --oneline -a'
 alias aic='ascii-image-converter'
 
 export STARSHIP_CONFIG=~/my_dotfiles/.config/starship/starship.toml
+export PDF_FMT_CONFIG_PATH=~/my_dotfiles/pdf-fmt/pdf-fmt.yaml
+
 eval "$(starship init bash)"
 # Set up fzf key bindings and fuzzy completion
 eval "$(fzf --bash)"
@@ -204,6 +206,9 @@ alias ft='fzf_tldr_search'
 
 activate-venv() {
     source ./.venv/bin/activate
+}
+create-venv() {
+    python -m venv .venv
 }
 
 export PATH="~/go/bin:$PATH"

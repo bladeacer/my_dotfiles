@@ -1,6 +1,6 @@
-## My dotfiles
+## bladeacer's dotfiles
 
-In this repository, you can find the dotfiles I use. WIP.
+In this repository, you can find the dotfiles I use.
 
 #### Configurations included
 
@@ -9,6 +9,8 @@ In this repository, you can find the dotfiles I use. WIP.
 - `fzf` and `rg` aliases
 - `waybar`
 - `hyprland`
+- `go` development
+- `pdf-fmt`
 
 #### Installation
 
