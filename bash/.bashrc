@@ -143,7 +143,7 @@ export FZF_CTRL_T_OPTS="
 --walker-skip .git,node_modules,target
 --preview 'bat -n --color=always {}'
 --bind 'ctrl-/:change-preview-window(down|hidden|)'"
-export BAT_THEME="Coldark-Dark"
+export BAT_THEME="Nord"
 
 vman() {
     # export MANPAGER="col -b" # for FreeBSD/MacOS
@@ -217,6 +217,16 @@ export PATH="~/Desktop/projects/mnemosync:$PATH"
 
 pacQi() {
     pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
+}
+# Load pyenv automatically by appending
+# the following to
+# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
+# and ~/.bashrc (for interactive shells) :
+
+pyenv-init() {
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - bash)"
 }
 
 conda-init() {
