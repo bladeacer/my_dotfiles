@@ -8,7 +8,7 @@
 		}
 	},
 	"display": {
-		"separator": "  "
+		"separator": " "
 	},
 	"modules": [
 		"break",
@@ -39,11 +39,11 @@
 			"key": "├─",
 			"keyColor": "magenta"
 		},
-		// {
-		// 	"type": "wm",
-		// 	"key": "├─",
-		// 	"keyColor": "magenta"
-		// },
+		{
+			"type": "wm",
+			"key": "╰─",
+			"keyColor": "magenta"
+		},
 		// {
 		// 	"type": "lm",
 		// 	"key": "├─󰧨",
@@ -54,11 +54,11 @@
 		// 	"key": "├─󰉼",
 		// 	"keyColor": "magenta"
 		// },
-		{
-			"type": "icons",
-			"key": "╰─󰀻",
-			"keyColor": "magenta"
-		},
+		// {
+		// 	"type": "icons",
+		// 	"key": "╰─󰀻",
+		// 	"keyColor": "magenta"
+		// },
 		"break",
 		// One entry for every partition
 		{
