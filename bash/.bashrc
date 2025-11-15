@@ -76,8 +76,8 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
@@ -90,7 +90,7 @@ fi
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
-alias l='ls -CF'
+# alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -123,6 +123,7 @@ fi
 alias vf='find -type f | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
 alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
+alias gco='git count-objects --human-readable'
 alias aic='ascii-image-converter'
 
 export STARSHIP_CONFIG=~/my_dotfiles/.config/starship/starship.toml
@@ -203,6 +204,8 @@ function fzf_tldr_search() {
 
 alias fm='fzf_man_search'
 alias ft='fzf_tldr_search'
+alias get_size='du -sh ./*'
+alias py_update='pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U'
 
 activate-venv() {
     source ./.venv/bin/activate
@@ -212,6 +215,7 @@ create-venv() {
 }
 
 export PATH="~/go/bin:$PATH"
+export PATH="~/.local/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="~/Desktop/projects/mnemosync:$PATH"
 

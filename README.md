@@ -29,7 +29,7 @@ stow <other_dirs>
 ### Fastfetch and wallpaper
 Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
 
-For the wallpaper on Linux, symlink or copy to `/usr/share`
+For the wallpaper on Linux, symlink or copy to `/usr/share/<your_de>`
 
 #### Vim on Windows
 
