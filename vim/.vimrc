@@ -10,6 +10,7 @@ call plug#begin()
       Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
       Plug 'junegunn/fzf.vim'
       Plug 'raimondi/delimitmate'
+      Plug 'mbbill/undotree'
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
@@ -255,7 +256,7 @@ endif
 
 let g:coc_node_path = "/usr/bin/node"
 
-let g:coc_global_extensions = ['coc-json', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-go']
+let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-go']
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
 nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
@@ -264,3 +265,5 @@ nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
 " Remap keys for apply code actions affect whole buffer
 nmap <leader>as  <Plug>(coc-codeaction-source)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+nnoremap <silent> <leader>t :UndotreeToggle<cr>
