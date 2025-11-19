@@ -45,3 +45,6 @@ Ensure both files do not exist before symbolic linking.
 > Copy over file content from _temp_vimrc to the first file in the command above.
 
 - Need admin on `cmd.exe`
+
+### License
+Unlicence, see [LICENSE](./LICENSE)
