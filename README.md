@@ -10,7 +10,7 @@ In this repository, you can find the dotfiles I use.
 - `waybar`
 - `hyprland`
 - `go` development
-- `pdf-fmt`
+- `ollama`
 
 #### Installation
 
@@ -47,4 +47,5 @@ Ensure both files do not exist before symbolic linking.
 - Need admin on `cmd.exe`
 
 ### License
+
 Unlicence, see [LICENSE](./LICENSE)
