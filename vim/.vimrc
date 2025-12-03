@@ -11,6 +11,7 @@ call plug#begin()
       Plug 'junegunn/fzf.vim'
       Plug 'raimondi/delimitmate'
       Plug 'mbbill/undotree'
+      Plug 'lervag/vimtex'
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
@@ -76,7 +77,7 @@ set smartcase
 set pumheight=10
 set showmatch
 set laststatus=2
-filetype plugin on
+" filetype plugin on
 set omnifunc=syntaxcomplete#Complete
 
 set noshowmode
@@ -267,3 +268,5 @@ nmap <leader>as  <Plug>(coc-codeaction-source)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 nnoremap <silent> <leader>t :UndotreeToggle<cr>
+
+let g:vimtex_view_method = 'zathura'
