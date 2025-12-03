@@ -214,13 +214,6 @@ create-venv() {
     python -m venv .venv
 }
 
-# Ollama config
-export OLLAMA_NUM_PARALLEL=1
-export OLLAMA_GPU=true
-export CUDA_VISIBLE_DEVICES=0
-export OLLAMA_VULKAN=0
-export OLLAMA_CONTEXT_LENGTH=32768
-
 export PATH="~/go/bin:$PATH"
 export PATH="~/.local/bin:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
