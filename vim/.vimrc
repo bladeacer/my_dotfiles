@@ -12,6 +12,7 @@ call plug#begin()
       Plug 'raimondi/delimitmate'
       Plug 'mbbill/undotree'
       Plug 'lervag/vimtex'
+      Plug 'rlue/vim-barbaric'
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()

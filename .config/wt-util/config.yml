@@ -1,0 +1,110 @@
+wtf:
+  colors:
+    border:
+      focusable: darkslateblue
+      focused: orange
+      normal: gray
+  grid:
+    columns: [32, 32, 32, 32, 90]
+    rows: [10, 10, 10, 4, 4, 90]
+  refreshInterval: 1
+  mods:
+    clocks:
+      colors:
+        rows:
+          even: "lightblue"
+          odd: "white"
+      enabled: true
+      locations:
+        Singapore: "Asia/Singapore"
+        Tokyo: "Asia/Tokyo"
+        Kuala Lumpur: "Asia/Kuala Lumpur"
+        Jakarta: "Asia/Jakarta"
+      position:
+        top: 0
+        left: 3
+        height: 1
+        width: 1
+      refreshInterval: 15
+      sort: "alphabetical"
+      title: "Clocks"
+      type: "clocks"
+    digitalclock:
+      dateFormat: "Monday Jan 02 2006"
+      color: blue
+      enabled: true
+      font: digitalfont
+      hourFormat: 24
+      position:
+        top: 0
+        left: 0
+        height: 1
+        width: 1
+      refreshInterval: 1s
+      title: "System Time"
+      type: "digitalclock"
+    feedreader:
+      enabled: true
+      feeds:
+      - https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml
+      - https://bladeacer.gitlab.io/portfolio/rss.xml
+      feedLimit: 20
+      position:
+        top: 1
+        left: 1
+        width: 2
+        height: 4
+      refreshInterval: 2000
+      title: RSS Feed
+    ipinfo:
+      colors:
+        name: "lightblue"
+        value: "white"
+      enabled: true
+      position:
+        top: 2
+        left: 0
+        height: 1
+        width: 1
+      refreshInterval: 150
+    power:
+      enabled: true
+      position:
+        top: 3
+        left: 0
+        height: 2
+        width: 1
+      refreshInterval: 15
+      title: "⚡️"
+    textfile:
+      enabled: true
+      filePath: "~/.config/wtf/config.yml"
+      format: true
+      position:
+        top: 1
+        left: 0
+        height: 1
+        width: 1
+      refreshInterval: 30
+      wrapText: false
+    uptime:
+      args: []
+      cmd: "uptime"
+      enabled: true
+      position:
+        top: 0
+        left: 1
+        height: 1
+        width: 2
+      refreshInterval: 30
+      type: cmdrunner
+    docker:
+      type: docker
+      enabled: true
+      labelColor: lightblue
+      position:
+        top: 1
+        left: 3
+        height: 2
+        width: 1
+      refreshInterval: 1s
