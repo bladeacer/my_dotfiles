@@ -208,6 +208,7 @@ alias get_size='du -sh ./*'
 alias jl='jupyter lab'
 alias rf='fcitx5-remote -r'
 alias py_update='pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U'
+alias cloc-git="cloc --vcs=git ./"
 
 activate-venv() {
     source ./.venv/bin/activate
