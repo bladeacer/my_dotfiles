@@ -258,7 +258,7 @@ endif
 
 let g:coc_node_path = "/usr/bin/node"
 
-let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-go', 'coc-vimtex']
+let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-go', 'coc-vimtex', 'coc-tsserver', 'coc-stylelint', 'coc-prettier']
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
 nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
