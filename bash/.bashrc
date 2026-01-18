@@ -116,13 +116,10 @@ if ! shopt -oq posix; then
     fi
 fi
 
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 alias vf='find -type f | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --preview-window '~3' --bind "enter:execute(vim {})"'
 alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --border --preview "bat --color=always --style=numbers,changes {}" --bind "enter:execute(vim {})"'
 alias gla='git log --oneline -a'
+alias glg='git log --oneline --decorate --all --graph'
 alias gco='git count-objects --human-readable'
 alias aic='ascii-image-converter'
 
@@ -134,10 +131,8 @@ eval "$(starship init bash)"
 eval "$(fzf --bash)"
 
 eval "$(zoxide init bash)"
-alias cd='z'
+# alias cd='z'
 set -o vi
-
-export EDITOR=vim
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_CTRL_T_OPTS="
@@ -210,17 +205,20 @@ alias rf='fcitx5-remote -r'
 alias py_update='pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U'
 alias tk='tokei'
 
+export EDITOR=vim
+export BROWSER=waterfox
+export PATH="~/go/bin:$PATH"
+export PATH="~/.local/bin:$PATH"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+export PATH="~/Desktop/projects/mnemosync:$PATH"
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+
 activate-venv() {
     source ./.venv/bin/activate
 }
 create-venv() {
     python -m venv .venv
 }
-
-export PATH="~/go/bin:$PATH"
-export PATH="~/.local/bin:$PATH"
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-export PATH="~/Desktop/projects/mnemosync:$PATH"
 
 pacQi() {
     pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
