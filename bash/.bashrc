@@ -91,6 +91,7 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias lt='ls --tree --git-ignore --level=2'
+alias bt='btm --theme nord'
 # alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
@@ -210,6 +211,7 @@ export EDITOR=vim
 export BROWSER=waterfox
 export PATH="~/go/bin:$PATH"
 export PATH="~/.local/bin:$PATH"
+export PATH="~/nerd-dictation:$PATH"
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export PATH="~/Desktop/projects/mnemosync:$PATH"
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
