@@ -1,7 +1,7 @@
 [window]
 opacity = 0.85
 blur = true
-dynamic_padding = false
+dynamic_padding = true
 
 [env]
 WINIT_X11_SCALE_FACTOR="1.0"
@@ -11,7 +11,7 @@ normal = {family="DepartureMono Nerd Font Mono", style="Regular"}
 bold = {family="CaskaydiaCove Nerd Font Mono", style="Regular"}
 italic = {family="CaskaydiaCove Nerd Font Mono", style="Regular"}
 size = 11
-builtin_box_drawing = true
+builtin_box_drawing=true
 
 [colors]
 transparent_background_colors=true

@@ -206,9 +206,13 @@ alias jl='jupyter lab'
 alias rf='fcitx5-remote -r'
 alias py_update='pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U'
 alias tk='tokei'
+alias flatpak_update='flatpak update -y && flatpak remove --unused -y'
+alias ytd='yt-dlp --embed-thumbnail --embed-metadata --extract-audio'
+alias pacman-clear='sudo rm -r /var/cache/pacman/pkg/download-*'
 
 export EDITOR=vim
 export BROWSER=waterfox
+export PATH="~/.cargo/bin:$PATH"
 export PATH="~/go/bin:$PATH"
 export PATH="~/.local/bin:$PATH"
 export PATH="~/nerd-dictation:$PATH"
@@ -253,3 +257,4 @@ conda-init() {
     unset __conda_setup
     # <<< conda initialize <<<
 }
+. "$HOME/.cargo/env"

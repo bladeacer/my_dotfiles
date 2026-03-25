@@ -98,13 +98,13 @@ wtf:
         width: 2
       refreshInterval: 30
       type: cmdrunner
-    docker:
-      type: docker
-      enabled: true
-      labelColor: lightblue
-      position:
-        top: 1
-        left: 3
-        height: 2
-        width: 1
-      refreshInterval: 1s
+    # docker:
+    #   type: docker
+    #   enabled: true
+    #   labelColor: lightblue
+    #   position:
+    #     top: 1
+    #     left: 3
+    #     height: 2
+    #     width: 1
+    #   refreshInterval: 1s
