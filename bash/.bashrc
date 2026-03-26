@@ -209,6 +209,7 @@ alias tk='tokei'
 alias flatpak_update='flatpak update -y && flatpak remove --unused -y'
 alias ytd='yt-dlp --embed-thumbnail --embed-metadata --extract-audio'
 alias pacman-clear='sudo rm -r /var/cache/pacman/pkg/download-*'
+alias tmux-td='./my_dotfiles/tmux/theme-dev.sh'
 
 export EDITOR=vim
 export BROWSER=waterfox
