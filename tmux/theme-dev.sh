@@ -5,11 +5,8 @@ SESSIONEXISTS=$(tmux list-session | rg $SESSION)
 
 if ["$SESSIONEXISTS" = ""]
 then
-  tmux new-session -d -s $SESSION
-
-  tmux rename-window -t 1 'Main'
-  tmux send-keys -t 'Main' 'z flex' C-m 'vg' C-m
-
+  tmux new-session -d -s $SESSION -n 'Main'
+  tmux send-keys -t 'Main' 'z flex' C-m
   tmux split-window -h
   tmux send-keys -t 'Main' 'z flex' C-m 'npm run lint' C-m
 

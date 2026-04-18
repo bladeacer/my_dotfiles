@@ -157,10 +157,6 @@ alias la='eza --icons --group-directories-first -a'
 alias v='vim'
 alias bat="bat --color=always --style=numbers,changes"
 
-batdiff() {
-    git diff --name-only --relative --diff-filter=d | xargs bat --diff
-}
-
 function fzf_man_search() {
     man -k . | fzf \
         --height=100% \
@@ -209,7 +205,7 @@ alias tk='tokei'
 alias flatpak_update='flatpak update -y && flatpak remove --unused -y'
 alias ytd='yt-dlp --embed-thumbnail --embed-metadata --extract-audio'
 alias pacman-clear='sudo rm -r /var/cache/pacman/pkg/download-*'
-alias tmux-td='./my_dotfiles/tmux/theme-dev.sh'
+alias tmux-td='~/my_dotfiles/tmux/theme-dev.sh'
 
 export EDITOR=vim
 export BROWSER=waterfox
@@ -231,15 +227,8 @@ create-venv() {
 pacQi() {
     pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h
 }
-# Load pyenv automatically by appending
-# the following to
-# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
-# and ~/.bashrc (for interactive shells) :
-
-pyenv-init() {
-    export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init - bash)"
+pacQii() {
+    pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h | rg $(fzf)
 }
 
 conda-init() {
