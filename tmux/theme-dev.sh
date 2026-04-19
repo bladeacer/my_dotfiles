@@ -8,10 +8,10 @@ then
   tmux new-session -d -s $SESSION -n 'Main'
   tmux send-keys -t 'Main' 'z flex' C-m
   tmux split-window -h
-  tmux send-keys -t 'Main' 'z flex' C-m 'npm run lint' C-m
+  tmux send-keys -t 'Main' 'z flex' C-m 'pnpm --silent lint' C-m
 
   tmux new-window -t $SESSION:2 -n 'Watch'
-  tmux send-keys -t 'Watch' 'z flex' C-m 'npm run dev' C-m
+  tmux send-keys -t 'Watch' 'z flex' C-m 'pnpm --silent dev' C-m
 fi
 
 tmux attach-session -t $SESSION:1
