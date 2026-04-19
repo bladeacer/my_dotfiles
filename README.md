@@ -2,6 +2,10 @@
 
 In this repository, you can find the dotfiles I use.
 
+Moved to Codeberg.
+
+https://codeberg.org/bladeacer/my_dotfiles.
+
 #### Configurations included
 
 - `tmux`
