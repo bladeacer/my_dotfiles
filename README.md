@@ -26,10 +26,10 @@ stow .config
 stow <other_dirs>
 ```
 
-### Fastfetch and wallpaper
+### Fastfetch
 Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
 
-For the wallpaper on Linux, symlink or copy to `/usr/share/<your_de>`
+For the wallpaper on Linux, symlink, copy to `/usr/share/<your_de>` or use your DE's GUI.
 
 #### Vim on Windows
 
