@@ -11,7 +11,6 @@ SP_PROF=$(pactl list cards | grep "HiFi" | grep "Speaker" | head -n 1 | sed 's/:
 
 LAST_STATE="unknown"
 
-# Function to check hardware and apply profile
 check_and_apply() {
     HP_PORT_LINE=$(pactl list cards | grep -A 1 "\[Out\] Headphones" | head -n 1)
     
@@ -22,35 +21,73 @@ check_and_apply() {
     fi
 
     if [ "$CURRENT_STATE" != "$LAST_STATE" ]; then
+        echo "[DEBUG] State Change: $LAST_STATE -> $CURRENT_STATE"
+        
+        # --- 1. PRE-EMPTIVE SNAPSHOT ---
+        P_STATUS=$(playerctl status 2>/dev/null)
+        echo "[DEBUG] Capture Status: '$P_STATUS'"
+        
+        WANT_PLAYING=false
+        # Logic: If playing, OR if just unplugged and status is already 'Paused' (OS hijack)
+        if [ "$P_STATUS" == "Playing" ] || ([ "$P_STATUS" == "Paused" ] && [ "$CURRENT_STATE" == "unplugged" ]); then
+            WANT_PLAYING=true
+            echo "[RECONCILE] Media intent: PLAYING. Pausing for switch..."
+            playerctl pause 2>/dev/null
+        else
+            echo "[RECONCILE] Media intent: SILENT."
+        fi
+
+        # --- 2. HARDWARE SWITCH ---
         if [ "$CURRENT_STATE" == "plugged" ]; then
-            echo "--- Headphones IN ---"
+            echo "--- ACTION: Switching to Headphones ---"
             pactl set-card-profile "$CARD" "$HP_PROF"
-            sleep 0.5
+            READY_SLEEP=0.4 
             ID=$(wpctl status | grep -i "headphone" | grep -oE "[0-9]+" | head -n 1)
             [ -n "$ID" ] && wpctl set-default "$ID"
         else
-            echo "--- Headphones OUT ---"
-            # Pause media only if we aren't at script startup (to avoid pausing background music when you just start your PC)
-            if [ "$LAST_STATE" != "unknown" ]; then
-                playerctl pause 2>/dev/null
-            fi
-            
+            echo "--- ACTION: Switching to Speakers ---"
             pactl set-card-profile "$CARD" "$SP_PROF"
-            sleep 0.5
+            READY_SLEEP=0.8
             ID=$(wpctl status | grep -i "speaker" | grep -oE "[0-9]+" | head -n 1)
             [ -z "$ID" ] && ID=$(wpctl status | grep "Sinks:" -A 15 | grep "Alder Lake" | grep -v "HDMI" | grep -oE "[0-9]+" | head -n 1)
             [ -n "$ID" ] && wpctl set-default "$ID"
         fi
+
+        # --- 3. RECONCILIATION LOOP ---
+        if [ "$WANT_PLAYING" = true ]; then
+            echo "[DEBUG] Waiting ${READY_SLEEP}s for hardware settle..."
+            sleep "$READY_SLEEP"
+            
+            echo "[DEBUG] Starting polling loop..."
+            for i in {1..8}; do
+                playerctl play 2>/dev/null
+                sleep 0.3
+                CHECK=$(playerctl status 2>/dev/null)
+                
+                if [ "$CHECK" == "Playing" ]; then
+                    echo "[SUCCESS] Playback resumed on attempt $i."
+                    break
+                fi
+                
+                echo "[DEBUG] Attempt $i: Status still '$CHECK'..."
+                
+                # Emergency kick for stubborn players
+                if [ $i -eq 3 ]; then
+                    echo "[DEBUG] Sending toggle jumpstart..."
+                    playerctl play-pause 2>/dev/null
+                fi
+            done
+        fi
+
         LAST_STATE=$CURRENT_STATE
+        echo "[DEBUG] Final State: $LAST_STATE"
+        echo "----------------------------------------"
     fi
 }
 
-echo "Starting audio monitor for $CARD..."
-
-# --- RUN ONCE AT STARTUP ---
+echo "Audio monitor (Debug + Polling) active for $CARD"
 check_and_apply
 
-# --- THEN LISTEN FOR EVENTS ---
 pactl subscribe | while read line; do
     if echo "$line" | grep -q "card"; then
         check_and_apply
