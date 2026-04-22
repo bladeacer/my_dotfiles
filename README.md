@@ -4,6 +4,8 @@ In this repository, you can find the dotfiles I use.
 
 #### Configurations included
 
+- Sane auto Speaker/Headphone audio switcher script/service
+  - Use the setup script :D
 - `tmux`
 - `.vimrc`
 - `fzf` and `rg` aliases
