@@ -27,21 +27,24 @@ echo "✓ Script moved to $BIN_DIR"
 cat <<EOF > "$SERVICE_DIR/$SERVICE_NAME"
 [Unit]
 Description=Auto Audio Profile Switcher
-After=pipewire.service
+After=graphical-session.target
+BindsTo=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/bin/bash $BIN_DIR/$SCRIPT_NAME
+ExecStart=%h/.local/bin/audio-monitor.sh
 Restart=always
 RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 EOF
 
 echo "✓ Service file created at $SERVICE_DIR"
 
-# 5. Reload systemd and start the service
+echo "--- Enabling Persistence ---"
+loginctl enable-linger "$USER"
+
 echo "--- Starting Service ---"
 systemctl --user daemon-reload
 systemctl --user enable "$SERVICE_NAME"
