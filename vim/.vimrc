@@ -11,10 +11,12 @@ call plug#begin()
       Plug 'junegunn/fzf.vim'
       Plug 'raimondi/delimitmate'
       Plug 'mbbill/undotree'
-      Plug 'lervag/vimtex'
       Plug 'rlue/vim-barbaric'
-      Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
+      Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'pnpm i'}
+      Plug 'bladeacer/coc-quarkdown', {'do': 'pnpm install && pnpm run build'}
+      Plug 'matze/vim-move'
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
 call plug#end()
 
 if has("gui_running")
@@ -258,7 +260,7 @@ endif
 
 let g:coc_node_path = "/usr/bin/node"
 
-let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-go', 'coc-vimtex', 'coc-tsserver', 'coc-stylelint', 'coc-prettier', '@yaegassy/coc-pylsp', '@yaegassy/coc-astro']
+let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-yaml', 'coc-go', 'coc-tsserver', 'coc-stylelint', 'coc-prettier', '@yaegassy/coc-pylsp', '@yaegassy/coc-astro']
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
 nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
@@ -268,6 +270,11 @@ nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
 nmap <leader>as  <Plug>(coc-codeaction-source)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 
-nnoremap <silent> <leader>t :UndotreeToggle<cr>
+let g:move_normal_option = 1
 
-let g:vimtex_view_method = 'zathura'
+vmap aj <Plug>MoveBlockCountLinesDown
+vmap ak <Plug>MoveBlockCountLinesUp
+
+" nnoremap <silent> <leader>t :UndotreeToggle<cr>
+
+" let g:vimtex_view_method = 'zathura'
