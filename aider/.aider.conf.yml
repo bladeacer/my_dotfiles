@@ -1,0 +1,19 @@
+model: ollama_chat/deepseek-r1:1.5b
+weak-model: ollama_chat/phi4-mini
+
+commit-prompt: |
+  You are an expert engineer. Generate a ONE-LINE commit message.
+  Format: <type>: <description>
+  Types: fix, feat, build, chore, ci, docs, style, refactor, perf, test
+  
+  Rules:
+  - Use imperative mood (e.g., "add" not "added").
+  - Max 72 characters.
+  - No explanations. No quotes. No extra text.
+  - Reply ONLY with the message.
+
+dark-mode: true
+attribute-author: false
+attribute-committer: false
+stream: true
+map-tokens: "2048"
