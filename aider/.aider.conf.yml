@@ -1,5 +1,8 @@
-model: ollama_chat/deepseek-r1:1.5b
-weak-model: ollama_chat/phi4-mini
+# model: ollama/huihui_ai/deepseek-r1-abliterated:7b-qwen-distill-q3_K_M 
+model: ollama/llama3.2:3b
+# model: ollama/phi4-stable
+
+# weak-model: ollama/huihui_ai/deepseek-r1-abliterated:7b-qwen-distill-q3_K_M 
 
 commit-prompt: |
   You are an expert engineer. Generate a ONE-LINE commit message.
@@ -16,4 +19,6 @@ dark-mode: true
 attribute-author: false
 attribute-committer: false
 stream: true
-map-tokens: "2048"
+map-tokens: "512"
+max-chat-history-tokens: "1024"
+edit-format: whole

@@ -15,6 +15,7 @@ call plug#begin()
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'pnpm i'}
       Plug 'bladeacer/coc-quarkdown', {'do': 'pnpm install && pnpm run build'}
       Plug 'matze/vim-move'
+      Plug 'gergap/vim-ollama'
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 call plug#end()
