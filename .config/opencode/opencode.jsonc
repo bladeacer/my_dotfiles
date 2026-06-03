@@ -1,0 +1,19 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "headroom": {
+      "type": "local",
+      "command": [
+        "sh",
+        "-c",
+        "HEADROOM_TELEMETRY=off HEADROOM_CODE_AWARE_ENABLED=1 headroom proxy --code-graph --memory & sleep 2 && headroom mcp serve"
+      ],
+      "enabled": true
+    },
+    "repowise": {
+      "type": "local",
+      "command": ["repowise", "mcp", "--transport", "stdio"],
+      "enabled": false
+    }
+  }
+}

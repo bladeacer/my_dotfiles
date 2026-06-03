@@ -1,6 +1,5 @@
 call plug#begin()
       Plug 'ap/vim-css-color'
-      Plug 'sheerun/vim-polyglot'
       Plug 'junegunn/goyo.vim'
       Plug 'tpope/vim-commentary'
       Plug 'tpope/vim-sensible'
@@ -276,6 +275,9 @@ let g:move_normal_option = 1
 vmap aj <Plug>MoveBlockCountLinesDown
 vmap ak <Plug>MoveBlockCountLinesUp
 
+nnoremap <leader>o :Ollama toggle<cr>
+
 " nnoremap <silent> <leader>t :UndotreeToggle<cr>
 
 " let g:vimtex_view_method = 'zathura'
+autocmd FileType ada setlocal shiftwidth=3 ts=3 softtabstop=3 expandtab
