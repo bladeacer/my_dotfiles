@@ -14,7 +14,7 @@ call plug#begin()
       Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'pnpm i'}
       Plug 'bladeacer/coc-quarkdown', {'do': 'pnpm install && pnpm run build'}
       Plug 'matze/vim-move'
-      Plug 'gergap/vim-ollama'
+      " Plug 'gergap/vim-ollama'
       Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 call plug#end()
@@ -275,7 +275,7 @@ let g:move_normal_option = 1
 vmap aj <Plug>MoveBlockCountLinesDown
 vmap ak <Plug>MoveBlockCountLinesUp
 
-nnoremap <leader>o :Ollama toggle<cr>
+" nnoremap <leader>o :Ollama toggle<cr>
 
 " nnoremap <silent> <leader>t :UndotreeToggle<cr>
 

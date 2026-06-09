@@ -1,6 +1,6 @@
 [window]
-# opacity = 0.9
-opacity = 1
+opacity = 0.9
+# opacity = 1
 blur = true
 dynamic_padding = true
 
