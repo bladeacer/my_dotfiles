@@ -32,7 +32,10 @@ stow <other_dirs>
 ```
 
 ### Fastfetch
+
 Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
+
+> Shout out to horse game for chibi Rice Shower
 
 For the wallpaper on Linux, symlink, copy to `/usr/share/<your_de>` or use your DE's GUI.
 
