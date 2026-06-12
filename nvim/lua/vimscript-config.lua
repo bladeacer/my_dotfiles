@@ -42,7 +42,7 @@ set noerrorbells
 set belloff=all
 set re=0
 set redrawtime=10000
-set clipboard+=unnamedplus
+" set clipboard+=unnamedplus
 
 " Delete character without register yank
 nnoremap x "_x

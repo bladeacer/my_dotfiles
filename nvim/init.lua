@@ -195,55 +195,102 @@ require("lazy").setup({
       })
     end
   },
+
   {
-    'goolord/alpha-nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      local alpha = require('alpha')
-
-      -- 1. Blank padding element (replaces the header safely)
-      local padding = { type = "padding", val = 4 }
-
-      -- 2. Define the individual menu buttons explicitly
-      local function create_button(sc, txt, keybind)
-        return {
-          type = "button",
-          val = txt,
-          on_press = function()
-            vim.api.nvim_input(keybind)
-          end,
-          opts = {
-            position = "center",
-            shortcut = sc,
-            cursor = 3,
-            width = 30,
-            align_shortcut = "right",
-            hl_shortcut = "Number",
-            hl = "Normal",
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      dashboard = {
+        enabled = true,
+        width = 90,
+        sections = {
+          {
+            section = "terminal",
+            -- TRICK: This prepends exactly 4 spaces to every row to translate it left/right.
+            -- Change the number of spaces inside the quotes below to adjust the shift amount!
+            cmd = "cat ~/my_dotfiles/logo/chibi_rice | sed 's/^/            /'",
+            height = 25,
+            padding = 1,
+            pane = 1,
           },
-        }
-      end
-
-      -- 3. Construct your custom button array
-      local buttons = {
-        type = "group",
-        val = {
-          create_button("f", "󰈞  Find File", ";f"),
-          create_button("r", "󰄉  Recent Files", ";r"),
-          create_button("n", "󰙅  New File", ":ene<CR>"),
-          create_button("q", "󰅚  Quit", ":qa<CR>"),
+          {
+            section = "keys",
+            gap = 1,
+            padding = 5,
+            pane = 2,
+          },
+          { section = "startup", pane = 2 },
         },
-        opts = { spacing = 1 },
+      },
+    },
+    config = function(_, opts)
+      local snacks = require("snacks")
+
+      -- ==========================================================================
+      -- ALPHA-STYLE BUTTON SCHEMATICS
+      -- ==========================================================================
+      -- We override the default key format function to layout elements like Alpha:
+      -- [Icon]  [Shortcut] 󰿟 [Action Description]
+      opts.dashboard.preset = {
+        keys = {
+          { icon = "󰈞 ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = "󰄉 ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+          { icon = "󰙅 ", key = "n", desc = "New File", action = ":ene | startinsert" },
+          { icon = "󰅚 ", key = "q", desc = "Quit", action = ":qa" },
+        },
+        format = function(key)
+          -- Format template matching Alpha's classic shortcut brackets/spacing
+          return {
+            { key.icon, hl = "SnacksDashboardIcon" },
+            { string.format(" %-2s ", key.key), hl = "SnacksDashboardKey" },
+            { "󰿟 ", hl = "SnacksDashboardDivider" },
+            { key.desc, hl = "SnacksDashboardDesc" },
+          }
+        end,
       }
 
-      -- 4. Assemble the final safe layout matrix
-      alpha.setup({
-        layout = {
-          padding, -- Safe top space
-          buttons, -- Your custom clean text buttons
-        },
-        opts = {},
+      snacks.setup(opts)
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "SnacksDashboardOpened",
+        callback = function(request)
+          local buf = request.buf
+          local win = vim.api.nvim_get_current_win()
+          -- Disable mouse scroll wheel behaviors inside this buffer context
+          local unscrollable_keys = { "<Up>", "<Down>", "<ScrollWheelUp>", "<ScrollWheelDown>" }
+          for _, key in ipairs(unscrollable_keys) do
+            -- Re-route standard directional commands to do absolutely nothing
+            vim.keymap.set("n", key, "<Nop>", { buffer = buf, silent = true })
+          end
+
+          -- Clamp the window view strictly to line 1 to stop scroll viewport shifting
+          vim.api.nvim_create_autocmd("WinScrolled", {
+            buffer = buf,
+            callback = function()
+              if vim.api.nvim_win_is_valid(win) then
+                vim.fn.winrestview({ topline = 1, lnum = vim.api.nvim_win_get_cursor(win)[1] })
+              end
+            end,
+          })
+        end,
       })
+
+      -- ==========================================================================
+      -- ICEBERG DESIGN CALIBRATION
+      -- ==========================================================================
+      local highlights = {
+        SnacksDashboardDesc    = { link = "Normal" }, -- Clear theme default text matching
+        SnacksDashboardKey     = { fg = "#84a0c6" }, -- Iceberg Blue for the shortcut tags
+        SnacksDashboardDivider = { fg = "#444b71" }, -- Deep muted line color for the divider symbol
+        SnacksDashboardIcon    = { fg = "#6b7089" }, -- Slate grey icons
+        SnacksDashboardHeader  = { fg = "#c6c8d1" },
+        SnacksDashboardFooter  = { fg = "#444b71" },
+      }
+
+      for group, style in pairs(highlights) do
+        vim.api.nvim_set_hl(0, group, style)
+      end
     end
   },
 
