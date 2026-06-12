@@ -15,6 +15,9 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.opt.number = true
+vim.opt.relativenumber = true
+
 vim.g.mapleader = ";"
 
 -- ==========================================================================
@@ -177,7 +180,6 @@ require("lazy").setup({
   { 'tpope/vim-commentary' },
   { 'tpope/vim-sensible' },
   { 'raimondi/delimitmate' },
-  { 'mbbill/undotree' },
   { 'rlue/vim-barbaric' },
   { 'matze/vim-move' },
 
@@ -201,8 +203,11 @@ require("lazy").setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require("nvim-tree").setup({
-        view = { width = 30 },
-        renderer = { icons = { show = { file = false, folder = true } } },
+        view = {
+          width = 30,
+          side = "right"
+        },
+        renderer = { icons = { show = { file = true, folder = true } } },
       })
     end
   },
@@ -315,3 +320,13 @@ vim.diagnostic.config({
 
 require("startpage")
 require("vimscript-config")
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.buftype == "" and vim.bo.filetype ~= "NvimTree" then
+      vim.opt.number = true
+      vim.opt.relativenumber = true
+    end
+  end,
+})
