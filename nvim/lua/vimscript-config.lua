@@ -1,7 +1,9 @@
 vim.cmd([[
 " --- Neovide Graphic Specifics ---
 if exists("g:neovide")
-      set guifont=CaskadiaCove\ NFM:h11
+      " Arch usually expects the full upstream 'CaskaydiaCove Nerd Font Mono'
+      set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h11
+      
       let g:neovide_cursor_animation_length = 0.05
       let g:neovide_cursor_trail_size = 0.4
 endif
@@ -84,6 +86,7 @@ set cpt=.,k,w,b
 set shortmess+=c
 
 nnoremap <silent> <leader>f <cmd>lua require('fzf-lua').files()<CR>
+nnoremap <silent> <leader>r <cmd>lua require('fzf-lua').oldfiles()<CR>
 let g:fzf_preview_window = ['right:60%', 'ctrl-/']
 
 " --- lazy.nvim Global Shortcuts ---
@@ -139,8 +142,6 @@ endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-nnoremap <silent> <Leader>r :History<CR>
 
 " Modern config reload target
 nnoremap <silent> <Leader>v :so ~/.config/nvim/init.lua<CR>
