@@ -6,8 +6,10 @@ In this repository, you can find the dotfiles I use.
 
 - Sane auto Speaker/Headphone audio switcher script/service
   - Use the setup script :D
+- `nvim`
 - `tmux`
-- `.vimrc`
+- `vim`
+- `opencode`
 - `fzf` and `rg` aliases
 - `waybar`
 - `hyprland`
@@ -24,6 +26,7 @@ cd dotfiles
 stow vim
 stow tmux
 stow bash
+# ...
 stow .config
 stow <other_dirs>
 ```

@@ -89,6 +89,8 @@ nnoremap <silent> <leader>f <cmd>lua require('fzf-lua').files()<CR>
 nnoremap <silent> <leader>r <cmd>lua require('fzf-lua').oldfiles()<CR>
 let g:fzf_preview_window = ['right:60%', 'ctrl-/']
 
+nnoremap <silent> <leader>t :NvimTreeToggle<CR>
+
 " --- lazy.nvim Global Shortcuts ---
 nnoremap <silent> <leader>i :Lazy install<CR>
 nnoremap <silent> <leader>c :Lazy clean<CR>
@@ -154,30 +156,16 @@ imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
 let g:SuperTabMappingForward = '<s-tab>'
 let g:SuperTabMappingBackward = '<tab>'
 
-" --- CoC Completion Mechanics ---
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+" Replaces your old CoC [g and ]g diagnostic jumps
+nnoremap <silent> [g <cmd>lua vim.diagnostic.jump({ count = -1 })<CR>
+nnoremap <silent> ]g <cmd>lua vim.diagnostic.jump({ count = 1 })<CR>
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Standard Native LSP definitions (Jump to definition & hover docs)
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K  <cmd>lua vim.lsp.buf.hover()<CR>
 
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <silent><expr> <c-space> coc#refresh()
-
-let g:coc_node_path = "/usr/bin/node"
-let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-yaml', 'coc-go', 'coc-tsserver', 'coc-stylelint', 'coc-prettier', '@yaegassy/coc-pylsp', '@yaegassy/coc-astro', 'coc-clangd']
-
-nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
-nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
-nmap <leader>as  <Plug>(coc-codeaction-source)
-nmap <leader>a   <Plug>(coc-codeaction-selected)
+" Replaces your old CoC leader code actions mapping
+nnoremap <silent> <leader>a <cmd>lua vim.lsp.buf.code_action()<CR>
 
 let g:move_normal_option = 1
 vmap aj <Plug>MoveBlockCountLinesDown
