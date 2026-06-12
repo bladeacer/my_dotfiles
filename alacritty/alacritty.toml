@@ -9,7 +9,7 @@ WINIT_X11_SCALE_FACTOR="1.0"
 
 [font]
 normal = {family="DepartureMono Nerd Font Mono", style="Regular"}
-bold = {family="CaskaydiaCove Nerd Font Mono", style="Regular"}
+bold = {family="DepartureMono Nerd Font Mono", style="Regular"}
 italic = {family="CaskaydiaCove Nerd Font Mono", style="Regular"}
 size = 11
 builtin_box_drawing=true
