@@ -197,104 +197,6 @@ require("lazy").setup({
   },
 
   {
-    "folke/snacks.nvim",
-    priority = 1000,
-    lazy = false,
-    opts = {
-      dashboard = {
-        enabled = true,
-        width = 90,
-        sections = {
-          {
-            section = "terminal",
-            -- TRICK: This prepends exactly 4 spaces to every row to translate it left/right.
-            -- Change the number of spaces inside the quotes below to adjust the shift amount!
-            cmd = "cat ~/my_dotfiles/logo/chibi_rice | sed 's/^/            /'",
-            height = 25,
-            padding = 1,
-            pane = 1,
-          },
-          {
-            section = "keys",
-            gap = 1,
-            padding = 5,
-            pane = 2,
-          },
-          { section = "startup", pane = 2 },
-        },
-      },
-    },
-    config = function(_, opts)
-      local snacks = require("snacks")
-
-      -- ==========================================================================
-      -- ALPHA-STYLE BUTTON SCHEMATICS
-      -- ==========================================================================
-      -- We override the default key format function to layout elements like Alpha:
-      -- [Icon]  [Shortcut] 󰿟 [Action Description]
-      opts.dashboard.preset = {
-        keys = {
-          { icon = "󰈞 ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
-          { icon = "󰄉 ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-          { icon = "󰙅 ", key = "n", desc = "New File", action = ":ene | startinsert" },
-          { icon = "󰅚 ", key = "q", desc = "Quit", action = ":qa" },
-        },
-        format = function(key)
-          -- Format template matching Alpha's classic shortcut brackets/spacing
-          return {
-            { key.icon, hl = "SnacksDashboardIcon" },
-            { string.format(" %-2s ", key.key), hl = "SnacksDashboardKey" },
-            { "󰿟 ", hl = "SnacksDashboardDivider" },
-            { key.desc, hl = "SnacksDashboardDesc" },
-          }
-        end,
-      }
-
-      snacks.setup(opts)
-
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "SnacksDashboardOpened",
-        callback = function(request)
-          local buf = request.buf
-          local win = vim.api.nvim_get_current_win()
-          -- Disable mouse scroll wheel behaviors inside this buffer context
-          local unscrollable_keys = { "<Up>", "<Down>", "<ScrollWheelUp>", "<ScrollWheelDown>" }
-          for _, key in ipairs(unscrollable_keys) do
-            -- Re-route standard directional commands to do absolutely nothing
-            vim.keymap.set("n", key, "<Nop>", { buffer = buf, silent = true })
-          end
-
-          -- Clamp the window view strictly to line 1 to stop scroll viewport shifting
-          vim.api.nvim_create_autocmd("WinScrolled", {
-            buffer = buf,
-            callback = function()
-              if vim.api.nvim_win_is_valid(win) then
-                vim.fn.winrestview({ topline = 1, lnum = vim.api.nvim_win_get_cursor(win)[1] })
-              end
-            end,
-          })
-        end,
-      })
-
-      -- ==========================================================================
-      -- ICEBERG DESIGN CALIBRATION
-      -- ==========================================================================
-      local highlights = {
-        SnacksDashboardDesc    = { link = "Normal" }, -- Clear theme default text matching
-        SnacksDashboardKey     = { fg = "#84a0c6" }, -- Iceberg Blue for the shortcut tags
-        SnacksDashboardDivider = { fg = "#444b71" }, -- Deep muted line color for the divider symbol
-        SnacksDashboardIcon    = { fg = "#6b7089" }, -- Slate grey icons
-        SnacksDashboardHeader  = { fg = "#c6c8d1" },
-        SnacksDashboardFooter  = { fg = "#444b71" },
-      }
-
-      for group, style in pairs(highlights) do
-        vim.api.nvim_set_hl(0, group, style)
-      end
-    end
-  },
-
-  {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
@@ -315,9 +217,9 @@ require("lazy").setup({
   {
     'saghen/blink.cmp',
     dependencies = {
-	    'neovim/nvim-lspconfig',
-	    'rafamadriz/friendly-snippets',
-	    'saghen/blink.lib'
+      'neovim/nvim-lspconfig',
+      'rafamadriz/friendly-snippets',
+      'saghen/blink.lib'
     },
     branch = 'main',
     lazy = false,
@@ -411,7 +313,5 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
--- ==========================================================================
--- 3. LOAD YOUR CLEAN VIMSCRIPT WRAPPER LAST
--- ==========================================================================
+require("startpage")
 require("vimscript-config")
