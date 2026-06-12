@@ -1,12 +1,10 @@
 #
-# ~/.profile
+# ~/.bash_profile
 #
 
-export EDITOR=vim
-export BROWSER=waterfox
-export PATH="~/go/bin:$PATH"
-export PATH="~/.local/bin:$PATH"
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-export PATH="~/Desktop/projects/mnemosync:$PATH"
-export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
-export TERMINAL=/usr/bin/alacritty
+# Source - https://superuser.com/a
+# Posted by Gilles 'SO- stop being evil', modified by community. See post 'Timeline' for change history
+# Retrieved 2026-01-19, License - CC BY-SA 3.0
+
+if [ -r ~/.profile ]; then . ~/.profile; fi
+case "$-" in *i*) if [ -r ~/.bashrc ]; then . ~/.bashrc; fi;; esac

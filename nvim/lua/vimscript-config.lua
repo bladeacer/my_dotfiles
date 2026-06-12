@@ -1,77 +1,25 @@
-call plug#begin()
-      Plug 'ap/vim-css-color'
-      Plug 'junegunn/goyo.vim'
-      Plug 'tpope/vim-commentary'
-      Plug 'tpope/vim-sensible'
-      Plug 'itchyny/lightline.vim'
-      Plug 'cocopon/iceberg.vim'
-      Plug 'gkeep/iceberg-dark'
-      Plug 'junegunn/fzf', {'do': { -> fzf#install()}}
-      Plug 'junegunn/fzf.vim'
-      Plug 'raimondi/delimitmate'
-      Plug 'mbbill/undotree'
-      Plug 'rlue/vim-barbaric'
-      Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'pnpm i'}
-      Plug 'bladeacer/coc-quarkdown', {'do': 'pnpm install && pnpm run build'}
-      Plug 'matze/vim-move'
-      " Plug 'psliwka/vim-smoothie'
-      " Plug 'opalmay/vim-smoothie'
-
-      " Plug 'gergap/vim-ollama'
-      Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-
-call plug#end()
-
-if has("gui_running")
-      set guifont=CaskadiaCove\ NFM
-      au VimEnter * colorscheme iceberg
+vim.cmd([[
+" --- Neovide Graphic Specifics ---
+if exists("g:neovide")
+      set guifont=CaskadiaCove\ NFM:h11
+      let g:neovide_cursor_animation_length = 0.05
+      let g:neovide_cursor_trail_size = 0.4
 endif
 
-let g:lightline = {
-      \ 'colorscheme': 'icebergDark',
-      \ 'mode_map': {
-            \ 'n' : 'NOR',
-            \ 'i' : 'INS',
-            \ 'R' : 'REP',
-            \ 'v' : 'V',
-            \ 'V' : 'VL',
-            \ "\<C-v>": 'VB',
-            \ 'c' : 'CMD',
-            \ 's' : 'S',
-            \ 'S' : 'SL',
-            \ "\<C-s>": 'SB',
-            \ 't': 'T',
-      \ },
-      \ 'tabline_separator': { 'left': '', 'right': '' },
-      \ 'tabline_subseparator': { 'left': ''},
-      \ 'subseparator': { 'left': '\ue0bb', 'right': '\ue0bd' },
-	\ 'active': {
-	\   'left': [ [ 'mode', 'paste' ],
-	\             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
-	\ },
-	\ 'component_function': {
-	\   'cocstatus': 'coc#status'
-	\ },
-\}
+colorscheme iceberg
 
-" Use autocmd to force lightline update.
-autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
+" --- Core Vim Options ---
 set termguicolors
 set background=dark
 set expandtab
 set shiftwidth=2
 set tabstop=2
 set spell spelllang=en_gb
-set nocompatible
 set smartcase
 set foldcolumn=2
 set mouse=a
 
-let loaded_netrwPlugin = 1
-let mapleader=";"
-
+" --- Core Keyboard Remaps ---
 nnoremap <silent> <tab> >>
 nnoremap <silent> <s-tab> <<
 vnoremap <silent> <tab> >
@@ -79,11 +27,9 @@ vnoremap <silent> <s-tab> <
 
 set autoindent
 set smartindent
-set smartcase
 set pumheight=10
 set showmatch
 set laststatus=2
-" filetype plugin on
 set omnifunc=syntaxcomplete#Complete
 
 set noshowmode
@@ -92,19 +38,11 @@ set wildmenu
 set number relativenumber
 set noerrorbells
 set belloff=all
-
-syntax on
-set encoding=UTF-8
 set re=0
 set redrawtime=10000
-
-" set clipboard+=unnamed,unnamedplus
 set clipboard+=unnamedplus
 
-filetype on
-filetype plugin on
-
-" delete single character without copying into register
+" Delete character without register yank
 nnoremap x "_x
 
 highlight SpellBad ctermfg=lightred ctermbg=none
@@ -116,6 +54,7 @@ iabbrev 1i <Esc>cc-<Space>
 iabbrev 2i <Esc>cc<Tab>-<Space>
 iabbrev 3i <Esc>cc<Tab><Tab>-<Space>
 
+" --- Markdown Navigation Remaps ---
 autocmd bufenter *.md nnoremap <leader>2# <Esc>I##<Space>
 autocmd bufenter *.md nnoremap <leader>3# <Esc>I###<Space>
 autocmd bufenter *.md nnoremap <leader>4# <Esc>I####<Space>
@@ -128,48 +67,30 @@ autocmd bufenter *.md iabbrev 4# ####
 autocmd bufenter *.md iabbrev 5# #####
 autocmd bufenter *.md iabbrev 6# ######
 
+" --- Buffer Control Remaps ---
 nnoremap <silent> <leader>n :bnext<CR>
 nnoremap <silent> <leader>p :bprevious<CR>
 nnoremap <silent> <leader>d :bdelete<CR>
 
-" nnoremap <leader>ft <Esc>{jzt<C-O>
 nnoremap } }zz
 nnoremap { {zz
-" nnoremap <leader>fz <Esc>{jzz<C-O>
-" nnoremap <leader>fb <Esc>{jzb<C-O>
 nnoremap % %zz
-
-nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
-
 nnoremap n nzz
 nnoremap N Nzz
 nnoremap <silent> <leader>= gg=G2<C-O>zz
+nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
 
 set cpt=.,k,w,b
-
-colorscheme iceberg
 set shortmess+=c
 
-let g:fzf_colors =
-      \ { 'fg':    ['fg', 'Normal'],
-      \ 'bg':      ['bg', 'Normal'],
-      \ 'hl':      ['fg', 'Comment'],
-      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-      \ 'hl+':     ['fg', 'Statement'],
-      \ 'info':    ['fg', 'PreProc'],
-      \ 'border':  ['fg', 'Ignore'],
-      \ 'prompt':  ['fg', 'Conditional'],
-      \ 'pointer': ['fg', 'Exception'],
-      \ 'marker':  ['fg', 'Keyword'],
-      \ 'spinner': ['fg', 'Label'],
-      \ 'header':  ['fg', 'Comment'] }
-nnoremap <silent> <leader>f :Files<CR>
-nnoremap <silent> <leader>i :PlugInstall<CR>
-nnoremap <silent> <leader>c :PlugClean<CR>
+nnoremap <silent> <leader>f <cmd>lua require('fzf-lua').files()<CR>
 let g:fzf_preview_window = ['right:60%', 'ctrl-/']
 
-" DrChip's additional man.vim stuff
+" --- lazy.nvim Global Shortcuts ---
+nnoremap <silent> <leader>i :Lazy install<CR>
+nnoremap <silent> <leader>c :Lazy clean<CR>
+
+" --- DrChip's Man Page Improvements ---
 syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
 syn match manSectionNumber "^\s\+[0-9]\+\.[0-9]*" contained
 syn region manDQString start='[^a-zA-Z"]"[^", )]'lc=1 end='"' contains=manSQString
@@ -195,6 +116,7 @@ hi manSubSection term=underline cterm=underline gui=underline ctermfg=green guif
 
 set ts=8
 
+" --- Goyo + Tmux Status Line Interactions ---
 nnoremap <silent> <leader>g :Goyo<CR>
 
 function! s:goyo_enter()
@@ -219,33 +141,25 @@ autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 nnoremap <silent> <Leader>r :History<CR>
-nnoremap <silent> <Leader>v :so ~/.vimrc<CR>
 
-
-" source for dictionary, current or other loaded buffers, see ':help cpt'
-set cpt=.,k,w,b
+" Modern config reload target
+nnoremap <silent> <Leader>v :so ~/.config/nvim/init.lua<CR>
 
 set completeopt=menu,menuone,noselect,preview
-
 set updatetime=300
+
 imap <script><silent> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
 imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
 let g:SuperTabMappingForward = '<s-tab>'
 let g:SuperTabMappingBackward = '<tab>'
 
-" Use tab for trigger completion with characters ahead and navigate
-" NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config
+" --- CoC Completion Mechanics ---
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
@@ -254,33 +168,19 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
+inoremap <silent><expr> <c-space> coc#refresh()
 
 let g:coc_node_path = "/usr/bin/node"
-
 let g:coc_global_extensions = ['coc-json', 'coc-rust-analyzer', 'coc-markdownlint', 'coc-css', 'coc-yaml', 'coc-go', 'coc-tsserver', 'coc-stylelint', 'coc-prettier', '@yaegassy/coc-pylsp', '@yaegassy/coc-astro', 'coc-clangd']
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+
 nmap <silent><nowait> [g <Plug>(coc-diagnostic-prev)
 nmap <silent><nowait> ]g <Plug>(coc-diagnostic-next)
-
-" Remap keys for apply code actions affect whole buffer
 nmap <leader>as  <Plug>(coc-codeaction-source)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a   <Plug>(coc-codeaction-selected)
 
 let g:move_normal_option = 1
-
 vmap aj <Plug>MoveBlockCountLinesDown
 vmap ak <Plug>MoveBlockCountLinesUp
 
-" nnoremap <leader>o :Ollama toggle<cr>
-
-" nnoremap <silent> <leader>t :UndotreeToggle<cr>
-
-" let g:vimtex_view_method = 'zathura'
 autocmd FileType ada setlocal shiftwidth=3 ts=3 softtabstop=3 expandtab
+]])
