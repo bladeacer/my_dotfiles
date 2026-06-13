@@ -103,11 +103,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.wo[main_win].cursorline = true
       vim.wo[main_win].conceallevel = 3
       vim.wo[main_win].concealcursor = "nvic"
-      vim.wo[main_win].scrolloff = 999 -- Keeps viewport perfectly centered and still
-      vim.wo[main_win].spell = false   -- FIX: Corrected scope. Kills the red squiggles entirely.
+      vim.wo[main_win].scrolloff = 999
+      vim.wo[main_win].spell = false
 
       -- 1. Read your true-color file channel lines
-      local art_path = vim.fn.expand("~/my_dotfiles/logo/chibi_rice")
+      local art_path = vim.fn.expand("~/my_dotfiles/logo/blue_rose")
       local art_file = io.open(art_path, "r")
       local raw_art_lines = {}
 
@@ -131,7 +131,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
       -- 2. Calibrate dynamic window margins for standard text centering
       local screen_width = vim.api.nvim_win_get_width(main_win)
-      local art_box_width = 46 
+      local art_box_width = 46
       local pad_width = math.max(0, math.floor((screen_width - art_box_width) / 2))
       local margin = string.rep(" ", pad_width)
 
@@ -142,15 +142,15 @@ vim.api.nvim_create_autocmd("VimEnter", {
       end
 
       table.insert(final_lines, "")
-      table.insert(final_lines, margin .. "  󰄛  WELCOME BACK")
+      table.insert(final_lines, margin .. "  󱎂  青いバラ")
       table.insert(final_lines, margin .. "  ────────────────────────────────────────")
 
       local button_start_idx = #final_lines + 1
 
       local menu_items = {
         { key = "f", icon = "󰈞 ", desc = "Find File",    action = function() require('fzf-lua').files() end },
-        { key = "r", icon = "󰄉 ", desc = "Recent Files", action = function() require('fzf-lua').oldfiles() end },
-        { key = "l", icon = "󰒲 ", desc = "Lazy Plugins", action = function() require('lazy').show() end },
+        { key = "r", icon = "󰋚 ", desc = "Recent Files", action = function() require('fzf-lua').oldfiles() end },
+        { key = "l", icon = "󱐥 ", desc = "Lazy Plugins", action = function() require('lazy').show() end },
         { key = "q", icon = "󰅚 ", desc = "Quit Neovim",  action = function() vim.cmd("qa") end },
       }
 
@@ -165,7 +165,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.bo[main_buf].modifiable = false
 
       -- Move cursor cleanly straight to the first interactive menu element using pad_width alignment
-      local target_col = pad_width + 2 -- Snaps cursor exactly inside the hotkey alignment columns
+      local target_col = pad_width + 2
       vim.api.nvim_win_set_cursor(main_win, { button_start_idx, target_col })
 
       -- ==========================================================================
@@ -237,13 +237,26 @@ vim.api.nvim_create_autocmd("VimEnter", {
       })
 
       -- ==========================================================================
-      -- MENU INTERFACE STYLING
+      -- DYNAMIC MENU INTERFACE STYLING
       -- ==========================================================================
+      -- Compile icon matching rule dynamically from your menu data array
+      local icon_patterns = {}
+      for _, item in ipairs(menu_items) do
+        -- Strip trailing spacing markers from tracking definitions
+        local clean_icon = vim.trim(item.icon)
+        if #clean_icon > 0 then
+          table.insert(icon_patterns, vim.pesc(clean_icon))
+        end
+      end
+      local dynamic_icon_regex = table.concat(icon_patterns, "\\|")
+
       vim.api.nvim_buf_call(main_buf, function()
-        vim.fn.matchadd("MenuHeader", "󰄛.*")
+        vim.fn.matchadd("MenuHeader", "󱎂.*")
         vim.fn.matchadd("MenuKey", "\\[\\zs\\w\\ze\\]")
         vim.fn.matchadd("MenuDivider", "──*")
-        vim.fn.matchadd("MenuIcon", "󰈞\\|󰄉\\|󰒲\\|󰅚")
+        if #dynamic_icon_regex > 0 then
+          vim.fn.matchadd("MenuIcon", dynamic_icon_regex)
+        end
       end)
 
       local highlights = {

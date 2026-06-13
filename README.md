@@ -26,7 +26,7 @@ cd dotfiles
 stow vim
 stow tmux
 stow bash
-# ...
+# Or better yet use stow <package-name> -t ~/path/to/config
 stow .config
 stow <other_dirs>
 ```
