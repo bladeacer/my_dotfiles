@@ -278,7 +278,7 @@ local servers = {
   jsonls = { filetypes = { 'json', 'jsonc' } },
   yamlls = { filetypes = { 'yaml', 'yaml.dockerfile' } },
   pylsp = { filetypes = { 'python' } },
-  astro = { filetypes = { 'astro' } },
+  -- astro = { filetypes = { 'astro' } },
   stylelint_lsp = { filetypes = { 'css', 'less', 'scss', 'sugarss', 'vue', 'ngx-template' } },
   vimls = { filetypes = { 'vim' } },
   marksman = { filetypes = { 'markdown', 'md' } },
