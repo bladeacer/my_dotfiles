@@ -320,6 +320,7 @@ vim.diagnostic.config({
 
 require("startpage")
 require("vimscript-config")
+require("dict")
 
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
