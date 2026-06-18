@@ -87,7 +87,8 @@ ShellRoot {
   // Complete Multi-Field Media Engine
   Process {
     id: mediaPipe
-    command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}"]
+    // UPDATED: Added |{{ mpris:length }} to capture total media runtime boundaries
+    command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
     running: true
     stdout: SplitParser {
       onRead: (line) => {
@@ -96,14 +97,23 @@ ShellRoot {
           root.mediaMetadata = segments[0].toUpperCase();
           root.mediaStatus = segments[1].toLowerCase();
           root.mediaArtUrl = segments[2] ? segments[2].replace("file://", "") : "";
+
+          // NEW: Parse out the 4th token parameter, convert microseconds to standard total track seconds
+          if (segments.length >= 4 && segments[3]) {
+            let rawLength = parseInt(segments[3]);
+            root.mediaLength = (!isNaN(rawLength) && rawLength > 0) ? Math.round(rawLength / 1000000) : 1;
+          } else {
+            root.mediaLength = 1;
+          }
         } else {
           root.mediaMetadata = "TRACK // IDLE";
           root.mediaStatus = "stopped";
           root.mediaArtUrl = "";
+          root.mediaLength = 1; // Fallback reset
         }
       }
     }
-  }
+  } 
 
   Timer {
     interval: 2000; running: true; repeat: true; triggeredOnStart: true
@@ -129,7 +139,7 @@ ShellRoot {
       RowLayout {
         Layout.preferredWidth: parent.width * 0.25
         Layout.fillHeight: true; spacing: 10; Layout.leftMargin: 12
-        Text { text: "NAVI_OS │"; font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true; color: Theme.accentBlue }
+        Text { text: "NAVI_OS"; font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true; color: Theme.accentBlue }
         Components.TaskTracker { Layout.fillHeight: true }
       }
 

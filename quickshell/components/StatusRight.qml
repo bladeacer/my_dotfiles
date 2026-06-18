@@ -55,7 +55,7 @@ Item {
                     
                     let ssid = root.activeWifiSSID;
                     let cleanSsid = (ssid === "DISCONNECTED" || ssid === "") ? "NONE" : ssid;
-                    return `WIFI_CTRL // ${cleanSsid} [${bars}]`;
+                    return `WIRED // ${cleanSsid} [${bars}]`;
                 }
             }
             onClicked: control.wifiCtrlClicked()
@@ -70,7 +70,7 @@ Item {
             Text {
                 id: sysText
                 anchors.verticalCenter: parent.verticalCenter
-                text: "SYS_CTRL"
+                text: "SYS"
                 font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal
             }
             onClicked: control.sysClicked()
