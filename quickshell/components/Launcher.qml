@@ -31,7 +31,9 @@ Rectangle {
             Layout.fillHeight: true
             clip: true
             spacing: 4
-            model: DesktopEntries 
+            
+            // Binds to the underlying array wrapper cleanly
+            model: DesktopEntries.applications
 
             delegate: Rectangle {
                 width: appList.width
@@ -44,8 +46,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.leftMargin: 10
                     verticalAlignment: Text.AlignVCenter
-                    // Fix: Evaluates string safety safely before forcing cases
-                    text: `» ${(model.name ? model.name : "UNKNOWN_APP").toUpperCase()}`
+                    
+                    // FIX: Quickshell populates the application data into the 'modelData' variable directly!
+                    text: `» ${(modelData && modelData.name ? modelData.name : "UNKNOWN_APP").toUpperCase()}`
                     color: appMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted
                     font.family: Theme.fontMono
                     font.pixelSize: 11
@@ -57,7 +60,10 @@ Rectangle {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        model.launch();
+                        // FIX: Safely targets Quickshell's native `.execute()` function signature on modelData
+                        if (modelData && typeof modelData.execute === "function") {
+                            modelData.execute();
+                        }
                         launcherWindow.visible = false;
                     }
                 }
