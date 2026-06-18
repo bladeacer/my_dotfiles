@@ -15,7 +15,7 @@ ShellRoot {
         implicitWidth: 320
         implicitHeight: 600
         color: "transparent"
-        
+
         IpcHandler {
             target: "widget_bar"
             function toggleVisibility() {
@@ -48,20 +48,28 @@ ShellRoot {
         sourceComponent: null
     }
 
+    Connections {
+        target: Quickshell
+        ignoreUnknownSignals: true
+        function onActiveWindowChanged() {
+            if (Quickshell.activeWindow === dynamicLauncherWindow && launcherLoader.item) {
+                launcherLoader.item.requestInputFocus();
+            }
+        }
+    }
+
     Component {
         id: launcherComponent
         
         PanelWindow {
             id: dynamicLauncherWindow
             WlrLayershell.layer: WlrLayer.Overlay
-            anchors {} 
             
-            implicitWidth: 560
-            implicitHeight: 400
+            // Anchoring everywhere stretches the surface context to capture out-of-bounds clicks safely
+            anchors { top: true; bottom: true; left: true; right: true }
             color: "transparent"
             
-            // FIX: Forces compositor seat mapping onto this surface frame instantly
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Force
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             Launcher {
                 onCloseRequested: {
