@@ -12,7 +12,6 @@ ShellRoot {
 
   Process {
     id: ipcReader
-    // Setup script: ensures the pipe exists, then opens a persistent stream via tail -f
     command: ["bash", "-c", "mkdir -p /tmp/quickshell && [ ! -p /tmp/quickshell/ipc ] && mkfifo /tmp/quickshell/ipc; exec tail -f /tmp/quickshell/ipc"]
     running: true
     stdout: SplitParser {
@@ -30,6 +29,15 @@ ShellRoot {
   // ── HOTKEY ROUTING MATRIX ──
   Shortcut { sequence: "Meta+Space"; onActivated: launcherLoader.active = !launcherLoader.active }
   Shortcut { sequence: "Meta+S"; onActivated: sysLoader.active = !sysLoader.active }
+  Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
+
+  function closeAllPopups() {
+    launcherLoader.active = false;
+    btLoader.active = false;
+    wifiLoader.active = false;
+    sysLoader.active = false;
+    mediaHUDLoader.active = false;
+  }
 
   // ── DATA TELEMETRY STORAGE ──
   property string currentTimestamp: "0000-00-00 // 00:00:00"
@@ -42,7 +50,7 @@ ShellRoot {
   property string activeWifiSSID: "DISCONNECTED"
   property int wifiSignalStrength: 0
   property int mediaPosition: 0
-  property int mediaLength: 1 // Guard division by zero errors
+  property int mediaLength: 1 
 
   // Network Telemetry Engine
   Process {
@@ -106,7 +114,6 @@ ShellRoot {
   // Complete Multi-Field Media Engine
   Process {
     id: mediaPipe
-    // UPDATED: Added |{{ mpris:length }} to capture total media runtime boundaries
     command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
     running: true
     stdout: SplitParser {
@@ -117,7 +124,6 @@ ShellRoot {
           root.mediaStatus = segments[1].toLowerCase();
           root.mediaArtUrl = segments[2] ? segments[2].replace("file://", "") : "";
 
-          // NEW: Parse out the 4th token parameter, convert microseconds to standard total track seconds
           if (segments.length >= 4 && segments[3]) {
             let rawLength = parseInt(segments[3]);
             root.mediaLength = (!isNaN(rawLength) && rawLength > 0) ? Math.round(rawLength / 1000000) : 1;
@@ -128,7 +134,7 @@ ShellRoot {
           root.mediaMetadata = "TRACK // IDLE";
           root.mediaStatus = "stopped";
           root.mediaArtUrl = "";
-          root.mediaLength = 1; // Fallback reset
+          root.mediaLength = 1; 
         }
       }
     }
@@ -148,6 +154,7 @@ ShellRoot {
   PanelWindow {
     id: statusBar
     WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.focusable: WlrKeyboardFocus.None
     anchors { top: true; left: true; right: true }
     implicitHeight: 28
     color: Theme.widgetBg
@@ -158,7 +165,7 @@ ShellRoot {
       // Left: logo + task tracker + focused window
       RowLayout {
         Layout.preferredWidth: parent.width * 0.35
-        Layout.fillHeight: true; spacing: 8; Layout.leftMargin: 12
+        Layout.fillHeight: true; spacing: 8; Layout.leftMargin: 12; clip: true
 
         Text {
           text: "NAVI_OS"
@@ -170,8 +177,8 @@ ShellRoot {
 
         Text {
           text: Services.FocusedWindow.title !== ""
-            ? "[" + Services.FocusedWindow.title.substring(0, 24) + "]"
-            : ""
+          ? "[" + Services.FocusedWindow.title.substring(0, 24) + "]"
+          : ""
           font.family: Theme.fontMono; font.pixelSize: 8
           color: Theme.fgMuted
           elide: Text.ElideRight
@@ -224,77 +231,58 @@ ShellRoot {
     }
   }
 
-  // ── INLINE INJECTED POPUP COMPONENT DEFINITION ──
-  // This removes the need for an external file and resolves the missing type error safely
-  component LocalInlinePopup : PanelWindow {
-    id: popupWindow
-    WlrLayershell.layer: WlrLayer.Overlay
-    anchors { top: true; bottom: true; left: true; right: true }
-    color: "transparent"
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+  // ── PANEL WINDOW OVERLAYS ──
 
-    property bool active: false
-    property bool center: true // Set this to true for centered popups, false for tray menus
-    property int targetX: 0
-    property int targetY: 32   
-    default property alias content: container.children
+  Loader { 
+    id: mediaHUDLoader; 
+    active: false; 
+    sourceComponent: mediaHUDExclusiveComp 
+  }
 
-    FocusScope {
-      anchors.fill: parent
-      focus: popupWindow.active
+  Component {
+    id: mediaHUDExclusiveComp
 
-      Keys.onEscapePressed: popupWindow.active = false
-      MouseArea { anchors.fill: parent; onClicked: popupWindow.active = false }
+    PanelWindow {
+      id: exclusiveHUDWin
+      // Fix: Use correct modern Wayland protocol specifications instead of mixed enums
+      WlrLayershell.layer: WlrLayer.Top
+      WlrLayershell.namespace: "exclusive_hud"
+      
+      anchors { top: true; left: true; right: true }
+      margins.top: 28 // Render precisely below status bar track bounds
+      implicitHeight: 135 
+      color: "transparent"
 
-      // This item acts as the positioning anchor space
-      Item {
-        id: container
-        y: popupWindow.targetY
-
-        // Dynamic declarative width tracking of the loaded sub-widget
-        width: children.length > 0 ? (children[0].width > 0 ? children[0].width : children[0].implicitWidth) : 0
-        height: children.length > 0 ? (children[0].height > 0 ? children[0].height : children[0].implicitHeight) : 0
-
-        // PERFECT CENTERING: Anchors horizontally to the parent window layout
-        anchors.horizontalCenter: popupWindow.center ? parent.horizontalCenter : undefined
-
-        // Fallback to manual X placement only if center mode is disabled
-        x: popupWindow.center ? 0 : popupWindow.targetX
-
-        MouseArea { anchors.fill: parent; propagateComposedEvents: false }
+      Components.MediaHUD {
+        anchors.fill: parent
       }
     }
   }
 
-  // ── SUBTLE AUDIO SPECTRUM BAR ──
-  PanelWindow {
-    WlrLayershell.layer: WlrLayer.Bottom
-    WlrLayershell.exclusiveZone: 0
-    anchors { bottom: true; left: true; right: true }
-    implicitHeight: 14
-    color: "transparent"
-
-    Components.SpectrumVisualizer { anchors.fill: parent }
-  }
-
-  // ── MODAL POPUP LAYER COMPONENT LOADERS ──
-  Loader { id: mediaHUDLoader; active: false; sourceComponent: mediaComp }
-  Component { id: mediaComp; Components.MediaHUD {} }
-
   Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
   Component {
     id: launchComp
-    LocalInlinePopup { 
-      active: launcherLoader.active 
-      center: true // Keeps horizontal alignment dead center
-      onActiveChanged: launcherLoader.active = active 
+    PanelWindow {
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+      
+      // FIX: Standardize layout positioning flags for Quickshell
+      anchors.top: true 
+      margins.top: 32
+      
+      implicitWidth: 560
+      implicitHeight: 400
+      color: "transparent"
 
-      // FIXED: Positions it exactly underneath the 26px high status bar
-      // Change 32 to 26 if you want zero gap, or keep 32 for a clean 6px spacing
-      targetY: 32
+      Rectangle {
+        anchors.fill: parent
+        color: Theme.widgetBg
+        border.color: Theme.accentBlue; border.width: 1
 
-      Components.Launcher {
-        onCloseRequested: launcherLoader.active = false
+        Components.Launcher { 
+          anchors.fill: parent 
+          onCloseRequested: launcherLoader.active = false 
+        }
       }
     }
   }
@@ -302,39 +290,64 @@ ShellRoot {
   Loader { id: btLoader; active: false; sourceComponent: btComp }
   Component {
     id: btComp
-    // Changed center to false so it drops into your system tray anchor bounds safely
-    LocalInlinePopup { 
-      active: btLoader.active 
-      center: false 
-      onActiveChanged: btLoader.active = active 
-      targetX: root.width - 312 // Corrected from root.width to keep inside screen frame
-      Components.BluetoothControlCenter { width: 300; height: 350 } 
+    PanelWindow {
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      anchors { top: true; right: true }
+      margins.top: 32
+      margins.right: 120
+      implicitWidth: 300
+      implicitHeight: 350
+      color: "transparent"
+
+      Rectangle {
+        anchors.fill: parent; color: Theme.widgetBg
+        border.color: Theme.accentBlue; border.width: 1
+        Components.BluetoothControlCenter { anchors.fill: parent }
+      }
     }
   }
 
   Loader { id: wifiLoader; active: false; sourceComponent: wifiComp }
   Component {
     id: wifiComp
-    LocalInlinePopup { 
-      active: wifiLoader.active 
-      onActiveChanged: wifiLoader.active = active 
-      center: false // Dropped center mode so it aligns perfectly underneath the wifi tray icon
-      targetX: root.width - 412 // Adjusted for the 400px panel layout width + edge gap
+    PanelWindow {
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      anchors { top: true; right: true }
+      margins.top: 32
+      margins.right: 60
+      implicitWidth: 400
+      implicitHeight: 500
+      color: "transparent"
 
-      Components.WifiWidget { width: 400 } 
+      Rectangle {
+        anchors.fill: parent; color: Theme.widgetBg
+        border.color: Theme.accentBlue; border.width: 1
+        Components.WifiWidget { anchors.fill: parent }
+      }
     }
   }
 
-  // System control center (centered full-screen)
   Loader { id: sysLoader; active: false; sourceComponent: sysComp }
   Component {
     id: sysComp
-    LocalInlinePopup {
-      active: sysLoader.active
-      center: true
-      targetY: 32
-      onActiveChanged: sysLoader.active = active
-      Components.SystemControlCenter {}
+    PanelWindow {
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+      
+      // FIX: Safe top-bound anchor with explicit width mapping. 
+      // Wayland centers windows with a fixed width automatically when left/right anchors are omitted.
+      anchors.top: true
+      margins.top: 32
+      
+      implicitWidth: 960
+      implicitHeight: 740
+      color: "transparent"
+
+      Components.SystemControlCenter { 
+        anchors.fill: parent
+      }
     }
   }
 }

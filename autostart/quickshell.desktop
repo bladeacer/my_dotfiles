@@ -1,8 +1,8 @@
-[Desktop Entry]
-Type=Application
-Name=Quickshell
-Exec=quickshell
-Terminal=false
-NoDisplay=false
-X-KDE-Autostart-enabled=true
-X-KDE-StartupNotify=false
+# [Desktop Entry]
+# Type=Application
+# Name=Quickshell
+# Exec=quickshell
+# Terminal=false
+# NoDisplay=false
+# X-KDE-Autostart-enabled=true
+# X-KDE-StartupNotify=false

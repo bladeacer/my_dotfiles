@@ -8,16 +8,17 @@ import "../theme"
 
 Rectangle {
   id: wifiCard
-  implicitWidth: 400
-  implicitHeight: expanded ? 500 : 72
-  clip: true 
+  width: parent ? parent.width : 400 // Scaled up baseline default fallback width
 
   property bool expanded: true
+  implicitHeight: expanded ? 500 : 72 // Increased open height to 500 and closed height to 72
+  clip: true 
 
   color: Theme.widgetBg
   border.color: expanded ? Theme.accentBlue : Theme.borderMain
   border.width: Theme.borderThin
 
+  // Fixed retro stutter: Standard linear transition, but pixel-snapped
   Behavior on implicitHeight { 
     NumberAnimation { duration: 140; easing.type: Easing.Linear } 
   }
@@ -26,7 +27,6 @@ Rectangle {
     anchors.fill: parent
     spacing: 0
 
-    // Header Workspace
     Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 64
@@ -66,7 +66,7 @@ Rectangle {
           }
 
           Text {
-            readonly property int strength: WifiService.connected ? WifiService.activeNetwork.strength : 0
+            property int strength: WifiService.connected ? WifiService.activeNetwork.strength : 0
             text: {
               if (!WifiService.connected) return "STATUS :: STDBY_MODE";
               let bars = "░░░░";
@@ -83,8 +83,8 @@ Rectangle {
         }
 
         Text {
-          text: wifiCard.expanded ? "[-] LAY_02" : "[+] LAY_01"
-          color: wifiCard.expanded ? Theme.accentBlue : Theme.fgMuted
+          text: expanded ? "[-] LAY_02" : "[+] LAY_01"
+          color: expanded ? Theme.accentBlue : Theme.fgMuted
           font.family: Theme.fontMono
           font.pixelSize: 10
         }
@@ -98,15 +98,16 @@ Rectangle {
       }
     }
 
-    // FIX: High performance solid pixel divider eliminates text metrics binding loop
-    Rectangle {
+    Text {
       Layout.fillWidth: true
-      height: 1
+      text: "─".repeat(width / 7)
       color: Theme.borderMain
+      font.family: Theme.fontMono
+      font.pixelSize: 11
       visible: wifiCard.expanded
+      clip: true
     }
 
-    // Available Client Connections List View
     ListView {
       id: networkList
       Layout.fillWidth: true
@@ -114,8 +115,8 @@ Rectangle {
       Layout.margins: 8
       model: WifiService.nearbyNetworks
       spacing: 2
-      visible: wifiCard.expanded
-      clip: true
+      visible: opacity > 0
+      opacity: wifiCard.expanded ? 1.0 : 0.0
 
       delegate: Rectangle {
         width: networkList.width
@@ -147,7 +148,7 @@ Rectangle {
               else if (s > 50) return "▂▄▆░";
               else if (s > 25) return "▂▄░░";
               else if (s > 0)  return "▂░░░";
-              return "░░░░";
+              return "░░░░"; // Fallback for 0% or dead nodes
             }
             color: modelData.active ? Theme.accentBlue : Theme.fgMuted
             font.family: Theme.fontMono
@@ -160,7 +161,7 @@ Rectangle {
           anchors.fill: parent
           hoverEnabled: true
           cursorShape: Qt.PointingHandCursor
-          onClicked: WifiService.connectToNetwork(modelData.ssid)
+          onClicked: { WifiService.connectToNetwork(modelData.ssid); }
         }
       }
     }
