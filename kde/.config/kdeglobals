@@ -1,0 +1,145 @@
+[ColorEffects:Disabled]
+ChangeSelectionColor=
+Color=
+ColorAmount=
+ColorEffect=
+ContrastAmount=
+ContrastEffect=
+Enable=
+IntensityAmount=
+IntensityEffect=
+
+[ColorEffects:Inactive]
+ChangeSelectionColor=
+Color=
+ColorAmount=
+ColorEffect=
+ContrastAmount=
+ContrastEffect=
+Enable=
+IntensityAmount=
+IntensityEffect=
+
+[Colors:Button]
+BackgroundAlternate=111,86,174
+BackgroundNormal=30,33,50
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=107,112,137
+ForegroundLink=209,199,242
+ForegroundNormal=198,200,209
+ForegroundVisited=119,89,180
+
+[Colors:Complementary]
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundLink=146,110,228
+
+[Colors:Header]
+BackgroundAlternate=46,50,68
+BackgroundNormal=30,33,50
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=107,112,137
+ForegroundLink=209,199,242
+ForegroundNormal=198,200,209
+ForegroundVisited=119,89,180
+
+[Colors:Selection]
+BackgroundAlternate=108,84,169
+BackgroundNormal=108,84,169
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=255,255,255
+ForegroundLink=209,199,242
+ForegroundNormal=255,255,255
+ForegroundVisited=119,89,180
+
+[Colors:Tooltip]
+BackgroundAlternate=232,233,236
+BackgroundNormal=22,24,33
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=107,112,137
+ForegroundLink=146,110,228
+ForegroundNormal=198,200,209
+ForegroundVisited=119,89,180
+
+[Colors:View]
+BackgroundAlternate=30,33,50
+BackgroundNormal=22,24,33
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=107,112,137
+ForegroundLink=146,110,228
+ForegroundNormal=198,200,209
+ForegroundVisited=119,89,180
+
+[Colors:Window]
+BackgroundAlternate=46,50,68
+BackgroundNormal=22,24,33
+DecorationFocus=146,110,228
+DecorationHover=146,110,228
+ForegroundActive=146,110,228
+ForegroundInactive=107,112,137
+ForegroundLink=146,110,228
+ForegroundNormal=198,200,209
+ForegroundVisited=119,89,180
+
+[General]
+ColorScheme=Iceberg Dark & Hybrid
+ColorSchemeHash=2c3f86428c11011a7c64ee1e7f47c274d498ff10
+TerminalApplication=alacritty
+TerminalService=Alacritty.desktop
+UseSystemBell=true
+XftHintStyle=hintslight
+XftSubPixel=none
+fixed=DepartureMono Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+font=CaskaydiaCove Nerd Font,11,-1,5,300,0,0,0,0,0,0,0,0,0,0,1,Light
+menuFont=DepartureMono Nerd Font Propo,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+smallestReadableFont=CaskaydiaCove Nerd Font,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+toolBarFont=CaskaydiaCove Nerd Font Mono,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+
+[KDE]
+LookAndFeelPackage=com.endeavouros.breezedarkeos.desktop
+contrast=7
+frameContrast=0.2
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=false
+Decoration position=2
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort hidden files last=false
+Sort reversed=false
+Speedbar Width=144
+View Style=Simple
+
+[KScreen]
+ScreenScaleFactors=eDP-1=1;HDMI-A-1=1;
+XwaylandClientsScale=false
+
+[Shortcuts]
+Home=Home Page; Alt+Home
+
+[WM]
+activeBackground=30,33,50
+activeBlend=132,160,198
+activeFont=CaskaydiaCove Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+activeForeground=198,200,209
+inactiveBackground=22,24,33
+inactiveBlend=46,50,68
+inactiveForeground=107,112,137

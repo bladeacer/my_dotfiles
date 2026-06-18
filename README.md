@@ -4,56 +4,49 @@ In this repository, you can find the dotfiles I use.
 
 #### Configurations included
 
-- Sane auto Speaker/Headphone audio switcher script/service
-  - Use the setup script :D
 - `nvim`
 - `tmux`
 - `vim`
 - `opencode`
-- `fzf` and `rg` aliases
-- `waybar`
+- `quickshell` (Wayland shell with KDE Plasma)
 - `hyprland`
-- `go` development
-- `ollama`
+- `alacritty`
+- `bash`
+- KDE Plasma configs
+- `starship`
+- `fcitx5`
+- `zathura`
 
-#### Installation
-
-Run the following in your home directory
+#### Installation (Arch Linux)
 
 ```bash
-git clone https://github.com/bladeacer/my_dotfiles.git
-cd dotfiles
-stow vim
-stow tmux
-stow bash
-# Or better yet use stow <package-name> -t ~/path/to/config
-stow .config
-stow <other_dirs>
+git clone https://github.com/bladeacer/my_dotfiles.git ~/my_dotfiles
+cd ~/my_dotfiles
+./setup.sh
 ```
 
-### Fastfetch
+The setup script will:
+1. Install required packages (stow, neovim, quickshell, playerctl, etc.)
+2. Stow all dotfiles to their proper locations
+3. Set up quickshell autostart
 
-Credit to https://codeberg.org/LainOS/LainOS-ricer-arch.
+#### Manual stow
 
-> Shout out to horse game for chibi Rice Shower
-
-For the wallpaper on Linux, symlink, copy to `/usr/share/<your_de>` or use your DE's GUI.
-
-#### Vim on Windows
-
-- Git clone as usual
-- Enable 64 bit support
-- Symlink files to your preference
-
-```md
-cmd.exe > mklink C:\Users\example\_vimrc C:\Users\example\<your_dotfiles_path>\_vimrc
+```bash
+cd ~/my_dotfiles
+stow bash            # ~/.bashrc, etc.
+stow nvim            # ~/nvim/
+stow quickshell      # ~/.config/quickshell/
+stow kde             # ~/.config/kdeglobals, etc.
+stow colors_kde      # ~/colors_kde/
+stow tmux            # ~/.tmux.conf
 ```
 
-Ensure both files do not exist before symbolic linking.
-> Copy over file content from _temp_vimrc to the first file in the command above.
+#### Blue Rose Logo
 
-- Need admin on `cmd.exe`
+The neovim startpage renders a blue rose ANSI art at `logo/blue_rose`.
+The quickshell status bar also displays a compact braille rendering.
 
-### License
+#### License
 
 Unlicence, see [LICENSE](./LICENSE)

@@ -1,0 +1,17 @@
+[Activities][a0912522-973a-4afd-8f93-833df34bb6a7]
+InhibitScreenManagement=false
+InhibitSuspend=false
+
+[Battery][Performance]
+PowerProfile=power-saver
+
+[BatteryManagement]
+BatteryCriticalAction=8
+BatteryCriticalLevel=10
+BatteryLowLevel=20
+
+[LowBattery][Display]
+UseProfileSpecificDisplayBrightness=false
+
+[LowBattery][Performance]
+PowerProfile=power-saver

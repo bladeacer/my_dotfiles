@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
 import "components" as Components
+import "services" as Services
 import "theme"
 
 ShellRoot {
@@ -36,6 +37,7 @@ ShellRoot {
   property string mediaStatus: "stopped"
   property string mediaArtUrl: ""
   property string batteryTelemetry: "BAT // --%"
+  property int batteryCapacity: 0
   property string bluetoothTelemetry: "BT // DOWN"
   property string activeWifiSSID: "DISCONNECTED"
   property int wifiSignalStrength: 0
@@ -90,7 +92,7 @@ ShellRoot {
     id: batPipe
     command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
     running: true
-    stdout: SplitParser { onRead: (line) => { root.batteryTelemetry = line.trim() !== "" ? `BAT // ${line.trim()}%` : "BAT // --%"; } }
+    stdout: SplitParser { onRead: (line) => { var c = parseInt(line.trim()); if (!isNaN(c)) root.batteryCapacity = c; root.batteryTelemetry = line.trim() !== "" ? `BAT // ${line.trim()}%` : "BAT // --%"; } }
   }
 
   // Bluetooth Link State Tracker
@@ -147,27 +149,45 @@ ShellRoot {
     id: statusBar
     WlrLayershell.layer: WlrLayer.Top
     anchors { top: true; left: true; right: true }
-    implicitHeight: 26
+    implicitHeight: 28
     color: Theme.widgetBg
 
     RowLayout {
       anchors.fill: parent; spacing: 0
 
+      // Left: logo + task tracker + focused window
       RowLayout {
-        Layout.preferredWidth: parent.width * 0.25
-        Layout.fillHeight: true; spacing: 10; Layout.leftMargin: 12
-        Text { text: "NAVI_OS"; font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true; color: Theme.accentBlue }
+        Layout.preferredWidth: parent.width * 0.35
+        Layout.fillHeight: true; spacing: 8; Layout.leftMargin: 12
+
+        Text {
+          text: "NAVI_OS"
+          font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true
+          color: Theme.accentBlue
+        }
+
         Components.TaskTracker { Layout.fillHeight: true }
+
+        Text {
+          text: Services.FocusedWindow.title !== ""
+            ? "[" + Services.FocusedWindow.title.substring(0, 24) + "]"
+            : ""
+          font.family: Theme.fontMono; font.pixelSize: 8
+          color: Theme.fgMuted
+          elide: Text.ElideRight
+          visible: Services.FocusedWindow.title !== ""
+        }
       }
 
+      // Center: media metadata (clickable)
       Item {
-        Layout.preferredWidth: parent.width * 0.40
+        Layout.preferredWidth: parent.width * 0.30
         Layout.fillHeight: true; clip: true
         MouseArea {
           anchors.fill: parent
           Text {
             anchors.centerIn: parent; text: root.mediaMetadata
-            font.family: Theme.fontMono; font.pixelSize: 10
+            font.family: Theme.fontMono; font.pixelSize: 9
             color: root.mediaMetadata.includes("IDLE") ? Theme.fgMuted : Theme.accentBlue
             elide: Text.ElideRight; width: Math.min(implicitWidth, parent.width - 10)
           }
@@ -175,6 +195,7 @@ ShellRoot {
         }
       }
 
+      // Right: status indicators
       Components.StatusRight {
         Layout.preferredWidth: parent.width * 0.35
         Layout.fillHeight: true; Layout.rightMargin: 12
@@ -245,6 +266,17 @@ ShellRoot {
     }
   }
 
+  // ── SUBTLE AUDIO SPECTRUM BAR ──
+  PanelWindow {
+    WlrLayershell.layer: WlrLayer.Bottom
+    WlrLayershell.exclusiveZone: 0
+    anchors { bottom: true; left: true; right: true }
+    implicitHeight: 14
+    color: "transparent"
+
+    Components.SpectrumVisualizer { anchors.fill: parent }
+  }
+
   // ── MODAL POPUP LAYER COMPONENT LOADERS ──
   Loader { id: mediaHUDLoader; active: false; sourceComponent: mediaComp }
   Component { id: mediaComp; Components.MediaHUD {} }
@@ -261,7 +293,9 @@ ShellRoot {
       // Change 32 to 26 if you want zero gap, or keep 32 for a clean 6px spacing
       targetY: 32
 
-      Components.Launcher {} 
+      Components.Launcher {
+        onCloseRequested: launcherLoader.active = false
+      }
     }
   }
 
@@ -291,20 +325,16 @@ ShellRoot {
     }
   }
 
-  // main.qml -> Loader for sysLoader
+  // System control center (centered full-screen)
   Loader { id: sysLoader; active: false; sourceComponent: sysComp }
   Component {
     id: sysComp
-    LocalInlinePopup { 
-      active: sysLoader.active 
-      center: true 
-      onActiveChanged: sysLoader.active = active 
-
-      // Forces the frame to stay tucked cleanly inside the right status margins
-      targetX: root.width - 332
+    LocalInlinePopup {
+      active: sysLoader.active
+      center: true
       targetY: 32
-
-      Components.SystemControlCenter {} 
+      onActiveChanged: sysLoader.active = active
+      Components.SystemControlCenter {}
     }
   }
 }

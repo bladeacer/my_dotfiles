@@ -1,0 +1,6 @@
+.headroom
+*.swp
+*.swo
+*~
+.DS_Store
+*.bak

@@ -1,0 +1,11 @@
+[general]
+bars = 40
+framerate = 30
+
+[input]
+method = pulse
+source = auto
+
+[output]
+method = noncurses
+channels = mono
