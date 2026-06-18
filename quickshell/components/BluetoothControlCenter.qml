@@ -6,115 +6,106 @@ import "../theme"
 
 Rectangle {
     id: compRoot
-    anchors.fill: parent
-    color: Theme.widgetBg
-    border.color: Theme.accentBlue
-    border.width: 1
-
-    signal onCloseRequested()
+    color: Theme.widgetBg; border.color: Theme.accentBlue; border.width: 1
 
     property string deviceListRaw: ""
-    
+    property string spinState: "—"
+
+    // Spin animation for the telemetry header icon
+    Timer {
+        interval: 250; running: true; repeat: true
+        onTriggered: {
+            if (spinState === "—") spinState = "\\";
+            else if (spinState === "\\") spinState = "│";
+            else if (spinState === "│") spinState = "/";
+            else spinState = "—";
+        }
+    }
+
     Process {
         id: btDevicesPipe
-        command: ["bash", "-c", "bluetoothctl devices Paired | while read -r line; do mac=$(echo \"$line\" | cut -d' ' -f2); name=$(echo \"$line\" | cut -d' ' -f3-); info=$(bluetoothctl info \"$mac\"); if echo \"$info\" | grep -q \"Connected: yes\"; then echo \"[*] $name ($mac)\"; else echo \"[ ] $name ($mac)\"; fi; done"]
+        command: ["bash", "-c", "bluetoothctl devices Paired | while read -r line; do mac=$(echo \"$line\" | cut -d' ' -f2); name=$(echo \"$line\" | cut -d' ' -f3-); info=$(bluetoothctl info \"$mac\"); if echo \"$info\" | grep -q \"Connected: yes\"; then type=\"UNKNOWN\"; echo \"$info\" | grep -q \"Icon: audio\" && type=\"AUDIO\"; echo \"$info\" | grep -q \"Icon: input\" && type=\"INPUT\"; echo \"CONNECTED|$name|$mac|$type\"; else echo \"DISCONNECTED|$name|$mac|--\"; fi; done"]
         running: true
         stdout: SplitParser {
-            onRead: (line) => {
-                if (line.trim() !== "") {
-                    compRoot.deviceListRaw += "  " + line.trim() + "\n";
-                }
-            }
+            onRead: (line) => { if (line.trim() !== "") compRoot.deviceListRaw += line.trim() + "\n"; }
         }
     }
 
     Timer {
-        interval: 4000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: {
-            compRoot.deviceListRaw = "";
-            btDevicesPipe.running = false;
-            btDevicesPipe.running = true;
-        }
-    }
-
-    // Modal Background Click Dismissal Handler
-    MouseArea {
-        anchors.fill: parent
-        onClicked: compRoot.onCloseRequested()
+        interval: 3000; running: true; repeat: true; triggeredOnStart: true
+        onTriggered: { compRoot.deviceListRaw = ""; btDevicesPipe.running = false; btDevicesPipe.running = true; }
     }
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 14
-        spacing: 8
+        anchors.fill: parent; anchors.margins: 14; spacing: 8
 
-        // Prevent layout clicks from bubbling up to dismissal backdrop
-        MouseArea {
-            Layout.fillWidth: true; Layout.fillHeight: true
-            propagateComposedEvents: false
+        RowLayout {
+            Layout.fillWidth: true
+            Text { text: `┌── [ BT_MANAGER // SCAN_${compRoot.spinState} ]`; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.accentBlue }
+        }
+
+        Flickable {
+            Layout.fillWidth: true; Layout.fillHeight: true; clip: true
+            contentWidth: deviceColumn.implicitWidth; contentHeight: deviceColumn.implicitHeight
+            flickableDirection: Flickable.VerticalFlick
 
             ColumnLayout {
-                anchors.fill: parent
-                spacing: 8
+                id: deviceColumn; spacing: 6; width: compRoot.width - 28
 
-                // Header Frame
-                RowLayout {
-                    Layout.fillWidth: true
-                    Text {
-                        text: "┌── [ BT_NODE_MANAGER // LINK_STATE ]"
-                        font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.accentBlue
-                    }
-                    Item { Layout.fillWidth: true }
-                    Text {
-                        text: "[X]"
-                        font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: compRoot.onCloseRequested()
-                        }
-                    }
-                }
+                Repeater {
+                    model: compRoot.deviceListRaw.trim().split("\n")
+                    delegate: RowLayout {
+                        Layout.fillWidth: true
+                        visible: modelData !== ""
+                        
+                        property var parts: modelData.split("|")
+                        property bool isConnected: parts[0] === "CONNECTED"
+                        property string devName: parts[1] ? parts[1] : "UNKNOWN"
+                        property string devMac: parts[2] ? parts[2] : "00:00:00:00:00:00"
+                        property string devType: parts[3] ? parts[3] : "--"
 
-                // FIX: Native Flickable text viewport container replacing ScrollView
-                Flickable {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    contentWidth: deviceText.implicitWidth
-                    contentHeight: deviceText.implicitHeight
-                    flickableDirection: Flickable.VerticalFlick
-
-                    Text {
-                        id: deviceText
-                        text: compRoot.deviceListRaw !== "" ? compRoot.deviceListRaw : "  NO PAIRED TELEMETRY FOUND"
-                        font.family: Theme.fontMono; font.pixelSize: 10
-                        color: Theme.fgNormal
-                        lineHeight: 1.4
-                    }
-                }
-
-                // Footer Control Unit Matrix
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 4
-                    Text { text: "├────────────────────────────────────────┤"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-                    RowLayout {
-                        spacing: 16
                         Text {
-                            text: "  [ DISCONNECT ALL ]"
-                            font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.accentBlue
+                            text: isConnected ? ` [*] [${devType}] ${devName}` : ` [ ] [--] ${devName}`
+                            font.family: Theme.fontMono; font.pixelSize: 10
+                            color: isConnected ? Theme.accentBlue : Theme.fgMuted
+                            Layout.fillWidth: true; elide: Text.ElideRight
+                        }
+
+                        Text {
+                            text: isConnected ? "[ DISCONNECT ]" : "[ CONNECT ]"
+                            font.family: Theme.fontMono; font.pixelSize: 9
+                            color: isConnected ? Theme.borderMain : Theme.accentBlue
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    let p = Quickshell.createProcess(["bash", "-c", "bluetoothctl devices Paired | cut -d' ' -f2 | xargs -I{} bluetoothctl disconnect {}"]);
+                                    let action = isConnected ? "disconnect" : "connect";
+                                    let p = Quickshell.createProcess(["bluetoothctl", action, devMac]);
                                     p.running = true;
                                 }
                             }
                         }
                     }
-                    Text { text: "└────────────────────────────────────────┘"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
                 }
             }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true; spacing: 4
+            Text { text: "├────────────────────────────────────────┤"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
+            RowLayout {
+                Text {
+                    text: "  [ DISCONNECT ALL TERMINALS ]"
+                    font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.accentBlue
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            let p = Quickshell.createProcess(["bash", "-c", "bluetoothctl devices Paired | cut -d' ' -f2 | xargs -I{} bluetoothctl disconnect {}"]);
+                            p.running = true;
+                        }
+                    }
+                }
+            }
+            Text { text: "└────────────────────────────────────────┘"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
         }
     }
 }

@@ -2,46 +2,81 @@ import QtQuick
 import QtQuick.Layouts
 import "../theme"
 
-RowLayout {
+Item {
     id: control
-    spacing: 12
+    // Forces the component container block to expand to wrap its children's dimensions natively
+    implicitWidth: mainRow.implicitWidth
+    Layout.fillHeight: true
     Layout.alignment: Qt.AlignRight
 
     signal btClicked()
-    signal wifiClicked()
+    signal wifiCtrlClicked()
     signal sysClicked()
 
-    // Interactive Bluetooth Module Node
-    MouseArea {
-        Layout.fillHeight: true; width: btLayout.implicitWidth
-        RowLayout { id: btLayout; anchors.fill: parent; Text { text: root.bluetoothTelemetry; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal } }
-        onClicked: control.btClicked()
+    Row {
+        id: mainRow
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        height: parent.height
+        spacing: 12
+
+        // ── BLUETOOTH HUB NODE ──
+        MouseArea {
+            height: parent.height
+            width: btText.implicitWidth
+            Text {
+                id: btText
+                anchors.verticalCenter: parent.verticalCenter
+                text: root.bluetoothTelemetry
+                font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal
+            }
+            onClicked: control.btClicked()
+        }
+
+        Text { text: "│"; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
+        Text { text: root.batteryTelemetry; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
+        Text { text: "│"; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
+
+        // ── DEDICATED INTERACTIVE WIFI_CTRL NODE ──
+        MouseArea {
+            height: parent.height
+            width: wifiText.implicitWidth
+            Text {
+                id: wifiText
+                anchors.verticalCenter: parent.verticalCenter
+                font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal
+                text: {
+                    let rssi = root.wifiSignalStrength;
+                    let bars = "░░░░"; // Disconnected baseline
+                    if (rssi > 75)      bars = "▂▄▆█";
+                    else if (rssi > 50) bars = "▂▄▆░";
+                    else if (rssi > 25) bars = "▂▄░░";
+                    else if (rssi > 0)  bars = "▂░░░";
+                    
+                    let ssid = root.activeWifiSSID;
+                    let cleanSsid = (ssid === "DISCONNECTED" || ssid === "") ? "NONE" : ssid;
+                    return `WIFI_CTRL // ${cleanSsid} [${bars}]`;
+                }
+            }
+            onClicked: control.wifiCtrlClicked()
+        }
+
+        Text { text: "│"; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
+
+        // ── SYSTEM CONTROL HARDWARE HUB ──
+        MouseArea {
+            height: parent.height
+            width: sysText.implicitWidth
+            Text {
+                id: sysText
+                anchors.verticalCenter: parent.verticalCenter
+                text: "SYS_CTRL"
+                font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal
+            }
+            onClicked: control.sysClicked()
+        }
+
+        Text { text: "│"; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
+        Text { text: root.currentTimestamp; anchors.verticalCenter: parent.verticalCenter; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
     }
-
-    Text { text: "│"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-    Text { text: root.batteryTelemetry; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
-    Text { text: "│"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-
-    // WLAN Telemetry Readout (Pure Data Stream, Not Clickable)
-    Text { text: root.wifiTelemetry; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.accentBlue }
-
-    Text { text: "│"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-
-    // Separate Wi-Fi Interaction Interface Button
-    MouseArea {
-        Layout.fillHeight: true; width: wifiLabel.implicitWidth
-        Text { id: wifiLabel; anchors.verticalCenter: parent.verticalCenter; text: "WIFI_CTRL"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
-        onClicked: control.wifiClicked()
-    }
-
-    Text { text: "│"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-
-    MouseArea {
-        Layout.fillHeight: true; width: sysLabel.implicitWidth
-        Text { id: sysLabel; anchors.verticalCenter: parent.verticalCenter; text: "SYS_CTRL"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
-        onClicked: control.sysClicked()
-    }
-
-    Text { text: "│"; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgMuted }
-    Text { text: root.currentTimestamp; font.family: Theme.fontMono; font.pixelSize: 10; color: Theme.fgNormal }
 }
