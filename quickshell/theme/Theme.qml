@@ -6,6 +6,10 @@ import Quickshell.Io
 QtObject {
     id: root
 
+    readonly property string fontMono: "Departure Mono Nerd Font Mono" // Or "Hack", "Fira Code", "JetBrains Mono"
+    readonly property color terminalGreen: Qt.rgba(180/255, 190/255, 130/255, 0.4) // Positive alpha accent
+    readonly property int borderThin: 1
+
     // --- 1. SET THE PATH TO YOUR THEME FILE ---
     // You can point this directly to your stowed config or ~/.config/kdeglobals
     readonly property string colorSchemePath: "../../colors_kde/IcebergDark.colors"
