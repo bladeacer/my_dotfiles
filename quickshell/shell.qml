@@ -1,26 +1,34 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Io
 import "components"
 import "theme"
 
 ShellRoot {
     id: root
 
-    Component.onCompleted: {
-        Quickshell.registerShortcut("Meta+Space", () => launcherLoader.active = !launcherLoader.active);
-        Quickshell.registerShortcut("Meta+N", () => wifiLoader.active = !wifiLoader.active);
-        Quickshell.registerShortcut("Meta+S", () => sysLoader.active = !sysLoader.active);
+    // ── NATIVE DECLARATIVE HOTKEYS ──
+    Shortcut {
+        sequence: "Meta+Space"
+        onActivated: launcherLoader.active = !launcherLoader.active
+    }
+    Shortcut {
+        sequence: "Meta+N"
+        onActivated: wifiLoader.active = !wifiLoader.active
+    }
+    Shortcut {
+        sequence: "Meta+S"
+        onActivated: sysLoader.active = !sysLoader.active
     }
 
     // ── DATA STORAGE ENGINE ──
     property string currentTimestamp: "0000.00.00 │ 00:00:00"
+    property string mediaMetadata: "TRACK // IDLE"
     property string batteryTelemetry: "BAT // --%"
     property string bluetoothTelemetry: "BT // DOWN"
     property string wifiTelemetry: "WLAN // IDLE"
-    property string mediaMetadata: "TRACK // IDLE"
 
     // Time Engine
     Timer {
@@ -42,7 +50,7 @@ ShellRoot {
         }
     }
 
-    // Isolated Bluetooth Parser
+    // Isolated Bluetooth Status Parser
     Process {
         id: btPipe
         command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
@@ -52,7 +60,7 @@ ShellRoot {
         }
     }
 
-    // Isolated Wi-Fi Router Parser
+    // Isolated Network Router SSID Parser
     Process {
         id: wifiPipe
         command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID dev wifi 2>/dev/null | grep '^yes' | cut -d':' -f2 || echo 'DISCONNECTED'"]
@@ -65,7 +73,7 @@ ShellRoot {
         }
     }
 
-    // Isolated Media Tracker Engine
+    // Isolated Media Metadata Tracker Engine
     Process {
         id: mediaPipe
         command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}"]
@@ -75,7 +83,7 @@ ShellRoot {
         }
     }
 
-    // Global Polling Loop (Triggers every 3 seconds)
+    // Global Telemetry Polling Refresh Frequency
     Timer {
         interval: 3000; running: true; repeat: true; triggeredOnStart: true
         onTriggered: {
@@ -84,9 +92,9 @@ ShellRoot {
             wifiPipe.running = false; wifiPipe.running = true;
             mediaPipe.running = false; mediaPipe.running = true;
         }
-    } 
+    }
 
-    // ── CORE BAR PANEL ──
+    // ── CORE BAR SURFACE WINDOW ──
     PanelWindow {
         id: statusBar
         WlrLayershell.layer: WlrLayer.Top
@@ -98,6 +106,7 @@ ShellRoot {
             anchors.fill: parent
             spacing: 0
 
+            // Left Block
             RowLayout {
                 Layout.preferredWidth: parent.width * 0.30
                 Layout.fillHeight: true; spacing: 10; Layout.leftMargin: 12
@@ -105,6 +114,7 @@ ShellRoot {
                 TaskTracker { Layout.fillHeight: true }
             }
 
+            // Center Block (Media Matrix Toggle)
             Item {
                 Layout.preferredWidth: parent.width * 0.30
                 Layout.fillHeight: true; clip: true
@@ -120,54 +130,108 @@ ShellRoot {
                 }
             }
 
+            // Right Block
             StatusRight {
                 Layout.preferredWidth: parent.width * 0.40
                 Layout.fillHeight: true; Layout.rightMargin: 12
+                onBtClicked: btLoader.active = !btLoader.active
                 onWifiClicked: wifiLoader.active = !wifiLoader.active
                 onSysClicked: sysLoader.active = !sysLoader.active
             }
         }
     }
 
-    // ── STYLIZED HOOK LAYERS ──
+    // ── MODULAR PANEL INTERACTION LOADERS ──
     Loader { id: mediaHUDLoader; active: false; sourceComponent: mediaComp }
     Component { id: mediaComp; MediaHUD {} }
 
     Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
     Component { 
-      id: launchComp
-      PanelWindow { 
-        WlrLayershell.layer: WlrLayer.Overlay
+        id: launchComp
+        PanelWindow { 
+            id: launcherWindow
+            WlrLayershell.layer: WlrLayer.Overlay
+            anchors { top: true; bottom: true; left: true; right: true }
+            color: "transparent"
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
-        // FIX: Replaced anchors.fill: parent with explicit layer shell edge targeting
-        anchors { top: true; bottom: true; left: true; right: true }
+            FocusScope {
+                anchors.fill: parent
+                focus: true
+                Keys.onEscapePressed: launcherLoader.active = false
 
-        color: "transparent"
-        Launcher { 
-          onCloseRequested: { launcherLoader.active = false; } 
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: launcherLoader.active = false
+                }
+
+                Launcher {
+                    anchors.centerIn: parent
+                    MouseArea { 
+                        anchors.fill: parent 
+                        propagateComposedEvents: false 
+                    }
+                }
+            }
         } 
-      } 
     }
 
+    // Dedicated Bluetooth Panel Layer
+    Loader { id: btLoader; active: false; sourceComponent: btComp }
+    Component { 
+        id: btComp
+        PanelWindow { 
+            WlrLayershell.layer: WlrLayer.Overlay
+            anchors { top: true; right: true }
+            WlrLayershell.margins { top: 32; right: 200 }
+            implicitWidth: 300; implicitHeight: 350; color: "transparent"
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            
+            FocusScope { 
+                anchors.fill: parent; focus: true
+                Keys.onEscapePressed: btLoader.active = false
+                
+                // FIXED: Handle window dismissal here instead of property mapping
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: btLoader.active = false
+                }
+                BluetoothControlCenter { 
+                    anchors.fill: parent
+                    MouseArea { anchors.fill: parent; propagateComposedEvents: false }
+                } 
+            } 
+        } 
+    }
+
+    // Wi-Fi Panel Layer
     Loader { id: wifiLoader; active: false; sourceComponent: wifiComp }
     Component { 
         id: wifiComp
         PanelWindow { 
             WlrLayershell.layer: WlrLayer.Overlay
             anchors { top: true; right: true }
-            WlrLayershell.margins { top: 32; right: 12 }
-            implicitWidth: 360; implicitHeight: 480
-            color: "transparent"
+            WlrLayershell.margins { top: 32; right: 80 }
+            implicitWidth: 360; implicitHeight: 480; color: "transparent"
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            
             FocusScope { 
                 anchors.fill: parent; focus: true
-                Keys.onEscapePressed: { wifiLoader.active = false; }
+                Keys.onEscapePressed: wifiLoader.active = false
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: wifiLoader.active = false
+                }
                 WifiControlCenter { 
-                    onCloseRequested: { wifiLoader.active = false; } 
+                    anchors.fill: parent
+                    MouseArea { anchors.fill: parent; propagateComposedEvents: false }
                 } 
             } 
         } 
     }
 
+    // System Status Panel Layer
     Loader { id: sysLoader; active: false; sourceComponent: sysComp }
     Component { 
         id: sysComp
@@ -175,15 +239,22 @@ ShellRoot {
             WlrLayershell.layer: WlrLayer.Overlay
             anchors { top: true; right: true }
             WlrLayershell.margins { top: 32; right: 12 }
-            implicitWidth: 320; implicitHeight: 400
-            color: "transparent"
+            implicitWidth: 320; implicitHeight: 400; color: "transparent"
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            
             FocusScope { 
                 anchors.fill: parent; focus: true
-                Keys.onEscapePressed: { sysLoader.active = false; }
+                Keys.onEscapePressed: sysLoader.active = false
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: sysLoader.active = false
+                }
                 SystemControlCenter { 
-                    onCloseRequested: { sysLoader.active = false; } 
+                    anchors.fill: parent
+                    MouseArea { anchors.fill: parent; propagateComposedEvents: false }
                 } 
             } 
         } 
-    }
+    }        
 }
