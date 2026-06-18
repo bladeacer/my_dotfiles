@@ -6,8 +6,8 @@ import "../theme"
 
 Rectangle {
     id: sysContainer
-    implicitWidth: 320
-    implicitHeight: 400
+    width: 320   // Explicitly define real dimensions
+    height: 400
     color: Theme.widgetBg
     border.color: Theme.accentBlue
     border.width: 1
@@ -57,7 +57,7 @@ Rectangle {
 
     // ── SYSTEM CONTROL ACTIONS (WRITE COMMANDS) ──
     Process { id: cmdToggleBt; command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"] }
-    Process { id: cmdLogout; command: ["qdbus", "org.kde.ksmserver", "/KSMServer", "logout", "0", "0", "0"] }
+    Process { id: cmdLogout; command: ["qdbus", "org.kde.Shutdown", "/Shutdown", "logout"] }
     Process { id: cmdReboot; command: ["systemctl", "reboot"] }
     Process { id: cmdPoweroff; command: ["systemctl", "poweroff"] }
 

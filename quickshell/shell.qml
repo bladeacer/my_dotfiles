@@ -9,6 +9,23 @@ import "theme"
 ShellRoot {
   id: root
 
+  Process {
+    id: ipcReader
+    // Setup script: ensures the pipe exists, then opens a persistent stream via tail -f
+    command: ["bash", "-c", "mkdir -p /tmp/quickshell && [ ! -p /tmp/quickshell/ipc ] && mkfifo /tmp/quickshell/ipc; exec tail -f /tmp/quickshell/ipc"]
+    running: true
+    stdout: SplitParser {
+      onRead: (line) => {
+        let action = line.trim().toLowerCase();
+        if (action === "toggle-launcher") {
+          launcherLoader.active = !launcherLoader.active;
+        } else if (action === "toggle-syscontrol") {
+          sysLoader.active = !sysLoader.active;
+        }
+      }
+    }
+  }
+
   // ── HOTKEY ROUTING MATRIX ──
   Shortcut { sequence: "Meta+Space"; onActivated: launcherLoader.active = !launcherLoader.active }
   Shortcut { sequence: "Meta+S"; onActivated: sysLoader.active = !sysLoader.active }
@@ -235,12 +252,15 @@ ShellRoot {
   Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
   Component {
     id: launchComp
-    // Launcher keeps center: true to lock to the terminal workspace center lines
     LocalInlinePopup { 
       active: launcherLoader.active 
-      center: true 
+      center: true // Keeps horizontal alignment dead center
       onActiveChanged: launcherLoader.active = active 
-      targetY: (root.height - 500) / 2 
+
+      // FIXED: Positions it exactly underneath the 26px high status bar
+      // Change 32 to 26 if you want zero gap, or keep 32 for a clean 6px spacing
+      targetY: 32
+
       Components.Launcher {} 
     }
   }
@@ -271,15 +291,20 @@ ShellRoot {
     }
   }
 
+  // main.qml -> Loader for sysLoader
   Loader { id: sysLoader; active: false; sourceComponent: sysComp }
   Component {
     id: sysComp
     LocalInlinePopup { 
       active: sysLoader.active 
-      center: false // Disabled centering mode
+      center: true 
       onActiveChanged: sysLoader.active = active 
-      targetX: root.width - 332 
-      Components.SystemControlCenter { width: 320; height: 400 } 
+
+      // Forces the frame to stay tucked cleanly inside the right status margins
+      targetX: root.width - 332
+      targetY: 32
+
+      Components.SystemControlCenter {} 
     }
-  } 
+  }
 }
