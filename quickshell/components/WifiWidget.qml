@@ -10,7 +10,7 @@ Rectangle {
   id: wifiCard
   width: parent ? parent.width : 400 // Scaled up baseline default fallback width
 
-  property bool expanded: false
+  property bool expanded: true
   implicitHeight: expanded ? 500 : 72 // Increased open height to 500 and closed height to 72
   clip: true 
 

@@ -196,8 +196,9 @@ ShellRoot {
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     property bool active: false
+    property bool center: true // Set this to true for centered popups, false for tray menus
     property int targetX: 0
-    property int targetY: 32
+    property int targetY: 32   
     default property alias content: container.children
 
     FocusScope {
@@ -207,11 +208,21 @@ ShellRoot {
       Keys.onEscapePressed: popupWindow.active = false
       MouseArea { anchors.fill: parent; onClicked: popupWindow.active = false }
 
+      // This item acts as the positioning anchor space
       Item {
         id: container
-        x: popupWindow.targetX; y: popupWindow.targetY
-        width: children.length > 0 ? children[0].width : 0
-        height: children.length > 0 ? children[0].height : 0
+        y: popupWindow.targetY
+
+        // Dynamic declarative width tracking of the loaded sub-widget
+        width: children.length > 0 ? (children[0].width > 0 ? children[0].width : children[0].implicitWidth) : 0
+        height: children.length > 0 ? (children[0].height > 0 ? children[0].height : children[0].implicitHeight) : 0
+
+        // PERFECT CENTERING: Anchors horizontally to the parent window layout
+        anchors.horizontalCenter: popupWindow.center ? parent.horizontalCenter : undefined
+
+        // Fallback to manual X placement only if center mode is disabled
+        x: popupWindow.center ? 0 : popupWindow.targetX
+
         MouseArea { anchors.fill: parent; propagateComposedEvents: false }
       }
     }
@@ -224,13 +235,27 @@ ShellRoot {
   Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
   Component {
     id: launchComp
-    LocalInlinePopup { active: launcherLoader.active; onActiveChanged: launcherLoader.active = active; targetX: (root.width - 400)/2; targetY: (root.height - 500)/2; Components.Launcher {} }
+    // Launcher keeps center: true to lock to the terminal workspace center lines
+    LocalInlinePopup { 
+      active: launcherLoader.active 
+      center: true 
+      onActiveChanged: launcherLoader.active = active 
+      targetY: (root.height - 500) / 2 
+      Components.Launcher {} 
+    }
   }
 
   Loader { id: btLoader; active: false; sourceComponent: btComp }
   Component {
     id: btComp
-    LocalInlinePopup { active: btLoader.active; onActiveChanged: btLoader.active = active; targetX: root.width - 480; Components.BluetoothControlCenter { width: 300; height: 350 } }
+    // Changed center to false so it drops into your system tray anchor bounds safely
+    LocalInlinePopup { 
+      active: btLoader.active 
+      center: false 
+      onActiveChanged: btLoader.active = active 
+      targetX: root.width - 312 // Corrected from root.width to keep inside screen frame
+      Components.BluetoothControlCenter { width: 300; height: 350 } 
+    }
   }
 
   Loader { id: wifiLoader; active: false; sourceComponent: wifiComp }
@@ -239,11 +264,9 @@ ShellRoot {
     LocalInlinePopup { 
       active: wifiLoader.active 
       onActiveChanged: wifiLoader.active = active 
+      center: false // Dropped center mode so it aligns perfectly underneath the wifi tray icon
+      targetX: root.width - 412 // Adjusted for the 400px panel layout width + edge gap
 
-      // Shift targetX leftwards to accommodate the wider 400px panel layout
-      targetX: root.width - 420  
-
-      // Let height remain dynamic to follow the widget's internal state machine
       Components.WifiWidget { width: 400 } 
     }
   }
@@ -251,6 +274,12 @@ ShellRoot {
   Loader { id: sysLoader; active: false; sourceComponent: sysComp }
   Component {
     id: sysComp
-    LocalInlinePopup { active: sysLoader.active; onActiveChanged: sysLoader.active = active; targetX: root.width - 332; Components.SystemControlCenter { width: 320; height: 400 } }
-  }
+    LocalInlinePopup { 
+      active: sysLoader.active 
+      center: false // Disabled centering mode
+      onActiveChanged: sysLoader.active = active 
+      targetX: root.width - 332 
+      Components.SystemControlCenter { width: 320; height: 400 } 
+    }
+  } 
 }
