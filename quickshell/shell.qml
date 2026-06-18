@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Io // <-- Need this for the IPC engine
+import Quickshell.Io
 import "components"
 import "theme"
 
@@ -16,10 +16,9 @@ ShellRoot {
         implicitHeight: 600
         color: "transparent"
         
-        // This registers 'widget_bar' into the quickshell msg map explicitly!
         IpcHandler {
             target: "widget_bar"
-            function toggleVisibility(): void {
+            function toggleVisibility() {
                 widgetBar.visible = !widgetBar.visible;
             }
         }
@@ -32,25 +31,43 @@ ShellRoot {
         }
     }
 
-    // ── 2. CENTERED LAUNCHER WINDOW ──
-    PanelWindow {
-        id: launcherWindow
-        WlrLayershell.layer: WlrLayer.Overlay
-        anchors {} // No anchors centers the surface on Wayland
-        
-        implicitWidth: 560
-        implicitHeight: 400
-        color: "transparent"
-        visible: false 
-
-        // This registers 'launcher_hud' into the quickshell msg map explicitly!
-        IpcHandler {
-            target: "launcher_hud"
-            function toggleVisibility(): void {
-                launcherWindow.visible = !launcherWindow.visible;
+    // ── 2. GLOBAL LAUNCHER IPC MANAGER ──
+    IpcHandler {
+        target: "launcher_hud"
+        function toggleVisibility() {
+            if (launcherLoader.status === Loader.Ready && launcherLoader.sourceComponent !== null) {
+                launcherLoader.sourceComponent = null;
+            } else {
+                launcherLoader.sourceComponent = launcherComponent;
             }
         }
+    }
 
-        Launcher {}
+    Loader {
+        id: launcherLoader
+        sourceComponent: null
+    }
+
+    Component {
+        id: launcherComponent
+        
+        PanelWindow {
+            id: dynamicLauncherWindow
+            WlrLayershell.layer: WlrLayer.Overlay
+            anchors {} 
+            
+            implicitWidth: 560
+            implicitHeight: 400
+            color: "transparent"
+            
+            // FIX: Forces compositor seat mapping onto this surface frame instantly
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Force
+
+            Launcher {
+                onCloseRequested: {
+                    launcherLoader.sourceComponent = null;
+                }
+            }
+        }
     }
 }
