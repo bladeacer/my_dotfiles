@@ -212,12 +212,12 @@ require("lazy").setup({
     end
   },
 
-  {
-    'neovim/nvim-lspconfig',
-    lazy = false,
-    priority = 900,
-  },
-  { 'rafamadriz/friendly-snippets' },
+  -- {
+  --   'neovim/nvim-lspconfig',
+  --   lazy = false,
+  --   priority = 900,
+  -- },
+  -- { 'rafamadriz/friendly-snippets' },
 
   {
     'saghen/blink.cmp',
