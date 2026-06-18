@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Networking
+import "../services" // <-- Import your service folder
 import "../theme" 
 
 Rectangle {
@@ -25,15 +25,13 @@ Rectangle {
             width: 32
             height: 32
             radius: Theme.radiusCompact
-            color: Network.connected ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.1) : Qt.rgba(Theme.fgMuted.r, Theme.fgMuted.g, Theme.fgMuted.b, 0.1)
+            color: WifiService.connected ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.1) : Qt.rgba(Theme.fgMuted.r, Theme.fgMuted.g, Theme.fgMuted.b, 0.1)
 
             Text {
                 anchors.centerIn: parent
-                // Added safety checks for Network.wifi existence
-                text: (Network.wifi && Network.wifi.enabled) 
-                      ? (Network.connected ? "󰤨" : "󰤯") 
-                      : "󰤮"
-                color: Network.connected ? Theme.accentBlue : Theme.fgMuted
+                // Check against your parsed backend state flags
+                text: WifiService.wifiEnabled ? (WifiService.connected ? "󰤨" : "󰤯") : "󰤮"
+                color: WifiService.connected ? Theme.accentBlue : Theme.fgMuted
                 font.pointSize: 14
             }
         }
@@ -43,8 +41,7 @@ Rectangle {
             spacing: 2
 
             Text {
-                // Safely checks if wifi and activeNetwork exist before pulling the SSID
-                text: (Network.wifi && Network.wifi.activeNetwork) ? Network.wifi.activeNetwork.ssid : "Disconnected"
+                text: WifiService.connected ? WifiService.activeNetwork.ssid : "Disconnected"
                 color: Theme.fgNormal
                 font.weight: Font.Bold
                 font.pointSize: 10
@@ -52,8 +49,7 @@ Rectangle {
             }
 
             Text {
-                // Safely handles the signal strength percentage string mapping
-                text: Network.connected ? `Connected (${(Network.wifi && Network.wifi.activeNetwork) ? Network.wifi.activeNetwork.signalStrength : 0}%)` : "No Connection"
+                text: WifiService.connected ? `Connected (${WifiService.activeNetwork.strength}%)` : "No Connection"
                 color: Theme.fgMuted
                 font.pointSize: 8
                 Layout.alignment: Qt.AlignLeft
