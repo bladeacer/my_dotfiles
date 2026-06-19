@@ -12,7 +12,8 @@ You are explicitly authorized to completely wipe, nuke, and rewrite the existing
 ## 2. THEMES, ANIMATIONS & GLSL VISUALS
 * **Palette Asset:** Extract and strictly color-map styles from `../IcebergDark.colors`.
 * **Visual Direction:** Minimalist, retro-technical, command-line terminal aesthetics inspired by Serial Experiments Lain (90s anime style). Safely weave in contextual Lain concepts like "The Wired" or "Cyberia" into panel labeling schemas where appropriate.
-* **Separation of Concerns:** * **Blue Rose:** Handled strictly as an ANSI Truecolor/ASCII art graphic engine loader.
+* **Separation of Concerns:**
+    * **Blue Rose:** Handled strictly as an ANSI Truecolor/ASCII art graphic engine loader.
     * **Matrix:** Refers explicitly to structural layout data streams, grid configurations, and systemic code arrangements. These two concepts must remain distinct.
 * **Animations & Shaders:** Implement hardware-accelerated menu transitions and sliding frames using custom QML animations and embedded GLSL Fragment Shaders (`ShaderEffect`) ported from `Persona-Quickshell`.
 * **Audio Visualizer:** Provide a fully realized, stable `cava`-driven audio spectrum visualizer using an asynchronous pipe into a raw data array, utilizing GLSL effects or matrix blocks to paint the equalizer bands cleanly.
@@ -32,7 +33,8 @@ You are explicitly authorized to completely wipe, nuke, and rewrite the existing
 
 ## 4. COMPONENT REGISTRY & INTERACTIVE MATRIX
 The bar and desktop overlay ecosystem must handle the following components flawlessly:
-* **StatusBar (28px Top Panel):** * `[NAVI_OS]` Branding Identifier.
+* **StatusBar (28px Top Panel):**
+    * `[NAVI_OS]` Branding Identifier.
     * **Currently Focused Window Name:** Live display of active application title tracking.
     * **Task Bar Pinned/Active Items:** Light layout tracking workspace index/tasks.
     * **Keyboard Layout Indicator:** Show active layout (e.g., `US`, `JA`).
@@ -43,15 +45,20 @@ The bar and desktop overlay ecosystem must handle the following components flawl
     * **Logout Matrix Controller:** Secure power actions overlay (Halt, Reboot, Sleep, Logout).
 * **Application Launcher:** Full keyboard-navigable matrix layout with dynamic fuzzy-search capability.
 
-## 5. HOTKEY ROUTING MATRIX (VIM-STYLE PARADIGM)
-Global keys use standard Meta modifiers, while internal navigation overlays strictly enforce Vim movement keys (`H`, `J`, `K`, `L` / Enter / Escape):
+## 5. HOTKEY ROUTING MATRIX (VIM / READLINE PARADIGM)
+Global keys use standard Meta modifiers, while internal navigation overlays strictly enforce classic terminal home-row and Readline-style movement keys:
 * `Meta + Space`: Toggle Application Launcher Menu.
 * `Meta + S`: Toggle System Control Center Overlay.
 * `Escape`: Instantly collapse/close any active popup window layer.
-* **Menu-Internal Keybinds:** Focus maps to `J` (Move Down), `K` (Move Up), `H`/`L` (Page Context Adjustments), and `Enter` (Execute/Select).
+* **Menu-Internal Navigation:** * `Ctrl + N`: Move to the **Next** item in interactive selection lists or fuzzy-search menus.
+    * `Ctrl + P`: Move to the **Previous** item in interactive selection lists or fuzzy-search menus.
+    * `J` / `K`: Alternative vertical focus stepping (Move Down / Move Up) when input fields are unfocused.
+    * `H` / `L`: Horizontal context / layout switching and page adjustments.
+    * `Enter`: Execute selection / Launch choice.
 
 ## 6. EXTENSIVE SPECIFICATION REFERENCES
 * **Quickshell Architecture:** Use the compiled framework references found in `quickshell_compiled_docs.md`.
+* **Structural Engineering Guidelines:** Deeply tap into the design parameters, coding tricks, and paradigms defined inside `~/Desktop/projects/lccst/skill.md`.
 * **Layout Designs:** Reference `~/Desktop/projects/Persona-Quickshell` and `~/Desktop/projects/DankMaterialShell` to extract layout concepts, structural code organization strategies, fluid layout animations, and telemetry modules. (Note: Avoid using `noctalia` due to heavy C++ dependencies).
 
 ## 7. DEVELOPMENT RULES

@@ -1,168 +1,101 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Io
 import "../services"
-import "../theme" 
+import "../theme"
 
 Rectangle {
-  id: wifiCard
-  implicitWidth: 400
-  implicitHeight: expanded ? 500 : 72
-  clip: true 
+    id: wifiCard
+    implicitWidth: 380
+    implicitHeight: expanded ? 480 : 64
+    clip: true
+    color: Theme.widgetBg
+    border.color: expanded ? Theme.accentBlue : Theme.borderMain
+    border.width: Theme.borderThin
 
-  property bool expanded: true
+    property bool expanded: true
 
-  color: Theme.widgetBg
-  border.color: expanded ? Theme.accentBlue : Theme.borderMain
-  border.width: Theme.borderThin
+    Behavior on implicitHeight { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
 
-  Behavior on implicitHeight { 
-    NumberAnimation { duration: 140; easing.type: Easing.Linear } 
-  }
+    ColumnLayout {
+        anchors.fill: parent; spacing: 0
 
-  ColumnLayout {
-    anchors.fill: parent
-    spacing: 0
+        Item {
+            Layout.fillWidth: true; Layout.preferredHeight: 56
 
-    // Header Workspace
-    Item {
-      Layout.fillWidth: true
-      Layout.preferredHeight: 64
+            RowLayout {
+                anchors.fill: parent; anchors.margins: 12; spacing: 12
 
-      Text { text: "┌"; color: Theme.fgMuted; font.family: Theme.fontMono; anchors { top: parent.top; left: parent.left; margins: 6 } }
-      Text { text: "┐"; color: Theme.fgMuted; font.family: Theme.fontMono; anchors { top: parent.top; right: parent.right; margins: 6 } }
+                Text {
+                    text: WifiService.connected ? "\u25b0" : "\u2591"
+                    color: WifiService.connected ? Theme.accentBlue : Theme.fgMuted
+                    font.family: Theme.fontMono; font.pixelSize: 16
+                }
 
-      RowLayout {
-        anchors.fill: parent
-        anchors.margins: 14
-        spacing: 12
+                ColumnLayout {
+                    Layout.fillWidth: true; spacing: 2
+                    Text {
+                        text: "WIRED_SYS // " + (WifiService.connected ? WifiService.activeSSID : "NULL")
+                        color: Theme.fgNormal; font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                    }
+                    Text {
+                        text: "LINK_METR [" + Theme.blockMeter(WifiService.activeStrength) + "] " + WifiService.activeStrength + "%"
+                        color: Theme.fgMuted; font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                    }
+                }
 
-        Text {
-          text: WifiService.wifiEnabled ? (WifiService.connected ? "▰" : "▱") : "×"
-          color: WifiService.connected ? Theme.accentBlue : Theme.fgMuted
-          font.family: Theme.fontMono
-          font.pixelSize: 14
-
-          Timer {
-            interval: 750
-            running: !WifiService.connected
-            repeat: true
-            onTriggered: parent.text = (parent.text === "▱" ? "░" : "▱")
-            onRunningChanged: if(!running) parent.text = WifiService.wifiEnabled ? "▰" : "×"
-          }
-        }
-
-        ColumnLayout {
-          Layout.fillWidth: true
-          spacing: 2
-
-          Text {
-            text: `WIRED_SYS // ${WifiService.connected ? WifiService.activeNetwork.ssid : "NULL"}`
-            color: Theme.fgNormal
-            font.family: Theme.fontMono
-            font.pixelSize: 11
-          }
-
-          Text {
-            readonly property int strength: WifiService.connected ? WifiService.activeNetwork.strength : 0
-            text: {
-              if (!WifiService.connected) return "STATUS :: STDBY_MODE";
-              let bars = "░░░░";
-              if (strength > 75)      bars = "▂▄▆█";
-              else if (strength > 50) bars = "▂▄▆░";
-              else if (strength > 25) bars = "▂▄░░";
-              else if (strength > 0)  bars = "▂░░░";
-              return `LINK_METR [${bars}] ${strength}%`;
+                Text {
+                    text: wifiCard.expanded ? "[-] COLLAPSE" : "[+] EXPAND"
+                    color: wifiCard.expanded ? Theme.accentBlue : Theme.fgMuted
+                    font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                }
             }
-            color: Theme.fgMuted
-            font.family: Theme.fontMono
-            font.pixelSize: 10
-          }
-        }
 
-        Text {
-          text: wifiCard.expanded ? "[-] LAY_02" : "[+] LAY_01"
-          color: wifiCard.expanded ? Theme.accentBlue : Theme.fgMuted
-          font.family: Theme.fontMono
-          font.pixelSize: 10
-        }
-      }
-
-      MouseArea {
-        id: headerMouse
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: wifiCard.expanded = !wifiCard.expanded
-      }
-    }
-
-    // FIX: High performance solid pixel divider eliminates text metrics binding loop
-    Rectangle {
-      Layout.fillWidth: true
-      height: 1
-      color: Theme.borderMain
-      visible: wifiCard.expanded
-    }
-
-    // Available Client Connections List View
-    ListView {
-      id: networkList
-      Layout.fillWidth: true
-      Layout.fillHeight: true
-      Layout.margins: 8
-      model: WifiService.nearbyNetworks
-      spacing: 2
-      visible: wifiCard.expanded
-      clip: true
-
-      delegate: Rectangle {
-        width: networkList.width
-        height: 32
-        radius: 0 
-
-        color: modelData.active ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
-        border.color: rowMouse.containsMouse ? Theme.accentBlue : "transparent"
-        border.width: 1
-
-        RowLayout {
-          anchors.fill: parent
-          anchors.leftMargin: 8
-          anchors.rightMargin: 8
-
-          Text {
-            text: `${modelData.active ? "» " : "· "}${modelData.ssid}`
-            color: modelData.active ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
-            font.family: Theme.fontMono
-            font.pixelSize: 11
-            Layout.fillWidth: true
-            elide: Text.ElideRight
-          }
-
-          Text {
-            text: {
-              let s = modelData.strength;
-              if (s > 75)      return "▂▄▆█";
-              else if (s > 50) return "▂▄▆░";
-              else if (s > 25) return "▂▄░░";
-              else if (s > 0)  return "▂░░░";
-              return "░░░░";
+            MouseArea {
+                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                onClicked: wifiCard.expanded = !wifiCard.expanded
             }
-            color: modelData.active ? Theme.accentBlue : Theme.fgMuted
-            font.family: Theme.fontMono
-            font.pixelSize: 10
-          }
         }
 
-        MouseArea {
-          id: rowMouse
-          anchors.fill: parent
-          hoverEnabled: true
-          cursorShape: Qt.PointingHandCursor
-          onClicked: WifiService.connectToNetwork(modelData.ssid)
+        Rectangle {
+            Layout.fillWidth: true; height: 1; color: Theme.borderMain; visible: wifiCard.expanded
         }
-      }
+
+        ListView {
+            id: networkList
+            Layout.fillWidth: true; Layout.fillHeight: true; Layout.margins: 8
+            model: WifiService.nearbyNetworks
+            spacing: 2; visible: wifiCard.expanded; clip: true
+
+            delegate: Rectangle {
+                width: networkList.width; height: 30
+                color: modelData.active ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
+                border.color: rowMouse.containsMouse ? Theme.accentBlue : "transparent"
+                border.width: 1
+
+                RowLayout {
+                    anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8
+
+                    Text {
+                        text: (modelData.active ? "\u00bb " : "\u00b7 ") + modelData.ssid
+                        color: modelData.active ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                        Layout.fillWidth: true; elide: Text.ElideRight
+                    }
+
+                    Text {
+                        text: Theme.blockMeter(modelData.strength)
+                        color: modelData.active ? Theme.accentBlue : Theme.fgMuted
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                    }
+                }
+
+                MouseArea {
+                    id: rowMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                    onClicked: WifiService.connectToNetwork(modelData.ssid)
+                }
+            }
+        }
     }
-  }
 }

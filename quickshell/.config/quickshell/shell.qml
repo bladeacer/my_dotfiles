@@ -8,346 +8,270 @@ import "services" as Services
 import "theme"
 
 ShellRoot {
-  id: root
+    id: root
 
-  Process {
-    id: ipcReader
-    command: ["bash", "-c", "mkdir -p /tmp/quickshell && [ ! -p /tmp/quickshell/ipc ] && mkfifo /tmp/quickshell/ipc; exec tail -f /tmp/quickshell/ipc"]
-    running: true
-    stdout: SplitParser {
-      onRead: (line) => {
-        let action = line.trim().toLowerCase();
-        if (action === "toggle-launcher") {
-          launcherLoader.active = !launcherLoader.active;
-        } else if (action === "toggle-syscontrol") {
-          sysLoader.active = !sysLoader.active;
-        }
-      }
+    property string currentTimestamp: "0000-00-00 // 00:00:00"
+    property string mediaMetadata: "TRACK // IDLE"
+    property string mediaStatus: "stopped"
+    property string mediaArtUrl: ""
+    property int batteryCapacity: 0
+    property string batteryStatus: "BAT // --%"
+    property string btStatus: "BT // DOWN"
+    property string activeWifiSSID: "DISCONNECTED"
+    property int wifiSignalStrength: 0
+    property int mediaPosition: 0
+    property int mediaLength: 1
+    property real currentVolume: 0.0
+    property real currentBrightness: 0.0
+    property string keyboardLayout: "US"
+
+    function closeAllPopups() {
+        sysLoader.active = false
+        launcherLoader.active = false
+        mediaHUDLoader.active = false
     }
-  }
 
-  // ── HOTKEY ROUTING MATRIX ──
-  Shortcut { sequence: "Meta+Space"; onActivated: launcherLoader.active = !launcherLoader.active }
-  Shortcut { sequence: "Meta+S"; onActivated: sysLoader.active = !sysLoader.active }
-  Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
-
-  function closeAllPopups() {
-    launcherLoader.active = false;
-    btLoader.active = false;
-    wifiLoader.active = false;
-    sysLoader.active = false;
-    mediaHUDLoader.active = false;
-  }
-
-  // ── DATA TELEMETRY STORAGE ──
-  property string currentTimestamp: "0000-00-00 // 00:00:00"
-  property string mediaMetadata: "TRACK // IDLE"
-  property string mediaStatus: "stopped"
-  property string mediaArtUrl: ""
-  property string batteryTelemetry: "BAT // --%"
-  property int batteryCapacity: 0
-  property string bluetoothTelemetry: "BT // DOWN"
-  property string activeWifiSSID: "DISCONNECTED"
-  property int wifiSignalStrength: 0
-  property int mediaPosition: 0
-  property int mediaLength: 1 
-
-  // Network Telemetry Engine
-  Process {
-    id: wifiPipe
-    command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0'"]
-    running: true
-    stdout: SplitParser {
-      onRead: (line) => {
-        let segments = line.trim().split(":");
-        if (segments.length >= 3 && segments[0] === "yes") {
-          root.activeWifiSSID = segments[1].toUpperCase();
-          root.wifiSignalStrength = parseInt(segments[2]);
-        } else {
-          root.activeWifiSSID = "DISCONNECTED";
-          root.wifiSignalStrength = 0;
+    // IPC FIFO listener
+    Process {
+        id: ipcReader
+        command: ["bash", "-c", "mkdir -p /tmp/quickshell && [ ! -p /tmp/quickshell/ipc ] && mkfifo /tmp/quickshell/ipc; exec tail -f /tmp/quickshell/ipc"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var action = line.trim().toLowerCase()
+                if (action === "toggle-launcher") launcherLoader.active = !launcherLoader.active
+                else if (action === "toggle-syscontrol") sysLoader.active = !sysLoader.active
+            }
         }
-      }
     }
-  }
 
-  // High frequency position tracker pipe
-  Process {
-    id: mediaPosPipe
-    command: ["playerctl", "position"]
-    running: true
-    stdout: SplitParser { 
-      onRead: (line) => { 
-        let p = parseFloat(line.trim());
-        if(!isNaN(p)) root.mediaPosition = Math.round(p);
-      } 
+    // Hotkey Matrix
+    Shortcut { sequence: "Meta+Space"; onActivated: launcherLoader.active = !launcherLoader.active }
+    Shortcut { sequence: "Meta+S"; onActivated: sysLoader.active = !sysLoader.active }
+    Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
+
+    // Timer
+    Timer {
+        interval: 1000; running: true; repeat: true; triggeredOnStart: true
+        onTriggered: {
+            var d = new Date()
+            var pad = function(n) { return n.toString().padStart(2, '0') }
+            currentTimestamp = d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) + " // " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())
+        }
     }
-  }
 
-  // Unified Date & Time Formatter Engine
-  Timer {
-    interval: 1000; running: true; repeat: true; triggeredOnStart: true
-    onTriggered: {
-      let d = new Date();
-      let pad = (n) => n.toString().padStart(2, '0');
-      root.currentTimestamp = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} // ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-      mediaPosPipe.running = false; mediaPosPipe.running = true;
+    // Battery
+    Process {
+        id: batPipe
+        command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var c = parseInt(line.trim())
+                if (!isNaN(c)) batteryCapacity = c
+                batteryStatus = line.trim() !== "" ? "BAT // " + line.trim() + "%" : "BAT // --%"
+            }
+        }
     }
-  }
 
-  // Battery Node Tracker
-  Process {
-    id: batPipe
-    command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
-    running: true
-    stdout: SplitParser { onRead: (line) => { var c = parseInt(line.trim()); if (!isNaN(c)) root.batteryCapacity = c; root.batteryTelemetry = line.trim() !== "" ? `BAT // ${line.trim()}%` : "BAT // --%"; } }
-  }
-
-  // Bluetooth Link State Tracker
-  Process {
-    id: btPipe
-    command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
-    running: true
-    stdout: SplitParser { onRead: (line) => { root.bluetoothTelemetry = `BT // ${line.trim().toUpperCase()}`; } }
-  }
-
-  // Complete Multi-Field Media Engine
-  Process {
-    id: mediaPipe
-    command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
-    running: true
-    stdout: SplitParser {
-      onRead: (line) => {
-        let segments = line.trim().split("|");
-        if (segments.length >= 3 && segments[0] !== "") {
-          root.mediaMetadata = segments[0].toUpperCase();
-          root.mediaStatus = segments[1].toLowerCase();
-          root.mediaArtUrl = segments[2] ? segments[2].replace("file://", "") : "";
-
-          if (segments.length >= 4 && segments[3]) {
-            let rawLength = parseInt(segments[3]);
-            root.mediaLength = (!isNaN(rawLength) && rawLength > 0) ? Math.round(rawLength / 1000000) : 1;
-          } else {
-            root.mediaLength = 1;
-          }
-        } else {
-          root.mediaMetadata = "TRACK // IDLE";
-          root.mediaStatus = "stopped";
-          root.mediaArtUrl = "";
-          root.mediaLength = 1; 
+    // Bluetooth
+    Process {
+        id: btPipe
+        command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => { btStatus = "BT // " + line.trim().toUpperCase() }
         }
-      }
     }
-  } 
 
-  Timer {
-    interval: 2000; running: true; repeat: true; triggeredOnStart: true
-    onTriggered: {
-      batPipe.running = false; batPipe.running = true;
-      btPipe.running = false; btPipe.running = true;
-      wifiPipe.running = false; wifiPipe.running = true;
-      mediaPipe.running = false; mediaPipe.running = true;
+    // Network
+    Process {
+        id: wifiPipe
+        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0'"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var seg = line.trim().split(":")
+                if (seg.length >= 3 && seg[0] === "yes") {
+                    activeWifiSSID = seg[1].toUpperCase()
+                    wifiSignalStrength = parseInt(seg[2])
+                } else {
+                    activeWifiSSID = "DISCONNECTED"
+                    wifiSignalStrength = 0
+                }
+            }
+        }
     }
-  }
 
-  // ── MAIN PANEL DESKTOP BAR ──
-  PanelWindow {
-    id: statusBar
-    WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.focusable: WlrKeyboardFocus.None
-    anchors { top: true; left: true; right: true }
-    implicitHeight: 28
-    color: Theme.widgetBg
-
-    RowLayout {
-      anchors.fill: parent; spacing: 0
-
-      // Left: logo + task tracker + focused window
-      RowLayout {
-        Layout.preferredWidth: parent.width * 0.35
-        Layout.fillHeight: true; spacing: 8; Layout.leftMargin: 12; clip: true
-
-        Text {
-          text: "NAVI_OS"
-          font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true
-          color: Theme.accentBlue
+    // Media metadata
+    Process {
+        id: mediaPipe
+        command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var seg = line.trim().split("|")
+                if (seg.length >= 3 && seg[0] !== "") {
+                    mediaMetadata = seg[0].toUpperCase()
+                    mediaStatus = seg[1].toLowerCase()
+                    mediaArtUrl = seg[2] ? seg[2].replace("file://", "") : ""
+                    if (seg.length >= 4 && seg[3]) {
+                        var raw = parseInt(seg[3])
+                        mediaLength = (!isNaN(raw) && raw > 0) ? Math.round(raw / 1000000) : 1
+                    } else {
+                        mediaLength = 1
+                    }
+                } else {
+                    mediaMetadata = "TRACK // IDLE"
+                    mediaStatus = "stopped"
+                    mediaArtUrl = ""
+                    mediaLength = 1
+                }
+            }
         }
-
-        Components.TaskTracker { Layout.fillHeight: true }
-
-        Text {
-          text: Services.FocusedWindow.title !== ""
-          ? "[" + Services.FocusedWindow.title.substring(0, 24) + "]"
-          : ""
-          font.family: Theme.fontMono; font.pixelSize: 8
-          color: Theme.fgMuted
-          elide: Text.ElideRight
-          visible: Services.FocusedWindow.title !== ""
-        }
-      }
-
-      // Center: media metadata (clickable)
-      Item {
-        Layout.preferredWidth: parent.width * 0.30
-        Layout.fillHeight: true; clip: true
-        MouseArea {
-          anchors.fill: parent
-          Text {
-            anchors.centerIn: parent; text: root.mediaMetadata
-            font.family: Theme.fontMono; font.pixelSize: 9
-            color: root.mediaMetadata.includes("IDLE") ? Theme.fgMuted : Theme.accentBlue
-            elide: Text.ElideRight; width: Math.min(implicitWidth, parent.width - 10)
-          }
-          onClicked: mediaHUDLoader.active = !mediaHUDLoader.active
-        }
-      }
-
-      // Right: status indicators
-      Components.StatusRight {
-        Layout.preferredWidth: parent.width * 0.35
-        Layout.fillHeight: true; Layout.rightMargin: 12
-
-        onBtClicked: {
-          let target = !btLoader.active;
-          wifiLoader.active = false;
-          sysLoader.active = false;
-          btLoader.active = target;
-        }
-
-        onWifiCtrlClicked: {
-          let target = !wifiLoader.active;
-          btLoader.active = false;
-          sysLoader.active = false;
-          wifiLoader.active = target;
-        }
-
-        onSysClicked: {
-          let target = !sysLoader.active;
-          btLoader.active = false;
-          wifiLoader.active = false;
-          sysLoader.active = target;
-        }
-      }
     }
-  }
 
-  // ── PANEL WINDOW OVERLAYS ──
+    // Media position
+    Process {
+        id: mediaPosPipe
+        command: ["playerctl", "position"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var p = parseFloat(line.trim())
+                if (!isNaN(p)) mediaPosition = Math.round(p)
+            }
+        }
+    }
 
-  Loader { 
-    id: mediaHUDLoader; 
-    active: false; 
-    sourceComponent: mediaHUDExclusiveComp 
-  }
+    // Volume
+    Process {
+        id: volPipe
+        command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}'"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var v = parseFloat(line.trim())
+                if (!isNaN(v)) currentVolume = Math.min(v, 1.0)
+            }
+        }
+    }
 
-  Component {
-    id: mediaHUDExclusiveComp
+    // Brightness
+    Process {
+        id: brightPipe
+        command: ["bash", "-c", "brightnessctl -m | cut -d, -f4 | tr -d '%'"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                var p = parseInt(line.trim())
+                if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0)
+            }
+        }
+    }
 
+    // Keyboard layout
+    Process {
+        id: kbPipe
+        command: ["bash", "-c", "setxkbmap -query 2>/dev/null | grep layout | awk '{print $2}' || echo 'US'"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                if (line.trim() !== "") keyboardLayout = line.trim().toUpperCase()
+            }
+        }
+    }
+
+    // Polling timer
+    Timer {
+        interval: 2000; running: true; repeat: true; triggeredOnStart: true
+        onTriggered: {
+            batPipe.running = false; batPipe.running = true
+            btPipe.running = false; btPipe.running = true
+            wifiPipe.running = false; wifiPipe.running = true
+            mediaPipe.running = false; mediaPipe.running = true
+            volPipe.running = false; volPipe.running = true
+            brightPipe.running = false; brightPipe.running = true
+            kbPipe.running = false; kbPipe.running = true
+        }
+    }
+
+    // ── MAIN STATUSBAR ──
     PanelWindow {
-      id: exclusiveHUDWin
-      // Fix: Use correct modern Wayland protocol specifications instead of mixed enums
-      WlrLayershell.layer: WlrLayer.Top
-      WlrLayershell.namespace: "exclusive_hud"
-      
-      anchors { top: true; left: true; right: true }
-      margins.top: 28 // Render precisely below status bar track bounds
-      implicitHeight: 135 
-      color: "transparent"
-
-      Components.MediaHUD {
-        anchors.fill: parent
-      }
-    }
-  }
-
-  Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
-  Component {
-    id: launchComp
-    PanelWindow {
-      WlrLayershell.layer: WlrLayer.Overlay
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-      
-      // FIX: Standardize layout positioning flags for Quickshell
-      anchors.top: true 
-      margins.top: 32
-      
-      implicitWidth: 560
-      implicitHeight: 400
-      color: "transparent"
-
-      Rectangle {
-        anchors.fill: parent
+        id: bar
+        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.focusable: WlrKeyboardFocus.None
+        anchors { top: true; left: true; right: true }
+        implicitHeight: Theme.barHeight
         color: Theme.widgetBg
-        border.color: Theme.accentBlue; border.width: 1
 
-        Components.Launcher { 
-          anchors.fill: parent 
-          onCloseRequested: launcherLoader.active = false 
+        Components.StatusBar { anchors.fill: parent }
+    }
+
+    // ── OVERLAYS ──
+    Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
+    Component {
+        id: launchComp
+        PanelWindow {
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            anchors.top: true
+            margins.top: 32
+            implicitWidth: 580
+            implicitHeight: 420
+            color: "transparent"
+
+            Rectangle {
+                anchors.fill: parent
+                color: Theme.widgetBg
+                border.color: Theme.accentBlue
+                border.width: 1
+
+                Components.AppLauncher {
+                    anchors.fill: parent
+                    onCloseRequested: launcherLoader.active = false
+                }
+            }
         }
-      }
     }
-  }
 
-  Loader { id: btLoader; active: false; sourceComponent: btComp }
-  Component {
-    id: btComp
-    PanelWindow {
-      WlrLayershell.layer: WlrLayer.Overlay
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-      anchors { top: true; right: true }
-      margins.top: 32
-      margins.right: 120
-      implicitWidth: 300
-      implicitHeight: 350
-      color: "transparent"
+    Loader { id: sysLoader; active: false; sourceComponent: sysComp }
+    Component {
+        id: sysComp
+        PanelWindow {
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            anchors.top: true
+            margins.top: 32
+            implicitWidth: 880
+            implicitHeight: 640
+            color: "transparent"
 
-      Rectangle {
-        anchors.fill: parent; color: Theme.widgetBg
-        border.color: Theme.accentBlue; border.width: 1
-        Components.BluetoothControlCenter { anchors.fill: parent }
-      }
+            Rectangle {
+                anchors.fill: parent
+                color: Theme.widgetBg
+                border.color: Theme.accentBlue
+                border.width: 1
+
+                Components.SystemControlCenter {
+                    anchors.fill: parent
+                }
+            }
+        }
     }
-  }
 
-  Loader { id: wifiLoader; active: false; sourceComponent: wifiComp }
-  Component {
-    id: wifiComp
-    PanelWindow {
-      WlrLayershell.layer: WlrLayer.Overlay
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-      anchors { top: true; right: true }
-      margins.top: 32
-      margins.right: 60
-      implicitWidth: 400
-      implicitHeight: 500
-      color: "transparent"
+    Loader { id: mediaHUDLoader; active: false; sourceComponent: mediaHUDComp }
+    Component {
+        id: mediaHUDComp
+        PanelWindow {
+            WlrLayershell.layer: WlrLayer.Top
+            WlrLayershell.namespace: "media_hud"
+            anchors { top: true; left: true; right: true }
+            margins.top: 28
+            implicitHeight: 135
+            color: "transparent"
 
-      Rectangle {
-        anchors.fill: parent; color: Theme.widgetBg
-        border.color: Theme.accentBlue; border.width: 1
-        Components.WifiWidget { anchors.fill: parent }
-      }
+            Components.MediaHUD { anchors.fill: parent }
+        }
     }
-  }
-
-  Loader { id: sysLoader; active: false; sourceComponent: sysComp }
-  Component {
-    id: sysComp
-    PanelWindow {
-      WlrLayershell.layer: WlrLayer.Overlay
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-      
-      // FIX: Safe top-bound anchor with explicit width mapping. 
-      // Wayland centers windows with a fixed width automatically when left/right anchors are omitted.
-      anchors.top: true
-      margins.top: 32
-      
-      implicitWidth: 960
-      implicitHeight: 740
-      color: "transparent"
-
-      Components.SystemControlCenter { 
-        anchors.fill: parent
-      }
-    }
-  }
 }

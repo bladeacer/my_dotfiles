@@ -1,84 +1,85 @@
 pragma Singleton
+import QtQuick
 import Quickshell
 import Quickshell.Io
-import QtQuick
 
 Singleton {
-    id: root
-
-    property var activeNetwork: null
-    readonly property bool connected: activeNetwork !== null
-    
-    property string wifiRawStatus: "disabled"
-    readonly property bool wifiEnabled: wifiRawStatus === "enabled"
-
-    // ── New property holding the array of nearby networks ──
+    property bool wifiEnabled: false
+    property bool connected: false
+    property string activeSSID: "DISCONNECTED"
+    property int activeStrength: 0
     property var nearbyNetworks: []
+    property string _rawBuffer: ""
 
-    function update(): void {
-        wifiStatusProc.running = true;
-        getNetworkList.running = true;
-    }
-
+    // Active connection scanner
     Process {
-        id: subscriber
-        command: ["nmcli", "monitor"]
+        id: activeScan
+        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'no:disconnected:0'"]
         running: true
-        stdout: SplitParser { onRead: root.update() }
-    }
-
-    Process {
-        id: wifiStatusProc
-        running: true
-        command: ["nmcli", "radio", "wifi"]
-        stdout: StdioCollector { onStreamFinished: { root.wifiRawStatus = text.trim(); } }
-    }
-
-    // Parses the full list of SSIDs, signals, and active statuses
-    Process {
-        id: getNetworkList
-        running: true
-        command: ["nmcli", "-g", "ACTIVE,SIGNAL,SSID", "d", "w"]
-        environment: ({ LANG: "C.UTF-8", LC_ALL: "C.UTF-8" })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const lines = text.trim().split("\n");
-                let listAccumulator = [];
-                let foundActive = null;
-
-                for (const line of lines) {
-                    const parts = line.split(":");
-                    const ssidName = parts[2] ?? "";
-                    if (!ssidName || ssidName.trim() === "") continue;
-
-                    let netObj = {
-                        active: parts[0] === "yes",
-                        strength: parseInt(parts[1]) ?? 0,
-                        ssid: ssidName
-                    };
-
-                    if (netObj.active) foundActive = netObj;
-                    
-                    // Deduplicate SSIDs so the menu stays clean
-                    if (!listAccumulator.some(n => n.ssid === netObj.ssid)) {
-                        listAccumulator.push(netObj);
-                    }
+        stdout: SplitParser {
+            onRead: (line) => {
+                var parts = line.trim().split(":")
+                if (parts.length < 3) return
+                if (parts[0] === "yes") {
+                    wifiEnabled = true
+                    connected = true
+                    activeSSID = (parts[1] || "").toUpperCase()
+                    activeStrength = parseInt(parts[2]) || 0
                 }
-                
-                root.activeNetwork = foundActive;
-                // Sort by strength descending so best networks stay on top
-                root.nearbyNetworks = listAccumulator.sort((a, b) => b.strength - a.strength);
             }
         }
     }
 
-    // Global action method that components can invoke on click
-    function connectToNetwork(ssid) {
-        connectProc.command = ["nmcli", "d", "wifi", "connect", ssid];
-        connectProc.running = true;
+    // Network list scanner
+    Process {
+        id: listScan
+        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL dev wifi list 2>/dev/null | head -30"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                if (line.trim() === "") return
+                _rawBuffer += line.trim() + "\n"
+            }
+        }
+        onRunningChanged: {
+            if (!running && _rawBuffer !== "") {
+                var lines = _rawBuffer.trim().split("\n")
+                var nets = []
+                for (var i = 0; i < lines.length; i++) {
+                    var p = lines[i].split(":")
+                    if (p.length >= 2 && p[0]) {
+                        nets.push({
+                            ssid: p[0],
+                            strength: parseInt(p[1]) || 0,
+                            security: p[2] || "",
+                            active: p[0].toUpperCase() === activeSSID
+                        })
+                    }
+                }
+                nearbyNetworks = nets
+                _rawBuffer = ""
+            }
+        }
     }
 
-    Process { id: connectProc }
+    Timer {
+        interval: 10000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            activeScan.running = false; activeScan.running = true
+            listScan.running = false; listScan.running = true
+        }
+    }
 
-    Component.onCompleted: update()
+    function connectToNetwork(ssid) {
+        var p = Quickshell.createProcess(["nmcli", "dev", "wifi", "connect", ssid])
+        p.running = true
+    }
+
+    function disconnect() {
+        var p = Quickshell.createProcess(["nmcli", "dev", "disconnect", "wifi"])
+        p.running = true
+    }
 }

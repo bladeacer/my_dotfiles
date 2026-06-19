@@ -1,307 +1,343 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import "../theme"
 
 Rectangle {
-  id: sysContainer
-  anchors.fill: parent
+    id: sysCard
+    color: Theme.widgetBg
+    border.color: Theme.accentBlue
+    border.width: Theme.borderThin
 
-  color: Qt.rgba(Theme.bgHeader.r, Theme.bgHeader.g, Theme.bgHeader.b, 0.75)
-  border.color: Theme.accentBlue
-  border.width: 1
+    property string blueRoseText: ""
+    property string confirmAction: ""
+    property int selectedTab: 0
 
-  property real currentVolume: 0.0
-  property real currentBrightness: 0.0
-  property string webcamStatus: "UNKNOWN"
-  property string blueRoseText: ""
-  property string confirmAction: ""
-
-  // Fix: Defer processing execution to avoid race conditions with component tree mapping
-  Component.onCompleted: {
-    roseReader.running = true;
-  }
-
-  Process {
-    id: roseReader
-    command: ["bash", "-c", "cat \"$HOME/my_dotfiles/logo/blue_rose\" 2>/dev/null | head -16 || true"]
-    running: false
-    stdout: StdioCollector { 
-      onStreamFinished: { 
-        if (text && text.trim() !== "") {
-          sysContainer.blueRoseText = sysContainer.ansi24ToHtml(text); 
-        } 
-      } 
-    }
-  }
-
-  function ansi24ToHtml(input) {
-    if (!input) return "";
-    let lines = input.split("\n");
-    let processedLines = [];
-
-    for (let i = 0; i < lines.length; i++) {
-        let line = lines[i];
-        if (line.trim() === "") continue;
-
-        let safeStr = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        let hasOpenFont = false;
-
-        let ansi24Regex = /\x1b\[38[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g;
-        safeStr = safeStr.replace(ansi24Regex, function(match, r, g, b) {
-            let hexR = parseInt(r).toString(16).padStart(2, '0');
-            let hexG = parseInt(g).toString(16).padStart(2, '0');
-            let hexB = parseInt(b).toString(16).padStart(2, '0');
-            
-            let prefix = hasOpenFont ? "</font>" : "";
-            hasOpenFont = true;
-            return `${prefix}<font color="#${hexR}${hexG}${hexB}">`;
-        });
-
-        let resetRegex = /\x1b\[0?m/g;
-        safeStr = safeStr.replace(resetRegex, function() {
-            if (hasOpenFont) {
-                hasOpenFont = false;
-                return "</font>";
+    Process {
+        id: roseReader
+        command: ["bash", "-c", "cat \"$HOME/my_dotfiles/logo/blue_rose\" 2>/dev/null | head -16 || true"]
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (text && text.trim() !== "") blueRoseText = ansi24ToHtml(text)
             }
-            return "";
-        });
-
-        if (hasOpenFont) {
-            safeStr += "</font>";
         }
-        processedLines.push(safeStr);
-    }
-    return processedLines.join("<br/>");
-  }
-
-  // Telemetry Pipes
-  Process { id: readVol; command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}'"]; running: true; stdout: SplitParser { onRead: (line) => { var v = parseFloat(line.trim()); if(!isNaN(v)) currentVolume = Math.min(v, 1.0); } } }
-  Process { id: readBright; command: ["bash", "-c", "brightnessctl -m | cut -d, -f4 | tr -d '%'"]; running: true; stdout: SplitParser { onRead: (line) => { var p = parseInt(line.trim()); if(!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0); } } }
-  Process { id: readWebcam; command: ["bash", "-c", "lsmod | grep -q uvcvideo && echo 'ACTIVE' || echo 'MUTED'"]; running: true; stdout: SplitParser { onRead: (line) => { webcamStatus = line.trim().toUpperCase(); } } }
-
-  Timer { 
-    interval: 1000; running: true; repeat: true; triggeredOnStart: true
-    onTriggered: { 
-      readVol.running = false; readVol.running = true; 
-      readBright.running = false; readBright.running = true; 
-      readWebcam.running = false; readWebcam.running = true; 
-    } 
-  }
-
-  // System Utility Modifiers
-  Process { id: cmdToggleBt; command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"] }
-  Process { id: cmdLogout; command: ["qdbus", "org.kde.Shutdown", "/Shutdown", "logout"] }
-  Process { id: cmdReboot; command: ["systemctl", "reboot"] }
-  Process { id: cmdPoweroff; command: ["systemctl", "poweroff"] }
-  Process { id: cmdSleep; command: ["systemctl", "suspend"] }
-
-  Process { id: volSet; onRunningChanged: if(!running) readVol.running = true }
-  Process { id: brightSet; onRunningChanged: if(!running) readBright.running = true }
-  Process { id: cmdToggleCam; command: ["bash", "-c", "lsmod | grep -q uvcvideo && pkexec modprobe -r uvcvideo || pkexec modprobe uvcvideo"]; onRunningChanged: if(!running) readWebcam.running = true }
-
-  RowLayout {
-    anchors.fill: parent
-    anchors.margins: 24
-    spacing: 24
-
-    // Decorative Graphic Matrix Frame
-    Rectangle {
-      Layout.preferredWidth: 320
-      Layout.fillHeight: true
-      color: Qt.rgba(0, 0, 0, 0.2)
-      border.color: Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.25)
-      border.width: 1
-      clip: true
-
-      Text {
-        anchors.centerIn: parent
-        text: sysContainer.blueRoseText !== "" ? sysContainer.blueRoseText : "\uf042"
-        textFormat: Text.RichText
-        font.family: Theme.fontMono
-        font.pixelSize: sysContainer.blueRoseText !== "" ? 7 : 24
-        lineHeight: 0.8
-        color: Theme.accentBlue
-      }
     }
 
-    // Hardware Configuration Grid
-    ColumnLayout {
-      Layout.fillWidth: true
-      Layout.fillHeight: true
-      spacing: 14
+    Process { id: volSet }
+    Process { id: brightSet }
+    Process { id: cmdLogout; command: ["qdbus", "org.kde.Shutdown", "/Shutdown", "logout"] }
+    Process { id: cmdReboot; command: ["systemctl", "reboot"] }
+    Process { id: cmdPoweroff; command: ["systemctl", "poweroff"] }
+    Process { id: cmdSleep; command: ["systemctl", "suspend"] }
 
-      Text { 
-        text: "┌── [ HARDWARE_IO // CONTROL ] ────────────────────────────────────────┐"
-        font.family: Theme.fontMono
-        font.pixelSize: 13
-        color: Theme.accentBlue 
-      }
+    Component.onCompleted: roseReader.running = true
 
-      GridLayout {
-        columns: 3
-        Layout.fillWidth: true
-        rowSpacing: 8
-        columnSpacing: 8
+    function ansi24ToHtml(input) {
+        if (!input) return ""
+        var lines = input.split("\n")
+        var out = []
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i]
+            if (line.trim() === "") continue
+            var safe = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: Theme.borderMain
-          Text { anchors.centerIn: parent; text: "RF_LINK // BT_TOGGLE"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggleBt.running = false; cmdToggleBt.running = true; } }
-        }
-        
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1
-          border.color: webcamStatus === "ACTIVE" ? Theme.accentBlue : Theme.borderMain
-          Text { anchors.centerIn: parent; text: "OPTICAL // " + webcamStatus; font.family: Theme.fontMono; font.pixelSize: 11; color: webcamStatus === "ACTIVE" ? Theme.accentBlue : Theme.fgMuted }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggleCam.running = false; cmdToggleCam.running = true; } }
-        }
-        
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: Theme.borderMain
-          Text { anchors.centerIn: parent; text: "WIFI // SCAN"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted }
-        }
-      }
+            var spans = []
 
-      // Audio Gain scrub block
-      Text { text: "AUDIO_GAIN // [ " + Math.round(currentVolume * 100) + "% ]"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted }
-      Rectangle {
-        Layout.fillWidth: true; height: 16; color: Theme.borderMain
-        Rectangle { width: parent.width * currentVolume; height: parent.height; color: Theme.accentBlue }
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
-          onPressed: (mouse) => {
-            var pct = Math.max(0, Math.min(1, mouse.x / width));
-            volSet.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", pct.toFixed(2)];
-            volSet.running = false;
-            volSet.running = true;
-          }
-          onPositionChanged: (mouse) => {
-            if (pressed) {
-              var pct = Math.max(0, Math.min(1, mouse.x / width));
-              volSet.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", pct.toFixed(2)];
-              volSet.running = false;
-              volSet.running = true;
+            safe = safe.replace(/\x1b\[38[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
+                return "<fgc:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
+            })
+            safe = safe.replace(/\x1b\[48[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
+                return "<bgc:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
+            })
+            safe = safe.replace(/\x1b\[0?m/g, "<rst>")
+
+            var fg = null, bg = null
+            var html = ""
+            var parts = safe.split(/(<(?:fgc|bgc|rst):[^>]*>)/)
+            for (var p = 0; p < parts.length; p++) {
+                if (parts[p].startsWith("<fgc:")) {
+                    var m = parts[p].match(/(\d+),(\d+),(\d+)/)
+                    if (m) fg = m
+                } else if (parts[p].startsWith("<bgc:")) {
+                    var m = parts[p].match(/(\d+),(\d+),(\d+)/)
+                    if (m) bg = m
+                } else if (parts[p] === "<rst>") {
+                    if (html !== "") html += "</span>"
+                    fg = null; bg = null
+                } else {
+                    if (fg || bg) {
+                        var style = ""
+                        if (fg) style += "color:#" + parseInt(fg[1]).toString(16).padStart(2,"0") + parseInt(fg[2]).toString(16).padStart(2,"0") + parseInt(fg[3]).toString(16).padStart(2,"0") + ";"
+                        if (bg) style += "background:#" + parseInt(bg[1]).toString(16).padStart(2,"0") + parseInt(bg[2]).toString(16).padStart(2,"0") + parseInt(bg[3]).toString(16).padStart(2,"0") + ";"
+                        html += "<span style=\"" + style + "\">" + parts[p] + "</span>"
+                    } else {
+                        html += parts[p]
+                    }
+                }
             }
-          }
+            out.push(html)
         }
-      }
+        return out.join("<br/>")
+    }
 
-      // Backlight Monitor Panel
-      Text { text: "BACKLIGHT  // [ " + Math.round(currentBrightness * 100) + "% ]"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted }
-      Rectangle {
-        Layout.fillWidth: true; height: 16; color: Theme.borderMain
-        Rectangle { width: parent.width * currentBrightness; height: parent.height; color: Theme.accentBlue }
-        MouseArea {
-          anchors.fill: parent
-          cursorShape: Qt.PointingHandCursor
-          onPressed: (mouse) => {
-            var pct = Math.max(0, Math.min(1, mouse.x / width));
-            brightSet.command = ["brightnessctl", "set", Math.round(pct * 100) + "%"];
-            brightSet.running = false;
-            brightSet.running = true;
-          }
-          onPositionChanged: (mouse) => {
-            if (pressed) {
-              var pct = Math.max(0, Math.min(1, mouse.x / width));
-              brightSet.command = ["brightnessctl", "set", Math.round(pct * 100) + "%"];
-              brightSet.running = false;
-              brightSet.running = true;
+    function confirmThen(action) {
+        confirmAction = action
+    }
+
+    function execPowerAction(action) {
+        confirmAction = ""
+        if (action === "logout") { cmdLogout.running = false; cmdLogout.running = true }
+        else if (action === "reboot") { cmdReboot.running = false; cmdReboot.running = true }
+        else if (action === "poweroff") { cmdPoweroff.running = false; cmdPoweroff.running = true }
+        else if (action === "sleep") { cmdSleep.running = false; cmdSleep.running = true }
+    }
+
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_H) { selectedTab = Math.max(0, selectedTab - 1); event.accepted = true }
+        else if (event.key === Qt.Key_L) { selectedTab = Math.min(2, selectedTab + 1); event.accepted = true }
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 20
+
+        // Blue Rose ASCII art panel
+        Rectangle {
+            Layout.preferredWidth: 260
+            Layout.fillHeight: true
+            color: Qt.rgba(0, 0, 0, 0.25)
+            border.color: Theme.borderMain
+            border.width: 1
+            clip: true
+
+            Text {
+                anchors.centerIn: parent
+                text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
+                textFormat: Text.RichText
+                font.family: Theme.fontMono
+                font.pixelSize: 7
+                lineHeight: 0.85
+                color: Theme.accentBlue
             }
-          }
         }
-      }
 
-      Text { text: "┌── [ POWER_MGMT // SHUTDOWN_MATRIX ] ──────────────────────────────────┐"; font.family: Theme.fontMono; font.pixelSize: 11; color: "#FF5555" }
+        // Control panels
+        ColumnLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            spacing: 12
 
-      GridLayout {
-        columns: 4; Layout.fillWidth: true; rowSpacing: 8; columnSpacing: 8
-
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: "#FF5555"
-          Text { anchors.centerIn: parent; text: "KDE // LOGOUT"; font.family: Theme.fontMono; font.pixelSize: 11; color: "#FF5555" }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sysContainer.confirmAction = "logout"; }
-        }
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: "#FF5555"
-          Text { anchors.centerIn: parent; text: "SYS // SLEEP"; font.family: Theme.fontMono; font.pixelSize: 11; color: "#FF5555" }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sysContainer.confirmAction = "sleep"; }
-        }
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: "#FF5555"
-          Text { anchors.centerIn: parent; text: "SYS // REBOOT"; font.family: Theme.fontMono; font.pixelSize: 11; color: "#FF5555" }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sysContainer.confirmAction = "reboot"; }
-        }
-        Rectangle {
-          Layout.fillWidth: true; height: 46; color: "transparent"; border.width: 1; border.color: "#FF5555"
-          Text { anchors.centerIn: parent; text: "SYS // HALT"; font.family: Theme.fontMono; font.pixelSize: 11; color: "#FF5555" }
-          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sysContainer.confirmAction = "poweroff"; }
-        }
-      }
-
-      Item { Layout.fillHeight: true }
-      Text { text: "└──────────────────────────────────────────────────────────────────────┘"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted; Layout.fillWidth: true }
-    }
-  }
-
-  // ── CONFIRMATION SHIELD OVERLAY ──
-  Rectangle {
-    anchors.fill: parent
-    color: Qt.rgba(0, 0, 0, 0.8)
-    visible: sysContainer.confirmAction !== ""
-
-    // Fix: Prevent events dropping out of bounds down into underlying control targets
-    MouseArea {
-      anchors.fill: parent
-      propagateComposedEvents: false
-      onClicked: sysContainer.confirmAction = ""
-    }
-
-    ColumnLayout {
-      anchors.centerIn: parent
-      spacing: 20
-
-      Text {
-        text: "CONFIRM // " + (sysContainer.confirmAction || "").toUpperCase() + " ?"
-        font.family: Theme.fontMono
-        font.pixelSize: 18
-        color: "#FF5555"
-        Layout.alignment: Qt.AlignHCenter
-      }
-
-      RowLayout {
-        spacing: 24
-        Layout.alignment: Qt.AlignHCenter
-
-        Rectangle {
-          width: 140; height: 48; color: "transparent"
-          border.width: 1; border.color: Theme.accentBlue
-          Text { anchors.centerIn: parent; text: "[ Y ]  EXECUTE"; font.family: Theme.fontMono; font.pixelSize: 13; color: Theme.accentBlue }
-          MouseArea {
-            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-            onClicked: {
-              var cmd = sysContainer.confirmAction;
-              sysContainer.confirmAction = "";
-              if (cmd === "logout") { cmdLogout.running = false; cmdLogout.running = true; }
-              else if (cmd === "sleep") { cmdSleep.running = false; cmdSleep.running = true; }
-              else if (cmd === "reboot") { cmdReboot.running = false; cmdReboot.running = true; }
-              else if (cmd === "poweroff") { cmdPoweroff.running = false; cmdPoweroff.running = true; }
+            Text {
+                text: Theme.frameHeader("HARDWARE_IO // CONTROL")
+                color: Theme.accentBlue
+                font.family: Theme.fontMono
+                font.pixelSize: 13
             }
-          }
-        }
 
-        Rectangle {
-          width: 140; height: 48; color: "transparent"
-          border.width: 1; border.color: Theme.fgMuted
-          Text { anchors.centerIn: parent; text: "[ N ]  CANCEL"; font.family: Theme.fontMono; font.pixelSize: 13; color: Theme.fgMuted }
-          MouseArea {
-            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-            onClicked: sysContainer.confirmAction = ""
-          }
+            StackLayout {
+                id: tabStack
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                currentIndex: selectedTab
+
+                // Tab 0: Audio + Backlight
+                ColumnLayout {
+                    spacing: 14
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+
+                        Rectangle {
+                            Layout.fillWidth: true; height: 40
+                            color: "transparent"; border.width: 1; border.color: Theme.borderMain
+                            Text { anchors.centerIn: parent; text: "RF_LINK // BT_TOGGLE"; font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                onClicked: {
+                                    var p = Quickshell.createProcess(["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"])
+                                    p.running = true
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true; height: 40
+                            color: "transparent"; border.width: 1; border.color: Theme.borderMain
+                            Text { anchors.centerIn: parent; text: "WIFI // SCAN"; font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                onClicked: sysLoader.active = false
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            text: "AUDIO_GAIN // [" + Math.round(root.currentVolume * 100) + "%] " + Theme.blockMeter(root.currentVolume * 100)
+                            font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true; height: 16; color: Theme.borderMain
+                            Rectangle {
+                                width: parent.width * root.currentVolume; height: parent.height; color: Theme.accentBlue
+                                Behavior on width { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onPressed: function(mouse) { setVol(mouse.x / width) }
+                                onPositionChanged: function(mouse) { if (pressed) setVol(mouse.x / width) }
+                                function setVol(ratio) {
+                                    var pct = Math.max(0, Math.min(1, ratio))
+                                    volSet.command = ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", pct.toFixed(2)]
+                                    volSet.running = false; volSet.running = true
+                                }
+                            }
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            text: "BACKLIGHT // [" + Math.round(root.currentBrightness * 100) + "%] " + Theme.blockMeter(root.currentBrightness * 100)
+                            font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
+                        }
+                        Rectangle {
+                            Layout.fillWidth: true; height: 16; color: Theme.borderMain
+                            Rectangle {
+                                width: parent.width * root.currentBrightness; height: parent.height; color: Theme.accentBlue
+                                Behavior on width { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
+                            }
+                            MouseArea {
+                                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onPressed: function(mouse) { setBri(mouse.x / width) }
+                                onPositionChanged: function(mouse) { if (pressed) setBri(mouse.x / width) }
+                                function setBri(ratio) {
+                                    var pct = Math.max(0, Math.min(1, ratio))
+                                    brightSet.command = ["brightnessctl", "set", Math.round(pct * 100) + "%"]
+                                    brightSet.running = false; brightSet.running = true
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Tab 1: Network info
+                ColumnLayout {
+                    spacing: 8
+
+                    Text {
+                        text: "WIRED_SYS // " + (root.activeWifiSSID === "DISCONNECTED" ? "NULL" : root.activeWifiSSID)
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal
+                    }
+                    Text {
+                        text: "LINK_METR [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + root.wifiSignalStrength + "%"
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
+                    }
+                    Text {
+                        text: "BT_LINK // " + root.btStatus
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                        color: root.btStatus.includes("UP") ? Theme.accentBlue : Theme.fgMuted
+                    }
+                }
+
+                // Tab 2: Power actions
+                ColumnLayout {
+                    spacing: 6
+
+                    Text {
+                        text: Theme.frameHeader("POWER_MATRIX // HALT_SEQUENCE")
+                        color: Theme.accentRed
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                    }
+
+                    GridLayout {
+                        columns: 2
+                        columnSpacing: 8
+                        rowSpacing: 6
+
+                        Repeater {
+                            model: [
+                                { label: "HALT",     action: "poweroff", icon: "\u25a0" },
+                                { label: "REBOOT",   action: "reboot",   icon: "\u21bb" },
+                                { label: "SLEEP",    action: "sleep",    icon: "\u23f8" },
+                                { label: "LOGOUT",  action: "logout",   icon: "\u25b6" }
+                            ]
+
+                            delegate: Rectangle {
+                                implicitWidth: 180; height: 44
+                                color: confirmAction === modelData.action ? Qt.rgba(Theme.accentRed.r, Theme.accentRed.g, Theme.accentRed.b, 0.15) : "transparent"
+                                border.color: confirmAction === modelData.action ? Theme.accentRed : Theme.borderMain
+                                border.width: 1
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: confirmAction === modelData.action
+                                        ? "CONFIRM " + modelData.label + " ?"
+                                        : modelData.icon + " " + modelData.label
+                                    font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                                    color: confirmAction === modelData.action ? Theme.accentRed : Theme.fgNormal
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        if (confirmAction === modelData.action) execPowerAction(modelData.action)
+                                        else confirmAction = modelData.action
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: Theme.frameFooter()
+                        color: Theme.fgMuted
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textMd
+                    }
+                }
+            }
+
+            // Tab selector
+            RowLayout {
+                spacing: 4
+                Repeater {
+                    model: ["AUDIO", "NETWORK", "POWER"]
+                    delegate: Rectangle {
+                        implicitWidth: 80; height: 26
+                        color: selectedTab === index ? Theme.selectionBg : "transparent"
+                        border.color: selectedTab === index ? Theme.accentBlue : Theme.borderMain
+                        border.width: 1
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData
+                            font.family: Theme.fontMono; font.pixelSize: 8
+                            color: selectedTab === index ? Theme.fgNormal : Theme.fgMuted
+                        }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: selectedTab = index
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
+
+    function formatBlueRoseFallback() {
+        return "\u256d\u2500\u2500\u256e<br/>" +
+               "\u2502 \u256d\u256e \u2502<br/>" +
+               "\u2502 \u2570\u256f \u2502<br/>" +
+               "\u2570\u2500\u2500\u256f<br/>" +
+               "<br/>" +
+               "// BLUE ROSE<br/>" +
+               "  THE WIRED"
+    }
 }

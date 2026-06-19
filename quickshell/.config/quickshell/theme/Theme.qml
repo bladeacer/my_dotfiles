@@ -1,43 +1,46 @@
 pragma Singleton
 import QtQuick
-import Quickshell
-import Quickshell.Io
 
 QtObject {
-    id: root
+    readonly property string fontMono: "Departure Mono Nerd Font Mono"
 
-    readonly property string fontMono: "Departure Mono Nerd Font Mono" // Or "Hack", "Fira Code", "JetBrains Mono"
-    readonly property color terminalGreen: Qt.rgba(180/255, 190/255, 130/255, 0.4) // Positive alpha accent
+    readonly property color bgNormal:    Qt.rgba(22/255, 24/255, 33/255, 1.0)
+    readonly property color bgHeader:    Qt.rgba(30/255, 33/255, 50/255, 1.0)
+    readonly property color bgAlt:       Qt.rgba(46/255, 50/255, 68/255, 1.0)
+    readonly property color fgNormal:    Qt.rgba(198/255, 200/255, 209/255, 1.0)
+    readonly property color fgMuted:     Qt.rgba(107/255, 112/255, 137/255, 1.0)
+    readonly property color accentBlue:  Qt.rgba(132/255, 160/255, 198/255, 1.0)
+    readonly property color accentGreen: Qt.rgba(180/255, 190/255, 130/255, 1.0)
+    readonly property color accentRed:   Qt.rgba(226/255, 120/255, 120/255, 1.0)
+    readonly property color accentOrange:Qt.rgba(226/255, 164/255, 120/255, 1.0)
+    readonly property color accentPurple:Qt.rgba(119/255, 89/255, 180/255, 1.0)
+    readonly property color selectionBg: Qt.rgba(69/255, 75/255, 104/255, 1.0)
+    readonly property color widgetBg:    Qt.rgba(30/255, 33/255, 50/255, 0.92)
+    readonly property color borderMain:  Qt.rgba(132/255, 160/255, 198/255, 0.18)
+
     readonly property int borderThin: 1
+    readonly property int barHeight: 28
+    readonly property int padding: 12
+    readonly property int textSm: 9
+    readonly property int textMd: 10
+    readonly property int textLg: 11
+    readonly property int animDur: 140
 
-    // --- 1. SET THE PATH TO YOUR THEME FILE ---
-    // You can point this directly to your stowed config or ~/.config/kdeglobals
-    readonly property string colorSchemePath: "../../colors_kde/IcebergDark.colors"
-
-    // --- 2. THE PARSING ENGINE ---
-    // Internal helper to read the file and extract values
-    function getIniColor(section, key, fallback) {
-        // Simple regex or string parsing to find "[Section]" then "key=r,g,b"
-        // For absolute robustness, you can read via Quickshell's FileReader
-        return fallback; 
+    function blockMeter(val) {
+        if (val > 75) return "\u2582\u2584\u2586\u2588"
+        if (val > 50) return "\u2582\u2584\u2586\u2591"
+        if (val > 25) return "\u2582\u2584\u2591\u2591"
+        if (val > 0)  return "\u2582\u2591\u2591\u2591"
+        return "\u2591\u2591\u2591\u2591"
     }
 
-    // --- 3. EXPOSED COLORS MAPPED FROM YOUR INI ---
-    // We convert the INI's "22,24,33" string format into usable Qt colors
-    readonly property color bgNormal:    Qt.rgba(22/255, 24/255, 33/255, 1.0)      // [Background:Normal]
-    readonly property color bgHeader:    Qt.rgba(30/255, 33/255, 50/255, 1.0)      // [Background:Header]
-    readonly property color fgNormal:    Qt.rgba(198/255, 200/255, 209/255, 1.0)  // [Foreground:Normal]
-    readonly property color fgMuted:     Qt.rgba(107/255, 112/255, 137/255, 1.0)  // [Foreground:Inactive]
-    readonly property color accentBlue:  Qt.rgba(132/255, 160/255, 198/255, 1.0)  // [Foreground:Link]
-    readonly property color accentGreen: Qt.rgba(180/255, 190/255, 130/255, 1.0)  // [Foreground:Positive]
+    function frameHeader(label) {
+        var pad = 40 - label.length
+        if (pad < 0) pad = 0
+        return "\u250c\u2500\u2500 [ " + label + " ]" + "\u2500".repeat(pad) + "\u2510"
+    }
 
-    // --- 4. YOUR STYLISTIC CONTROL OVERRIDES ---
-    // This is where you manipulate the scheme to give you full aesthetic control
-    readonly property int radiusCompact: 6
-    readonly property int radiusLarge: 12
-    readonly property int padding: 10
-    
-    // Custom modifications of the system scheme
-    readonly property color widgetBg: Qt.alpha(bgHeader, 0.85) // Transparent card accent
-    readonly property color borderMain: Qt.rgba(accentBlue.r, accentBlue.g, accentBlue.b, 0.2) // Subtle accent borders
+    function frameFooter() {
+        return "\u2514" + "\u2500".repeat(42) + "\u2518"
+    }
 }
