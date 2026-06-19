@@ -121,6 +121,7 @@ Rectangle {
     }
 
     signal closeRequested()
+    signal openWifiRequested()
 
     Keys.onPressed: function(event) {
         if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
@@ -197,7 +198,7 @@ Rectangle {
                             color: "transparent"; border.width: 1; border.color: Theme.borderMain
                             Text { anchors.centerIn: parent; text: "WIFI // SCAN"; font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
-                                onClicked: sysLoader.active = false
+                                onClicked: { closeRequested(); openWifiRequested() }
                             }
                         }
                     }

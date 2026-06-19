@@ -1,12 +1,14 @@
 #version 440
 
-in vec2 qt_TexCoord0;
-out vec4 fragColor;
+layout(location = 0) in vec2 qt_TexCoord0;
+layout(location = 0) out vec4 fragColor;
 
-uniform float qt_Opacity;
-uniform float time;
-uniform float bars;
-uniform sampler2D src;
+layout(std140, binding = 1) uniform buf {
+    float qt_Opacity;
+    float time;
+    float bars;
+};
+layout(binding = 0) uniform sampler2D source;
 
 #define PI 3.14159265359
 

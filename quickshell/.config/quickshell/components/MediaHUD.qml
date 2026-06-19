@@ -32,9 +32,19 @@ Rectangle {
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 8; spacing: 4
 
-        Text {
-            text: Theme.frameHeader("LAYER_AUDIO // CORE_STATE")
-            font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+        RowLayout {
+            Layout.fillWidth: true; spacing: 0
+            Text {
+                text: "\u250c\u2500\u2500 [ LAYER_AUDIO // CORE_STATE ]"
+                font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+            }
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 1
+                color: Theme.accentBlue; Layout.alignment: Qt.AlignVCenter
+            }
+            Text {
+                text: "\u2500\u2500\u2510"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+            }
         }
 
         RowLayout {
@@ -93,9 +103,14 @@ Rectangle {
             }
         }
 
-        Text {
-            text: Theme.frameFooter()
-            font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted
+        RowLayout {
+            Layout.fillWidth: true; spacing: 0
+            Text { text: "\u2514\u2500\u2500"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 1
+                color: Theme.fgMuted; Layout.alignment: Qt.AlignVCenter
+            }
+            Text { text: "\u2500\u2500\u2518"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
         }
     }
 }

@@ -3,7 +3,7 @@
 layout(location = 0) in vec2 qt_TexCoord0;
 layout(location = 0) out vec4 fragColor;
 
-layout(binding = 0) uniform sampler2D src;
+layout(binding = 0) uniform sampler2D source;
 
 layout(std140, binding = 1) uniform buf {
     float qt_Opacity;
@@ -23,7 +23,7 @@ void main() {
     float edge = 1.0 - smoothstep(0.0, 0.1, abs(uv.x - 0.5) - 0.4);
     float tint = 0.5 + 0.5 * sin(uv.y * 30.0 + time * 4.0);
 
-    vec4 color = texture(src, distorted);
+    vec4 color = texture(source, distorted);
     color.rgb += vec3(0.08, 0.12, 0.20) * edge * 0.3;
     color.rgb *= 1.0 + 0.15 * tint * edge;
 

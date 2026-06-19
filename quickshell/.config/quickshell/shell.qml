@@ -181,7 +181,7 @@ ShellRoot {
                     fragmentShader: Qt.resolvedUrl("shaders/tidal.frag.qsb")
                     NumberAnimation on time { from: 0; to: 6.28; duration: 4000; loops: Animation.Infinite }
                 }
-                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false }
+                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: togglePopup(wifiLoader) }
             }
         }
     }
@@ -215,8 +215,7 @@ ShellRoot {
             anchors.top: true
             anchors.right: true
             margins.top: 28; margins.right: 10
-            implicitWidth: 380; implicitHeight: 500
-            height: wifiWidget.implicitHeight
+            implicitWidth: 380; implicitHeight: wifiWidget.implicitHeight
             color: "transparent"
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
