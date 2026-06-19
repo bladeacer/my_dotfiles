@@ -8,7 +8,8 @@ Item {
     id: spectrum
     clip: true
 
-    property var bands: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    property var bands: []
+    property int barCount: 48
 
     Process {
         id: cavaProc
@@ -18,7 +19,7 @@ Item {
             onRead: (line) => {
                 var parts = line.trim().split(";")
                 var vals = []
-                for (var i = 0; i < 24; i++) {
+                for (var i = 0; i < barCount; i++) {
                     var v = i < parts.length ? parseFloat(parts[i]) : 0
                     vals.push(isNaN(v) ? 0 : Math.min(v / 100.0, 1.0))
                 }
@@ -29,23 +30,23 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        spacing: 2
+        spacing: 1
 
         Repeater {
-            model: 24
+            model: barCount
 
             delegate: Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 6
+                Layout.preferredWidth: 8
                 color: "transparent"
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height * Math.min(1.0, Math.max(0.03, spectrum.bands[index] * 1.8))
+                    height: parent.height * Math.min(0.6, Math.max(0.02, spectrum.bands[index] * 1.2))
                     anchors.bottom: parent.bottom
                     radius: 1
                     color: Theme.accentBlue
-                    opacity: 0.2 + 0.15 * spectrum.bands[index]
+                    opacity: 0.15 + 0.12 * spectrum.bands[index]
                 }
             }
         }

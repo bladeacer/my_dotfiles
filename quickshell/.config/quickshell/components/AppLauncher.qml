@@ -22,14 +22,20 @@ Rectangle {
         if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
     }
 
+    property bool loading: true
+
     Component.onCompleted: {
         forceActiveFocus()
         var appsObj = DesktopEntries.applications
         if (appsObj && appsObj.values) {
             allApps = appsObj.values.filter(function(a) { return a && a.name })
             filteredApps = allApps.slice()
+            loading = false
         }
     }
+
+    Timer { interval: 1000; running: true; onTriggered: { if (allApps.length === 0) { var appsObj = DesktopEntries.applications; if (appsObj && appsObj.values) { allApps = appsObj.values.filter(function(a) { return a && a.name }); filteredApps = allApps.slice(); loading = false } } } }
+    Timer { interval: 3000; running: true; onTriggered: { loading = false; var appsObj = DesktopEntries.applications; if (appsObj && appsObj.values) { allApps = appsObj.values.filter(function(a) { return a && a.name }); filteredApps = allApps.slice() } var sf = searchField; if (sf) launcher.filterApps(sf.text) } }
 
     function filterApps(text) {
         searchText = text.toUpperCase()
@@ -112,6 +118,13 @@ Rectangle {
             color: Theme.fgMuted
             font.family: Theme.fontMono
             font.pixelSize: 8
+        }
+
+        Text {
+            text: "SCANNING // ..."
+            font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
+            visible: launcher.loading
+            Layout.alignment: Qt.AlignCenter
         }
 
         ListView {

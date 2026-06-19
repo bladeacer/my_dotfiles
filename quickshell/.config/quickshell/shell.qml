@@ -15,6 +15,7 @@ ShellRoot {
     property string mediaStatus: "stopped"
     property string mediaArtUrl: ""
     property int batteryCapacity: 0
+    property bool batteryCharging: false
     property string batteryStatus: "BAT // --%"
     property string btStatus: "BT // DOWN"
     property string activeWifiSSID: "DISCONNECTED"
@@ -66,77 +67,79 @@ ShellRoot {
     }
 
     Process {
-        id: batPipe; command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
+        id: telemetryPipe
+        command: ["bash", "-c",
+            "echo \"BAT:$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo --)\"; " +
+            "echo \"PWR:$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo Unknown)\"; " +
+            "echo \"POS:$(playerctl position 2>/dev/null || echo 0)\"; " +
+            "echo \"BT:$([ $(bluetoothctl devices Connected 2>/dev/null | wc -l) -gt 0 ] && echo UP || echo DOWN)\"; " +
+            "echo \"WIFI:$(nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0')\"; " +
+            "echo \"MEDIA:$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}' 2>/dev/null)\"; " +
+            "echo \"VOL:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}' || echo 0)\"; " +
+            "echo \"BRIGHT:$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%' || echo 0)\"; " +
+            "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\""
+        ]
         running: true
-        stdout: SplitParser { onRead: (line) => { var c = parseInt(line.trim()); if (!isNaN(c)) batteryCapacity = c; batteryStatus = line.trim() !== "" ? "BAT // " + line.trim() + "%" : "BAT // --%" } }
-    }
-
-    Process {
-        id: btPipe; command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { btStatus = "BT // " + line.trim().toUpperCase() } }
-    }
-
-    Process {
-        id: wifiPipe; command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0'"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { var seg = line.trim().split(":"); if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]) } else { activeWifiSSID = "DISCONNECTED"; wifiSignalStrength = 0 } } }
-    }
-
-    Process {
-        id: mediaPipe; command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { var seg = line.trim().split("|"); if (seg.length >= 3 && seg[0] !== "") { mediaMetadata = seg[0].toUpperCase(); mediaStatus = seg[1].toLowerCase(); mediaArtUrl = seg[2] ? seg[2].replace("file://", "") : ""; if (seg.length >= 4 && seg[3]) { var raw = parseInt(seg[3]); mediaLength = (!isNaN(raw) && raw > 0) ? Math.round(raw / 1000000) : 1 } else { mediaLength = 1 } } else { mediaMetadata = "TRACK // IDLE"; mediaStatus = "stopped"; mediaArtUrl = ""; mediaLength = 1 } } }
-    }
-
-    Process {
-        id: mediaPosPipe; command: ["playerctl", "position"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { var p = parseFloat(line.trim()); if (!isNaN(p)) mediaPosition = Math.round(p) } }
-    }
-
-    Process {
-        id: volPipe; command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}'"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { var v = parseFloat(line.trim()); if (!isNaN(v)) currentVolume = Math.min(v, 1.0) } }
-    }
-
-    Process {
-        id: brightPipe; command: ["bash", "-c", "brightnessctl -m | cut -d, -f4 | tr -d '%'"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { var p = parseInt(line.trim()); if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0) } }
-    }
-
-    Process {
-        id: kbPipe; command: ["bash", "-c", "fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US'"]
-        running: true
-        stdout: SplitParser { onRead: (line) => { if (line.trim() !== "") keyboardLayout = line.trim().toUpperCase() } }
+        stdout: SplitParser {
+            onRead: (line) => {
+                    var t = line.trim()
+                    if (t.startsWith("BAT:")) {
+                        var v = t.substring(4).trim()
+                        var c = parseInt(v)
+                        if (!isNaN(c)) batteryCapacity = c
+                        var pct = v !== "" && v !== "--" ? v + "%" : "--%"
+                        batteryStatus = "BAT // " + (batteryCharging ? "+ " : "") + pct
+                    } else if (t.startsWith("PWR:")) {
+                        batteryCharging = t.substring(4).trim().toLowerCase() === "charging"
+                        var pct = batteryCapacity >= 0 ? batteryCapacity + "%" : "--%"
+                        batteryStatus = "BAT // " + (batteryCharging ? "+ " : "") + pct
+                    } else if (t.startsWith("POS:")) {
+                        var pos = parseFloat(t.substring(4))
+                        if (!isNaN(pos)) mediaPosition = Math.round(pos)
+                    } else if (t.startsWith("BT:")) {
+                        btStatus = "BT // " + t.substring(3).trim().toUpperCase()
+                    } else if (t.startsWith("WIFI:")) {
+                    var seg = t.substring(5).split(":")
+                    if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]) }
+                    else { activeWifiSSID = "DISCONNECTED"; wifiSignalStrength = 0 }
+                } else if (t.startsWith("MEDIA:")) {
+                    var seg = t.substring(6).split("|")
+                    if (seg.length >= 3 && seg[0] !== "") {
+                        mediaMetadata = seg[0].toUpperCase(); mediaStatus = seg[1].toLowerCase()
+                        mediaArtUrl = seg[2] ? seg[2].replace("file://", "") : ""
+                        if (seg.length >= 4 && seg[3]) { var raw = parseInt(seg[3]); mediaLength = (!isNaN(raw) && raw > 0) ? Math.round(raw / 1000000) : 1 }
+                        else { mediaLength = 1 }
+                    } else { mediaMetadata = "TRACK // IDLE"; mediaStatus = "stopped"; mediaArtUrl = ""; mediaLength = 1 }
+                } else if (t.startsWith("VOL:")) {
+                    var v = parseFloat(t.substring(4))
+                    if (!isNaN(v)) currentVolume = Math.min(v, 1.0)
+                } else if (t.startsWith("BRIGHT:")) {
+                    var p = parseInt(t.substring(7))
+                    if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0)
+                } else if (t.startsWith("KB:")) {
+                    var k = t.substring(3).trim()
+                    if (k !== "") keyboardLayout = k.toUpperCase()
+                }
+            }
+        }
     }
 
     Timer {
         interval: 2000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: {
-            batPipe.running = false; batPipe.running = true
-            btPipe.running = false; btPipe.running = true
-            wifiPipe.running = false; wifiPipe.running = true
-            mediaPipe.running = false; mediaPipe.running = true
-            volPipe.running = false; volPipe.running = true
-            brightPipe.running = false; brightPipe.running = true
-            kbPipe.running = false; kbPipe.running = true
-        }
+        onTriggered: { telemetryPipe.running = false; telemetryPipe.running = true }
     }
 
     function refreshMediaStatus() {
-        mediaPipe.running = false; mediaPipe.running = true
+        telemetryPipe.running = false; telemetryPipe.running = true
     }
 
     PanelWindow {
         WlrLayershell.layer: WlrLayer.Background
         WlrLayershell.focusable: WlrKeyboardFocus.None
         anchors { top: true; left: true; right: true; bottom: true }
-        color: Theme.bgNormal
+        color: "transparent"
 
-        Components.SpectrumVisualizer { anchors.fill: parent; opacity: 0.6 }
+        Components.SpectrumVisualizer { anchors.fill: parent; opacity: 0.8 }
     }
 
     PanelWindow {
@@ -237,7 +240,7 @@ ShellRoot {
             anchors.right: true
             margins.top: 28; margins.right: 10
             implicitWidth: 380; implicitHeight: wifiWidget.implicitHeight
-            Behavior on implicitHeight { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+            Behavior on implicitHeight { NumberAnimation { duration: 60; easing.type: Easing.OutCubic } }
             color: "transparent"
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg

@@ -112,11 +112,7 @@ Rectangle {
         ColumnLayout {
             Layout.fillWidth: true; spacing: 4
             Text {
-                text: "\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524"
-                font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
-            }
-            Text {
-                text: "  [DISCONNECT ALL]"
+                text: "   [DISCONNECT ALL]"
                 font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.accentBlue
                 MouseArea {
                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor

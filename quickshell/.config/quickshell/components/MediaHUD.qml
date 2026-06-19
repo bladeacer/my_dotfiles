@@ -18,6 +18,7 @@ Rectangle {
     Process { id: cmdToggle; command: ["playerctl", "play-pause"] }
     Process { id: cmdNext; command: ["playerctl", "next"] }
     Process { id: cmdScrub; command: ["playerctl", "position", "0"] }
+    Process { id: pollStatus; command: ["playerctl", "status", "--format", "{{ status }}"]; stdout: SplitParser { onRead: (line) => { root.mediaStatus = line.trim().toLowerCase() } } }
 
     function scrubTo(percent) {
         var targetSec = Math.round(root.mediaLength * percent)
@@ -43,6 +44,7 @@ Rectangle {
             Text {
                 text: "\u250c\u2500\u2500 [ LAYER_AUDIO // CORE_STATE ]"
                 font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+                Layout.alignment: Qt.AlignVCenter
             }
             Rectangle {
                 Layout.fillWidth: true; Layout.preferredHeight: 1
@@ -50,6 +52,7 @@ Rectangle {
             }
             Text {
                 text: "\u2500\u2500\u2510"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+                Layout.alignment: Qt.AlignVCenter
             }
         }
 
@@ -57,7 +60,7 @@ Rectangle {
             Layout.fillWidth: true; spacing: 6
 
             Rectangle {
-                Layout.leftMargin: 4
+                Layout.leftMargin: 8
                 width: 50; height: 50
                 color: Qt.rgba(1, 1, 1, 0.05)
                 border.color: Theme.fgMuted; border.width: 1
@@ -103,7 +106,7 @@ Rectangle {
                     Text {
                         text: root.mediaStatus === "playing" ? "\u258c\u258c" : "\u25b6"
                         font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.accentBlue
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true; root.refreshMediaStatus() } }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true; pollStatus.running = false; pollStatus.running = true } }
                     }
                     Text { text: "NEXT >>"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdNext.running = false; cmdNext.running = true } } }
                 }

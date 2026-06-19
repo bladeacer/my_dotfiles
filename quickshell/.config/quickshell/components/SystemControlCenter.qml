@@ -17,7 +17,7 @@ Rectangle {
 
     Process {
         id: roseReader
-        command: ["bash", "-c", "cat \"$HOME/my_dotfiles/logo/blue_rose\" 2>/dev/null | head -16 || true"]
+        command: ["bash", "-c", "cat \"$HOME/my_dotfiles/logo/blue_rose\" 2>/dev/null || true"]
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
@@ -42,7 +42,7 @@ Rectangle {
         var out = []
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i]
-            if (line.trim() === "") continue
+            if (line.trim() === "") { out.push(""); continue }
 
             var safe = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
             var fg = null, bg = null, rev = false
@@ -138,7 +138,7 @@ Rectangle {
 
         // Blue Rose ASCII art panel
         Rectangle {
-            Layout.preferredWidth: 340
+            Layout.preferredWidth: 360
             Layout.minimumWidth: 120
             Layout.fillHeight: true
             Layout.minimumHeight: 100
@@ -148,18 +148,17 @@ Rectangle {
             clip: true
 
             Flickable {
-                anchors.fill: parent; anchors.margins: 6
+                anchors.fill: parent; clip: true
                 contentWidth: artText.implicitWidth; contentHeight: artText.implicitHeight
-                flickableDirection: Flickable.HorizontalAndVerticalFlick
-                clip: true
-
+                boundsBehavior: Flickable.StopAtBounds
+                ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
                 Text {
                     id: artText
                     text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
                     textFormat: Text.RichText
                     font.family: Theme.fontMono
-                    font.pixelSize: 9
-                    lineHeight: 0.7
+                    font.pixelSize: 6
+                    lineHeight: 1.0
                     color: Theme.accentBlue
                 }
             }
