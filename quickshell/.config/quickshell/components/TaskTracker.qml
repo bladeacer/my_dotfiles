@@ -21,8 +21,7 @@ RowLayout {
         id: appLauncher
         function launch(desktopId) {
             command = ["bash", "-c", "gtk-launch " + desktopId + ".desktop &"]
-            running = false
-            running = true
+            running = false; running = true
         }
     }
 
@@ -41,10 +40,7 @@ RowLayout {
                 if (id !== "") {
                     kdeLoaded = true
                     var list = taskRoot.pinnedApps.slice()
-                    if (list.indexOf(id) === -1) {
-                        list.push(id)
-                        taskRoot.pinnedApps = list
-                    }
+                    if (list.indexOf(id) === -1) { list.push(id); taskRoot.pinnedApps = list }
                 }
             }
         }
@@ -56,61 +52,39 @@ RowLayout {
     Repeater {
         model: taskRoot.pinnedApps
 
-        delegate: Rectangle {
-            height: 20
-            implicitWidth: pinLabel.implicitWidth + 8
+        delegate: Text {
             Layout.alignment: Qt.AlignVCenter
-            color: "transparent"
-            border.color: Theme.fgMuted
-            border.width: 1
-
-            Text {
-                id: pinLabel
-                anchors.centerIn: parent
-                text: modelData.split(".").pop().toUpperCase()
-                font.family: Theme.fontMono
-                font.pixelSize: 8
-                color: Theme.fgMuted
-            }
-
+            text: "[" + (index + 1) + "]: " + modelData.split(".").pop()
+            font.family: Theme.fontMono; font.pixelSize: 8
+            color: Theme.fgMuted
             MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
+                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                 onClicked: appLauncher.launch(modelData)
+                hoverEnabled: true
+                onEntered: parent.color = Theme.accentBlue
+                onExited: parent.color = Theme.fgMuted
             }
         }
     }
 
     Text {
         text: taskRoot.pinnedApps.length > 0 ? "\u2502" : ""
-        font.family: Theme.fontMono
-        font.pixelSize: 9
-        color: Theme.fgMuted
+        font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted
         Layout.alignment: Qt.AlignVCenter
     }
 
     Repeater {
         model: Quickshell.windows && Quickshell.windows.length > 0 ? Quickshell.windows : []
 
-        delegate: Rectangle {
-            height: 20
-            implicitWidth: taskLabel.implicitWidth + 8
+        delegate: Text {
             Layout.alignment: Qt.AlignVCenter
-            color: modelData.active ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-            border.width: 1
-            border.color: modelData.active ? Theme.accentBlue : Qt.rgba(1, 1, 1, 0.15)
-
-            Text {
-                id: taskLabel
-                anchors.centerIn: parent
-                text: {
-                    var label = modelData.appId || modelData.title || "WIN"
-                    return label.split(".").pop().toUpperCase().substring(0, 8)
-                }
-                font.family: Theme.fontMono
-                font.pixelSize: 8
-                color: modelData.active ? Theme.accentBlue : Theme.fgMuted
+            text: {
+                var idx = index + 1
+                var label = modelData.appId || modelData.title || "WIN"
+                return "[" + idx + "]: " + label.split(".").pop()
             }
+            font.family: Theme.fontMono; font.pixelSize: 8
+            color: modelData.active ? Theme.accentBlue : Theme.fgMuted
         }
     }
 }

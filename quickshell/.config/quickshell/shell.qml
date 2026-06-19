@@ -26,12 +26,13 @@ ShellRoot {
     property string keyboardLayout: "US"
 
     function closeAllPopups() {
-        sysLoader.active = false
         launcherLoader.active = false
+        sysLoader.active = false
         mediaHUDLoader.active = false
+        wifiLoader.active = false
+        btLoader.active = false
     }
 
-    // IPC FIFO listener
     Process {
         id: ipcReader
         command: ["bash", "-c", "mkdir -p /tmp/quickshell && [ ! -p /tmp/quickshell/ipc ] && mkfifo /tmp/quickshell/ipc; exec tail -f /tmp/quickshell/ipc"]
@@ -45,12 +46,10 @@ ShellRoot {
         }
     }
 
-    // Hotkey Matrix
     Shortcut { sequence: "Meta+Space"; onActivated: launcherLoader.active = !launcherLoader.active }
     Shortcut { sequence: "Meta+S"; onActivated: sysLoader.active = !sysLoader.active }
     Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
 
-    // Timer
     Timer {
         interval: 1000; running: true; repeat: true; triggeredOnStart: true
         onTriggered: {
@@ -60,10 +59,8 @@ ShellRoot {
         }
     }
 
-    // Battery
     Process {
-        id: batPipe
-        command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
+        id: batPipe; command: ["cat", "/sys/class/power_supply/BAT0/capacity"]
         running: true
         stdout: SplitParser {
             onRead: (line) => {
@@ -74,20 +71,14 @@ ShellRoot {
         }
     }
 
-    // Bluetooth
     Process {
-        id: btPipe
-        command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
+        id: btPipe; command: ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && echo 'UP' || echo 'DOWN'"]
         running: true
-        stdout: SplitParser {
-            onRead: (line) => { btStatus = "BT // " + line.trim().toUpperCase() }
-        }
+        stdout: SplitParser { onRead: (line) => { btStatus = "BT // " + line.trim().toUpperCase() } }
     }
 
-    // Network
     Process {
-        id: wifiPipe
-        command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0'"]
+        id: wifiPipe; command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0'"]
         running: true
         stdout: SplitParser {
             onRead: (line) => {
@@ -103,10 +94,8 @@ ShellRoot {
         }
     }
 
-    // Media metadata
     Process {
-        id: mediaPipe
-        command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
+        id: mediaPipe; command: ["playerctl", "metadata", "--format", "{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}"]
         running: true
         stdout: SplitParser {
             onRead: (line) => {
@@ -118,9 +107,7 @@ ShellRoot {
                     if (seg.length >= 4 && seg[3]) {
                         var raw = parseInt(seg[3])
                         mediaLength = (!isNaN(raw) && raw > 0) ? Math.round(raw / 1000000) : 1
-                    } else {
-                        mediaLength = 1
-                    }
+                    } else { mediaLength = 1 }
                 } else {
                     mediaMetadata = "TRACK // IDLE"
                     mediaStatus = "stopped"
@@ -131,58 +118,30 @@ ShellRoot {
         }
     }
 
-    // Media position
     Process {
-        id: mediaPosPipe
-        command: ["playerctl", "position"]
+        id: mediaPosPipe; command: ["playerctl", "position"]
         running: true
-        stdout: SplitParser {
-            onRead: (line) => {
-                var p = parseFloat(line.trim())
-                if (!isNaN(p)) mediaPosition = Math.round(p)
-            }
-        }
+        stdout: SplitParser { onRead: (line) => { var p = parseFloat(line.trim()); if (!isNaN(p)) mediaPosition = Math.round(p) } }
     }
 
-    // Volume
     Process {
-        id: volPipe
-        command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}'"]
+        id: volPipe; command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2}'"]
         running: true
-        stdout: SplitParser {
-            onRead: (line) => {
-                var v = parseFloat(line.trim())
-                if (!isNaN(v)) currentVolume = Math.min(v, 1.0)
-            }
-        }
+        stdout: SplitParser { onRead: (line) => { var v = parseFloat(line.trim()); if (!isNaN(v)) currentVolume = Math.min(v, 1.0) } }
     }
 
-    // Brightness
     Process {
-        id: brightPipe
-        command: ["bash", "-c", "brightnessctl -m | cut -d, -f4 | tr -d '%'"]
+        id: brightPipe; command: ["bash", "-c", "brightnessctl -m | cut -d, -f4 | tr -d '%'"]
         running: true
-        stdout: SplitParser {
-            onRead: (line) => {
-                var p = parseInt(line.trim())
-                if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0)
-            }
-        }
+        stdout: SplitParser { onRead: (line) => { var p = parseInt(line.trim()); if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0) } }
     }
 
-    // Keyboard layout
     Process {
-        id: kbPipe
-        command: ["bash", "-c", "setxkbmap -query 2>/dev/null | grep layout | awk '{print $2}' || echo 'US'"]
+        id: kbPipe; command: ["bash", "-c", "setxkbmap -query 2>/dev/null | grep layout | awk '{print $2}' || echo 'US'"]
         running: true
-        stdout: SplitParser {
-            onRead: (line) => {
-                if (line.trim() !== "") keyboardLayout = line.trim().toUpperCase()
-            }
-        }
+        stdout: SplitParser { onRead: (line) => { if (line.trim() !== "") keyboardLayout = line.trim().toUpperCase() } }
     }
 
-    // Polling timer
     Timer {
         interval: 2000; running: true; repeat: true; triggeredOnStart: true
         onTriggered: {
@@ -205,10 +164,19 @@ ShellRoot {
         implicitHeight: Theme.barHeight
         color: Theme.widgetBg
 
-        Components.StatusBar { anchors.fill: parent }
+        Components.StatusBar {
+            anchors.fill: parent
+            onBtClicked: toggleOverlay(btLoader)
+            onWifiClicked: toggleOverlay(wifiLoader)
+            onSysClicked: toggleOverlay(sysLoader)
+        }
     }
 
-    // ── OVERLAYS ──
+    function toggleOverlay(loader) {
+        closeAllPopups()
+        loader.active = true
+    }
+
     Loader { id: launcherLoader; active: false; sourceComponent: launchComp }
     Component {
         id: launchComp
@@ -216,17 +184,13 @@ ShellRoot {
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
             anchors.top: true
-            margins.top: 32
+            margins.top: 28
             implicitWidth: 580
             implicitHeight: 420
             color: "transparent"
-
             Rectangle {
-                anchors.fill: parent
-                color: Theme.widgetBg
-                border.color: Theme.accentBlue
-                border.width: 1
-
+                anchors.fill: parent; color: Theme.widgetBg
+                border.color: Theme.accentBlue; border.width: 1
                 Components.AppLauncher {
                     anchors.fill: parent
                     onCloseRequested: launcherLoader.active = false
@@ -242,20 +206,18 @@ ShellRoot {
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
             anchors.top: true
-            margins.top: 32
+            margins.top: 28
             implicitWidth: 880
             implicitHeight: 640
             color: "transparent"
-
             Rectangle {
-                anchors.fill: parent
-                color: Theme.widgetBg
-                border.color: Theme.accentBlue
-                border.width: 1
-
-                Components.SystemControlCenter {
+                anchors.fill: parent; color: Theme.widgetBg
+                border.color: Theme.accentBlue; border.width: 1
+                ShaderEffect {
                     anchors.fill: parent
+                    fragmentShader: Qt.resolvedUrl("shaders/spectrum.frag.qsb")
                 }
+                Components.SystemControlCenter { anchors.fill: parent }
             }
         }
     }
@@ -264,14 +226,61 @@ ShellRoot {
     Component {
         id: mediaHUDComp
         PanelWindow {
-            WlrLayershell.layer: WlrLayer.Top
-            WlrLayershell.namespace: "media_hud"
-            anchors { top: true; left: true; right: true }
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+            anchors.top: true
+            anchors.left: true
+            anchors.right: true
             margins.top: 28
-            implicitHeight: 135
+            implicitHeight: 98
             color: "transparent"
+            Rectangle {
+                anchors.fill: parent; color: Theme.widgetBg
+                border.color: Theme.accentBlue; border.width: 1
+                Components.MediaHUD { anchors.fill: parent }
+            }
+        }
+    }
 
-            Components.MediaHUD { anchors.fill: parent }
+    Loader { id: wifiLoader; active: false; sourceComponent: wifiComp }
+    Component {
+        id: wifiComp
+        PanelWindow {
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            anchors.top: true
+            anchors.right: true
+            margins.top: 28
+            margins.right: 10
+            implicitWidth: 380
+            implicitHeight: 500
+            color: "transparent"
+            Rectangle {
+                anchors.fill: parent; color: Theme.widgetBg
+                border.color: Theme.accentBlue; border.width: 1
+                Components.WifiWidget { anchors.fill: parent }
+            }
+        }
+    }
+
+    Loader { id: btLoader; active: false; sourceComponent: btComp }
+    Component {
+        id: btComp
+        PanelWindow {
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+            anchors.top: true
+            anchors.right: true
+            margins.top: 28
+            margins.right: 120
+            implicitWidth: 300
+            implicitHeight: 350
+            color: "transparent"
+            Rectangle {
+                anchors.fill: parent; color: Theme.widgetBg
+                border.color: Theme.accentBlue; border.width: 1
+                Components.BluetoothControlCenter { anchors.fill: parent }
+            }
         }
     }
 }

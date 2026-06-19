@@ -44,37 +44,44 @@ Rectangle {
             if (line.trim() === "") continue
             var safe = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 
-            var spans = []
-
             safe = safe.replace(/\x1b\[38[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
-                return "<fgc:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
+                return "<fg:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
             })
             safe = safe.replace(/\x1b\[48[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
-                return "<bgc:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
+                return "<bg:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
             })
+            safe = safe.replace(/\x1b\[7m/g, "<rev>")
+            safe = safe.replace(/\x1b\[27m/g, "<nrev>")
             safe = safe.replace(/\x1b\[0?m/g, "<rst>")
 
-            var fg = null, bg = null
+            var fg = null, bg = null, rev = false
             var html = ""
-            var parts = safe.split(/(<(?:fgc|bgc|rst):[^>]*>)/)
+            var parts = safe.split(/(<(?:fg|bg|rev|nrev|rst):?[^>]*>)/)
             for (var p = 0; p < parts.length; p++) {
-                if (parts[p].startsWith("<fgc:")) {
-                    var m = parts[p].match(/(\d+),(\d+),(\d+)/)
+                var tok = parts[p]
+                if (tok.startsWith("<fg:")) {
+                    var m = tok.match(/(\d+),(\d+),(\d+)/)
                     if (m) fg = m
-                } else if (parts[p].startsWith("<bgc:")) {
-                    var m = parts[p].match(/(\d+),(\d+),(\d+)/)
+                } else if (tok.startsWith("<bg:")) {
+                    var m = tok.match(/(\d+),(\d+),(\d+)/)
                     if (m) bg = m
-                } else if (parts[p] === "<rst>") {
+                } else if (tok === "<rev>") {
+                    rev = true
+                } else if (tok === "<nrev>") {
+                    rev = false
+                } else if (tok === "<rst>") {
                     if (html !== "") html += "</span>"
-                    fg = null; bg = null
+                    fg = null; bg = null; rev = false
                 } else {
-                    if (fg || bg) {
+                    var useFg = rev ? bg : fg
+                    var useBg = rev ? fg : bg
+                    if (useFg || useBg) {
                         var style = ""
-                        if (fg) style += "color:#" + parseInt(fg[1]).toString(16).padStart(2,"0") + parseInt(fg[2]).toString(16).padStart(2,"0") + parseInt(fg[3]).toString(16).padStart(2,"0") + ";"
-                        if (bg) style += "background:#" + parseInt(bg[1]).toString(16).padStart(2,"0") + parseInt(bg[2]).toString(16).padStart(2,"0") + parseInt(bg[3]).toString(16).padStart(2,"0") + ";"
-                        html += "<span style=\"" + style + "\">" + parts[p] + "</span>"
+                        if (useFg) style += "color:#" + parseInt(useFg[1]).toString(16).padStart(2,"0") + parseInt(useFg[2]).toString(16).padStart(2,"0") + parseInt(useFg[3]).toString(16).padStart(2,"0") + ";"
+                        if (useBg) style += "background:#" + parseInt(useBg[1]).toString(16).padStart(2,"0") + parseInt(useBg[2]).toString(16).padStart(2,"0") + parseInt(useBg[3]).toString(16).padStart(2,"0") + ";"
+                        html += "<span style=\"" + style + "\">" + tok + "</span>"
                     } else {
-                        html += parts[p]
+                        html += tok
                     }
                 }
             }
