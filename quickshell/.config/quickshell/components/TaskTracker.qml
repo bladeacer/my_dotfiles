@@ -55,7 +55,7 @@ RowLayout {
         delegate: Text {
             Layout.alignment: Qt.AlignVCenter
             text: "[" + (index + 1) + "]: " + modelData.split(".").pop()
-            font.family: Theme.fontMono; font.pixelSize: 8
+            font.family: Theme.fontMono; font.pixelSize: 11
             color: Theme.fgMuted
             MouseArea {
                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -69,7 +69,7 @@ RowLayout {
 
     Text {
         text: taskRoot.pinnedApps.length > 0 ? "\u2502" : ""
-        font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted
+        font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted
         Layout.alignment: Qt.AlignVCenter
     }
 
@@ -83,7 +83,7 @@ RowLayout {
                 var label = modelData.appId || modelData.title || "WIN"
                 return "[" + idx + "]: " + label.split(".").pop()
             }
-            font.family: Theme.fontMono; font.pixelSize: 8
+            font.family: Theme.fontMono; font.pixelSize: 11
             color: modelData.active ? Theme.accentBlue : Theme.fgMuted
         }
     }

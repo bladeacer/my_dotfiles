@@ -127,6 +127,15 @@ ShellRoot {
     }
 
     PanelWindow {
+        WlrLayershell.layer: WlrLayer.Background
+        WlrLayershell.focusable: WlrKeyboardFocus.None
+        anchors { top: true; left: true; right: true; bottom: true }
+        color: Theme.bgNormal
+
+        Components.SpectrumVisualizer { anchors.fill: parent; opacity: 0.6 }
+    }
+
+    PanelWindow {
         id: bar
         WlrLayershell.layer: WlrLayer.Top
         WlrLayershell.focusable: WlrKeyboardFocus.None
@@ -176,12 +185,12 @@ ShellRoot {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 ShaderEffect {
-                    anchors.fill: parent
+                    anchors.fill: parent; opacity: 0.5
                     property real time: 0
-                    fragmentShader: Qt.resolvedUrl("shaders/tidal.frag.qsb")
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/tidal.frag.qsb"
                     NumberAnimation on time { from: 0; to: 6.28; duration: 4000; loops: Animation.Infinite }
                 }
-                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: togglePopup(wifiLoader) }
+                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: Qt.callLater(function(){ togglePopup(wifiLoader) }) }
             }
         }
     }
@@ -200,7 +209,7 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
-                Components.MediaHUD { anchors.fill: parent }
+                Components.MediaHUD { anchors.fill: parent; onCloseRequested: mediaHUDLoader.active = false }
             }
         }
     }
@@ -220,7 +229,7 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
-                Components.WifiWidget { id: wifiWidget; anchors.fill: parent }
+                Components.WifiWidget { id: wifiWidget; anchors.fill: parent; onCloseRequested: wifiLoader.active = false }
             }
         }
     }
@@ -240,7 +249,7 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
-                Components.BluetoothControlCenter { anchors.fill: parent }
+                Components.BluetoothControlCenter { anchors.fill: parent; onCloseRequested: btLoader.active = false }
             }
         }
     }

@@ -8,6 +8,12 @@ Rectangle {
     id: mediaCard
     color: "transparent"
 
+    signal closeRequested()
+
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
+    }
+
     Process { id: cmdPrev; command: ["playerctl", "previous"] }
     Process { id: cmdToggle; command: ["playerctl", "play-pause"] }
     Process { id: cmdNext; command: ["playerctl", "next"] }

@@ -3,7 +3,7 @@
 layout(location = 0) in vec2 qt_TexCoord0;
 layout(location = 0) out vec4 fragColor;
 
-layout(std140, binding = 1) uniform buf {
+layout(std140, binding = 1) uniform qt_ubuf {
     float qt_Opacity;
     float time;
     float bars;

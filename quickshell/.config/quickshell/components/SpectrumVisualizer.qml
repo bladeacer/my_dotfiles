@@ -4,56 +4,53 @@ import Quickshell
 import Quickshell.Io
 import "../theme"
 
-Rectangle {
-    id: viz
-    color: "transparent"
-    implicitWidth: 320
-    implicitHeight: 48
+Item {
+    id: spectrum
+    clip: true
 
-    property var data: []
+    property var bands: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
     Process {
-        id: cavaRunner
-        command: ["bash", "-c",
-            "exec cava -p $HOME/my_dotfiles/quickshell/.config/quickshell/cava_config 2>/dev/null"]
+        id: cavaProc
+        command: ["cava", "-p", "/home/data/.config/quickshell/cava_config"]
         running: true
         stdout: SplitParser {
             onRead: (line) => {
-                if (line.trim() === "") return
                 var parts = line.trim().split(";")
-                var arr = []
-                for (var i = 0; i < parts.length; i++) {
-                    var v = parseFloat(parts[i])
-                    arr.push(isNaN(v) ? 0 : v)
+                var vals = []
+                for (var i = 0; i < 24; i++) {
+                    var v = i < parts.length ? parseFloat(parts[i]) : 0
+                    vals.push(isNaN(v) ? 0 : Math.min(v / 100.0, 1.0))
                 }
-                viz.data = arr
+                spectrum.bands = vals
             }
         }
     }
 
-    Row {
-        anchors.centerIn: parent
-        spacing: 3
+    RowLayout {
+        anchors.fill: parent
+        spacing: 1
 
         Repeater {
             model: 24
 
-            delegate: Rectangle {
-                width: 6
-                height: {
-                    var idx = index
-                    var arr = viz.data
-                    if (arr.length === 0) return 2
-                    var normIdx = Math.floor(idx / 24 * arr.length)
-                    if (normIdx >= arr.length) normIdx = arr.length - 1
-                    return Math.max(2, arr[normIdx] * viz.height)
-                }
-                color: Theme.accentBlue
-                opacity: 0.7 + (height / viz.height) * 0.3
-                y: viz.height - height
+            delegate: Item {
+                Layout.fillHeight: true
+                Layout.preferredWidth: 3
 
-                Behavior on height { NumberAnimation { duration: 60; easing.type: Easing.Linear } }
-                Behavior on color { ColorAnimation { duration: 200 } }
+                Rectangle {
+                    width: parent.width
+                    height: parent.height
+                    color: Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.04)
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: parent.height * Math.min(1.0, Math.max(0.02, spectrum.bands[index]))
+                    anchors.bottom: parent.bottom
+                    color: Theme.accentBlue
+                    opacity: 0.12
+                }
             }
         }
     }

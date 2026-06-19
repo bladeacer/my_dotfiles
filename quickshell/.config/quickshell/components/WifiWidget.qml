@@ -16,6 +16,12 @@ Rectangle {
 
     property bool expanded: true
 
+    signal closeRequested()
+
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
+    }
+
     Behavior on implicitHeight { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
 
     ColumnLayout {

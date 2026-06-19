@@ -13,6 +13,12 @@ Rectangle {
     property var parsedDevices: []
     property string accumulatedRaw: ""
     property int spinIndex: 0
+
+    signal closeRequested()
+
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
+    }
     readonly property var spinChars: ["\u2014", "\\", "\u2502", "/"]
 
     Timer {
@@ -40,6 +46,8 @@ Rectangle {
             }
         }
     }
+
+    Process { id: btCtl }
 
     Timer {
         interval: 3000; running: true; repeat: true; triggeredOnStart: true
@@ -91,8 +99,8 @@ Rectangle {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                                 onClicked: {
                                     var action = isConnected ? "disconnect" : "connect"
-                                    var p = Quickshell.createProcess(["bluetoothctl", action, devMac])
-                                    p.running = true
+                                    btCtl.command = ["bluetoothctl", action, devMac]
+                                    btCtl.running = true
                                 }
                             }
                         }
@@ -113,8 +121,8 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        var p = Quickshell.createProcess(["bash", "-c", "bluetoothctl devices Paired | cut -d' ' -f2 | xargs -I{} bluetoothctl disconnect {}"])
-                        p.running = true
+                        btCtl.command = ["bash", "-c", "bluetoothctl devices Paired | cut -d' ' -f2 | xargs -I{} bluetoothctl disconnect {}"]
+                        btCtl.running = true
                     }
                 }
             }

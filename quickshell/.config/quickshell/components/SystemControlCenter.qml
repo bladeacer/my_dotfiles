@@ -32,6 +32,7 @@ Rectangle {
     Process { id: cmdReboot; command: ["systemctl", "reboot"] }
     Process { id: cmdPoweroff; command: ["systemctl", "poweroff"] }
     Process { id: cmdSleep; command: ["systemctl", "suspend"] }
+    Process { id: cmdBluetooth }
 
     Component.onCompleted: roseReader.running = true
 
@@ -136,21 +137,30 @@ Rectangle {
 
         // Blue Rose ASCII art panel
         Rectangle {
-            Layout.preferredWidth: 260
+            Layout.preferredWidth: 280
+            Layout.minimumWidth: 80
             Layout.fillHeight: true
+            Layout.minimumHeight: 80
             color: Qt.rgba(0, 0, 0, 0.25)
             border.color: Theme.borderMain
             border.width: 1
             clip: true
 
-            Text {
-                anchors.centerIn: parent
-                text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
-                textFormat: Text.RichText
-                font.family: Theme.fontMono
-                font.pixelSize: 7
-                lineHeight: 0.85
-                color: Theme.accentBlue
+            Flickable {
+                anchors.fill: parent
+                contentWidth: artText.implicitWidth; contentHeight: artText.implicitHeight
+                flickableDirection: Flickable.VerticalFlick
+                clip: true
+
+                Text {
+                    id: artText
+                    text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
+                    textFormat: Text.RichText
+                    font.family: Theme.fontMono
+                    font.pixelSize: 9
+                    lineHeight: 0.7
+                    color: Theme.accentBlue
+                }
             }
         }
 
@@ -187,8 +197,8 @@ Rectangle {
                             Text { anchors.centerIn: parent; text: "RF_LINK // BT_TOGGLE"; font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
                                 onClicked: {
-                                    var p = Quickshell.createProcess(["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"])
-                                    p.running = true
+                                    cmdBluetooth.command = ["bash", "-c", "bluetoothctl show | grep -q 'Powered: yes' && bluetoothctl power off || bluetoothctl power on"]
+                                    cmdBluetooth.running = true
                                 }
                             }
                         }

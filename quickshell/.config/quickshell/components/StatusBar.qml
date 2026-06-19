@@ -14,10 +14,10 @@ RowLayout {
     signal sysClicked()
 
     RowLayout {
-        Layout.preferredWidth: parent.width * 0.38
+        Layout.preferredWidth: parent.width * 0.32
         Layout.fillHeight: true
-        spacing: 6
-        Layout.leftMargin: 10
+        spacing: 4
+        Layout.leftMargin: 8
         clip: true
 
         Text {
@@ -61,8 +61,8 @@ RowLayout {
     }
 
     RowLayout {
-        Layout.preferredWidth: parent.width * 0.34
-        Layout.fillHeight: true; spacing: 4; Layout.rightMargin: 10
+        Layout.preferredWidth: parent.width * 0.44
+        Layout.fillHeight: true; spacing: 3; Layout.rightMargin: 10
         Layout.alignment: Qt.AlignRight
 
         Text {
@@ -110,10 +110,10 @@ RowLayout {
         Text { text: "\u2502"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted }
 
         MouseArea {
-            Layout.fillHeight: true; width: Math.min(wifiLabel.implicitWidth, 130); cursorShape: Qt.PointingHandCursor
+            Layout.fillHeight: true; Layout.preferredWidth: wifiLabel.implicitWidth + 8; cursorShape: Qt.PointingHandCursor
             onClicked: bar.wifiClicked()
             Text {
-                id: wifiLabel; anchors.verticalCenter: parent.verticalCenter; width: parent.width; elide: Text.ElideRight
+                id: wifiLabel; anchors.verticalCenter: parent.verticalCenter
                 text: "WIFI [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID)
                 font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal
             }
