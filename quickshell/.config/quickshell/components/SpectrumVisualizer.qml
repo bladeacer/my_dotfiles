@@ -21,7 +21,7 @@ Item {
                 var vals = []
                 for (var i = 0; i < barCount; i++) {
                     var v = i < parts.length ? parseFloat(parts[i]) : 0
-                    vals.push(isNaN(v) ? 0 : Math.min(v / 100.0, 1.0))
+                    vals.push(isNaN(v) ? 0 : v / 1000.0)
                 }
                 spectrum.bands = vals
             }
@@ -42,7 +42,7 @@ Item {
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height * Math.min(1.0, Math.max(0.03, spectrum.bands[index] * 1.8))
+                    height: parent.height * Math.min(0.85, Math.max(0.02, spectrum.bands[index] * 3.0))
                     anchors.bottom: parent.bottom
                     radius: 1
                     color: Theme.accentBlue

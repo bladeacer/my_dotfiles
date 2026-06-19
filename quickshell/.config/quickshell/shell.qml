@@ -136,6 +136,8 @@ ShellRoot {
     function refreshMediaStatus() {
         telemetryPipe.running = false; telemetryPipe.running = true
     }
+    function openWifiFromSys() { sysLoader.active = false; togglePopup(wifiLoader) }
+    function openBtFromSys() { sysLoader.active = false; togglePopup(btLoader) }
 
     PanelWindow {
         WlrLayershell.layer: WlrLayer.Background
@@ -199,7 +201,7 @@ ShellRoot {
                 border.color: Theme.accentBlue; border.width: 1
                 layer.enabled: true; layer.samples: 4
 
-                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: Qt.callLater(function(){ togglePopup(wifiLoader) }); onOpenBtRequested: Qt.callLater(function(){ togglePopup(btLoader) }) }
+                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys; onOpenBtRequested: openBtFromSys }
 
                 ShaderEffect {
                     id: waveShader
@@ -214,11 +216,11 @@ ShellRoot {
                         id: waveAnim
                         onStarted: { waveShader.visible = true; waveShader.opacity = 0 }
                         ParallelAnimation {
-                            NumberAnimation { target: waveShader; property: "sweep"; from: -0.3; to: 1.3; duration: 3000; easing.type: Easing.InOutSine }
+                            NumberAnimation { target: waveShader; property: "sweep"; from: -0.3; to: 1.3; duration: 1800; easing.type: Easing.InOutSine }
                             SequentialAnimation {
-                                NumberAnimation { target: waveShader; property: "opacity"; from: 0; to: 0.7; duration: 400 }
-                                PauseAnimation { duration: 1800 }
-                                NumberAnimation { target: waveShader; property: "opacity"; from: 0.7; to: 0; duration: 800 }
+                                NumberAnimation { target: waveShader; property: "opacity"; from: 0; to: 0.8; duration: 300 }
+                                PauseAnimation { duration: 1000 }
+                                NumberAnimation { target: waveShader; property: "opacity"; from: 0.8; to: 0; duration: 500 }
                             }
                         }
                         onFinished: { waveShader.visible = false }

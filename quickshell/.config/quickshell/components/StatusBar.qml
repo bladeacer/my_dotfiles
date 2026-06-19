@@ -16,10 +16,9 @@ RowLayout {
     RowLayout {
         Layout.preferredWidth: parent.width * 0.32
         Layout.fillHeight: true
-        spacing: 4
+        spacing: 6
         Layout.leftMargin: 8
         clip: true
-        Layout.alignment: Qt.AlignVCenter
 
         Text {
             text: "\u25c8 NAVI_OS"
@@ -32,10 +31,10 @@ RowLayout {
 
         Text {
             text: Services.FocusedWindow.title !== ""
-                ? Services.FocusedWindow.title
-                : "[ DESKTOP ]"
+                ? ">> " + Services.FocusedWindow.title
+                : ">> DESKTOP"
             font.family: Theme.fontMono; font.pixelSize: 11
-            color: Theme.fgMuted
+            color: Services.FocusedWindow.title !== "" ? Theme.accentBlue : Theme.fgMuted
             elide: Text.ElideRight
             Layout.alignment: Qt.AlignVCenter
             Layout.maximumWidth: 280
@@ -50,8 +49,8 @@ RowLayout {
             Text {
                 anchors.centerIn: parent
                 text: root.mediaStatus === "playing" ? "\u266b " + root.mediaMetadata : root.mediaMetadata
-                font.family: Theme.fontMono; font.pixelSize: 11
-                color: root.mediaMetadata.includes("IDLE") ? Theme.fgMuted : Theme.accentBlue
+                font.family: Theme.fontMono; font.pixelSize: 11; font.bold: root.mediaStatus === "playing"
+                color: root.mediaMetadata.includes("IDLE") ? Theme.fgMuted : Theme.fgNormal
                 elide: Text.ElideRight; width: Math.min(implicitWidth, parent.width - 10)
             }
             onClicked: mediaHUDLoader.active = !mediaHUDLoader.active
@@ -60,13 +59,12 @@ RowLayout {
 
     RowLayout {
         Layout.preferredWidth: parent.width * 0.44
-        Layout.fillHeight: true; spacing: 3; Layout.rightMargin: 10
+        Layout.fillHeight: true; spacing: 4; Layout.rightMargin: 10
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
-        MouseArea {
-            Layout.fillHeight: true; width: btLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: bar.btClicked()
+        Item {
+            Layout.fillHeight: true; implicitWidth: btLabel.implicitWidth + 4
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: bar.btClicked() }
             Text {
                 id: btLabel; anchors.verticalCenter: parent.verticalCenter
                 text: root.btStatus; font.family: Theme.fontMono; font.pixelSize: 11
@@ -74,17 +72,15 @@ RowLayout {
             }
         }
 
-        MouseArea {
-            id: batArea
-            Layout.fillHeight: true; cursorShape: Qt.PointingHandCursor
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: bar.sysClicked()
-            implicitWidth: batLabel.implicitWidth + batBar.width + 20
+        Item {
+            Layout.fillHeight: true
+            implicitWidth: batLabel.implicitWidth + batBar.width + 24
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: bar.sysClicked() }
             RowLayout {
                 spacing: 4; anchors.verticalCenter: parent.verticalCenter
                 Text {
                     id: batLabel
-                    text: root.batteryStatus + " " + Theme.blockMeter(root.batteryCapacity)
+                    text: root.batteryStatus
                     font.family: Theme.fontMono; font.pixelSize: 11
                     color: root.batteryCharging ? Theme.accentGreen : root.batteryCapacity <= 15 ? Theme.accentRed : Theme.fgNormal
                 }
@@ -110,21 +106,20 @@ RowLayout {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        MouseArea {
-            Layout.fillHeight: true; Layout.preferredWidth: wiredLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: bar.wifiClicked()
+        Item {
+            Layout.fillHeight: true; implicitWidth: wiredLabel.implicitWidth + 4
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: bar.wifiClicked() }
             Text {
                 id: wiredLabel; anchors.verticalCenter: parent.verticalCenter
                 text: "WIRED [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID)
-                font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal
+                font.family: Theme.fontMono; font.pixelSize: 11
+                color: root.activeWifiSSID === "DISCONNECTED" ? Theme.fgMuted : Theme.accentBlue
             }
         }
 
-        MouseArea {
-            Layout.fillHeight: true; width: sysLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
-            Layout.alignment: Qt.AlignVCenter
-            onClicked: bar.sysClicked()
+        Item {
+            Layout.fillHeight: true; implicitWidth: sysLabel.implicitWidth + 4
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: bar.sysClicked() }
             Text {
                 id: sysLabel; anchors.verticalCenter: parent.verticalCenter
                 text: "SYS"; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal

@@ -8,7 +8,7 @@ In this repository, you can find the dotfiles I use.
 - `tmux`
 - `vim`
 - `opencode`
-- `quickshell` (Wayland shell with KDE Plasma)
+- `quickshell` (Wayland shell with KDE Plasma) — [details](./quickshell/README.md)
 - `hyprland`
 - `alacritty`
 - `bash`
@@ -46,6 +46,13 @@ stow tmux            # ~/.tmux.conf
 
 The neovim startpage renders a blue rose ANSI art at `logo/blue_rose`.
 The quickshell status bar also displays a compact braille rendering.
+
+#### Credits
+
+- **[IcebergDark](https://github.com/gkeep/iceberg-dark)** — Colour palette
+- **[iceberg.vim](https://github.com/cocopon/iceberg.vim)** — Original Iceberg colour scheme
+- **[Persona-Quickshell](https://github.com/Yujonpradhananga/Persona-Quickshell)** — Layout concepts, GLSL shaders, fluid animation patterns
+- **[DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell)** — Telemetry modules, panel layout strategies, interactive matrix patterns
 
 #### License
 

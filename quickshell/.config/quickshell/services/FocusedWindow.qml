@@ -1,33 +1,18 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import Quickshell.Io
 
 Singleton {
-    property string title: ""
-    property string appId: ""
-
-    property string wmClass: ""
-
-    Timer {
-        interval: 500
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            var wins = Quickshell.windows
-            if (!wins || wins.length === 0) return
-            for (var i = 0; i < wins.length; i++) {
-                if (wins[i].active) {
-                    title = wins[i].title || ""
-                    appId = wins[i].appId || ""
-                    wmClass = wins[i].wmClass || ""
-                    return
-                }
-            }
-            title = ""
-            appId = ""
-            wmClass = ""
+    readonly property QtObject activeWindow: {
+        var wins = Quickshell.windows
+        if (!wins) return null
+        for (var i = 0; i < wins.length; i++) {
+            if (wins[i].active || wins[i].focused) return wins[i]
         }
+        return null
     }
+
+    readonly property string title: activeWindow ? activeWindow.title : ""
+    readonly property string appId: activeWindow ? activeWindow.appId : ""
+    readonly property string wmClass: activeWindow ? activeWindow.wmClass : ""
 }
