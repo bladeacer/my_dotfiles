@@ -22,7 +22,7 @@ RowLayout {
 
         Text {
             text: "\u25c8 NAVI_OS"
-            font.family: Theme.fontMono; font.pixelSize: 10; font.bold: true
+            font.family: Theme.fontMono; font.pixelSize: 9; font.bold: true
             color: Theme.accentBlue
         }
 
@@ -38,7 +38,7 @@ RowLayout {
             text: Services.FocusedWindow.title !== ""
                 ? "[" + Services.FocusedWindow.title.substring(0, 28) + "]"
                 : ""
-            font.family: Theme.fontMono; font.pixelSize: 8
+            font.family: Theme.fontMono; font.pixelSize: 9
             color: Theme.fgMuted; elide: Text.ElideRight
             visible: Services.FocusedWindow.title !== ""
         }
@@ -67,7 +67,7 @@ RowLayout {
 
         Text {
             text: "[" + root.keyboardLayout + "]"
-            font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgMuted
+            font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted
         }
 
         Text { text: "\u2502"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
@@ -77,7 +77,7 @@ RowLayout {
             onClicked: bar.btClicked()
             Text {
                 id: btLabel; anchors.verticalCenter: parent.verticalCenter
-                text: root.btStatus; font.family: Theme.fontMono; font.pixelSize: 8
+                text: root.btStatus; font.family: Theme.fontMono; font.pixelSize: 9
                 color: root.btStatus.includes("UP") ? Theme.accentBlue : Theme.fgMuted
             }
         }
@@ -88,7 +88,7 @@ RowLayout {
             spacing: 3; Layout.fillHeight: true
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                text: { var c = root.batteryCapacity; if (c >= 90) return "\u26a1"; if (c >= 60) return "\u25b0"; return "\u25ae" }
+                text: { var c = root.batteryCapacity; if (c >= 90) return "\u2261"; if (c >= 60) return "\u25b0"; return "\u25ae" }
                 font.family: Theme.fontMono; font.pixelSize: 9
                 color: root.batteryCapacity <= 15 ? Theme.accentRed : Theme.accentBlue
             }
@@ -102,7 +102,7 @@ RowLayout {
             }
             Text {
                 Layout.alignment: Qt.AlignVCenter
-                text: root.batteryCapacity + "%"; font.family: Theme.fontMono; font.pixelSize: 8
+                text: root.batteryCapacity + "%"; font.family: Theme.fontMono; font.pixelSize: 9
                 color: root.batteryCapacity <= 15 ? Theme.accentRed : Theme.fgNormal
             }
         }
@@ -115,7 +115,7 @@ RowLayout {
             Text {
                 id: wifiLabel; anchors.verticalCenter: parent.verticalCenter; width: parent.width; elide: Text.ElideRight
                 text: "WIFI [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID.substring(0, 10))
-                font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal
+                font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgNormal
             }
         }
 
@@ -133,7 +133,7 @@ RowLayout {
         Text { text: "\u2502"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
 
         Text {
-            text: root.currentTimestamp; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal
+            text: root.currentTimestamp; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgNormal
         }
     }
 }

@@ -42,52 +42,70 @@ Rectangle {
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i]
             if (line.trim() === "") continue
+
             var safe = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-
-            safe = safe.replace(/\x1b\[38[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
-                return "<fg:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
-            })
-            safe = safe.replace(/\x1b\[48[;:]2[;:](\d+)[;:](\d+)[;:](\d+)m/g, function(_, r, g, b) {
-                return "<bg:" + parseInt(r) + "," + parseInt(g) + "," + parseInt(b) + ">"
-            })
-            safe = safe.replace(/\x1b\[7m/g, "<rev>")
-            safe = safe.replace(/\x1b\[27m/g, "<nrev>")
-            safe = safe.replace(/\x1b\[0?m/g, "<rst>")
-
             var fg = null, bg = null, rev = false
             var html = ""
-            var parts = safe.split(/(<(?:fg|bg|rev|nrev|rst):?[^>]*>)/)
-            for (var p = 0; p < parts.length; p++) {
-                var tok = parts[p]
-                if (tok.startsWith("<fg:")) {
-                    var m = tok.match(/(\d+),(\d+),(\d+)/)
-                    if (m) fg = m
-                } else if (tok.startsWith("<bg:")) {
-                    var m = tok.match(/(\d+),(\d+),(\d+)/)
-                    if (m) bg = m
-                } else if (tok === "<rev>") {
-                    rev = true
-                } else if (tok === "<nrev>") {
-                    rev = false
-                } else if (tok === "<rst>") {
-                    if (html !== "") html += "</span>"
+            var pos = 0
+
+            while (pos < safe.length) {
+                var escIdx = safe.indexOf("\x1b", pos)
+                if (escIdx < 0) {
+                    html += ansiEscapeText(safe.substring(pos), fg, bg, rev)
+                    break
+                }
+
+                if (escIdx > pos) {
+                    html += ansiEscapeText(safe.substring(pos, escIdx), fg, bg, rev)
+                }
+
+                var mEnd = safe.indexOf("m", escIdx + 1)
+                if (mEnd < 0) { html += safe.substring(escIdx); break }
+
+                var seq = safe.substring(escIdx, mEnd + 1)
+                pos = mEnd + 1
+
+                if (seq === "\x1b[0m" || seq === "\x1b[m") {
+                    if (html.length > 0 && html.lastIndexOf("</span>") !== html.length - 7) html += "</span>"
                     fg = null; bg = null; rev = false
+                } else if (seq === "\x1b[7m") {
+                    rev = true
+                } else if (seq === "\x1b[27m") {
+                    rev = false
+                } else if (seq.indexOf("?25") >= 0) {
+                    continue
                 } else {
-                    var useFg = rev ? bg : fg
-                    var useBg = rev ? fg : bg
-                    if (useFg || useBg) {
-                        var style = ""
-                        if (useFg) style += "color:#" + parseInt(useFg[1]).toString(16).padStart(2,"0") + parseInt(useFg[2]).toString(16).padStart(2,"0") + parseInt(useFg[3]).toString(16).padStart(2,"0") + ";"
-                        if (useBg) style += "background:#" + parseInt(useBg[1]).toString(16).padStart(2,"0") + parseInt(useBg[2]).toString(16).padStart(2,"0") + parseInt(useBg[3]).toString(16).padStart(2,"0") + ";"
-                        html += "<span style=\"" + style + "\">" + tok + "</span>"
-                    } else {
-                        html += tok
+                    var nums = []
+                    for (var n in seq.match(/\d+/g)) nums.push(parseInt(seq.match(/\d+/g)[n]))
+                    var j = 0
+                    while (j < nums.length) {
+                        if (nums[j] === 38 && j + 4 < nums.length && nums[j+1] === 2) {
+                            fg = [null, nums[j+2], nums[j+3], nums[j+4]]
+                            j += 5
+                        } else if (nums[j] === 48 && j + 4 < nums.length && nums[j+1] === 2) {
+                            bg = [null, nums[j+2], nums[j+3], nums[j+4]]
+                            j += 5
+                        } else { j++ }
                     }
                 }
             }
+
             out.push(html)
         }
         return out.join("<br/>")
+    }
+
+    function ansiEscapeText(text, fg, bg, rev) {
+        if (!text) return ""
+        var useFg = rev ? bg : fg
+        var useBg = rev ? fg : bg
+        if (useFg || useBg) {
+            var style = ""
+            if (useFg) style += "color:#" + useFg[1].toString(16).padStart(2,"0") + useFg[2].toString(16).padStart(2,"0") + useFg[3].toString(16).padStart(2,"0") + ";"
+            if (useBg) style += "background:#" + useBg[1].toString(16).padStart(2,"0") + useBg[2].toString(16).padStart(2,"0") + useBg[3].toString(16).padStart(2,"0") + ";"
+            return "<span style=\"" + style + "\">" + text + "</span>"
+        }
+        return text
     }
 
     function confirmThen(action) {
@@ -102,8 +120,11 @@ Rectangle {
         else if (action === "sleep") { cmdSleep.running = false; cmdSleep.running = true }
     }
 
+    signal closeRequested()
+
     Keys.onPressed: function(event) {
-        if (event.key === Qt.Key_H) { selectedTab = Math.max(0, selectedTab - 1); event.accepted = true }
+        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
+        else if (event.key === Qt.Key_H) { selectedTab = Math.max(0, selectedTab - 1); event.accepted = true }
         else if (event.key === Qt.Key_L) { selectedTab = Math.min(2, selectedTab + 1); event.accepted = true }
     }
 

@@ -83,7 +83,11 @@ Rectangle {
                 RowLayout {
                     spacing: 8
                     Text { text: "<< PREV"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdPrev.running = false; cmdPrev.running = true } } }
-                    Text { text: root.mediaStatus === "playing" ? "[>><<]" : "[>  ]"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.accentBlue; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true } } }
+                    Text {
+                        text: root.mediaStatus === "playing" ? "\u258c\u258c" : "\u25b6"
+                        font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.accentBlue
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true } }
+                    }
                     Text { text: "NEXT >>"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdNext.running = false; cmdNext.running = true } } }
                 }
             }

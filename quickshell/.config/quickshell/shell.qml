@@ -108,7 +108,7 @@ ShellRoot {
     }
 
     Process {
-        id: kbPipe; command: ["bash", "-c", "setxkbmap -query 2>/dev/null | grep layout | awk '{print $2}' || echo 'US'"]
+        id: kbPipe; command: ["bash", "-c", "fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US'"]
         running: true
         stdout: SplitParser { onRead: (line) => { if (line.trim() !== "") keyboardLayout = line.trim().toUpperCase() } }
     }
@@ -175,7 +175,13 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
-                Components.SystemControlCenter { anchors.fill: parent }
+                ShaderEffect {
+                    anchors.fill: parent
+                    property real time: 0
+                    fragmentShader: Qt.resolvedUrl("shaders/tidal.frag.qsb")
+                    NumberAnimation on time { from: 0; to: 6.28; duration: 4000; loops: Animation.Infinite }
+                }
+                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false }
             }
         }
     }
@@ -210,11 +216,12 @@ ShellRoot {
             anchors.right: true
             margins.top: 28; margins.right: 10
             implicitWidth: 380; implicitHeight: 500
+            height: wifiWidget.implicitHeight
             color: "transparent"
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
-                Components.WifiWidget { anchors.fill: parent }
+                Components.WifiWidget { id: wifiWidget; anchors.fill: parent }
             }
         }
     }

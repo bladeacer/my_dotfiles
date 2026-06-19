@@ -18,7 +18,12 @@ Rectangle {
 
     signal closeRequested()
 
+    Keys.onPressed: function(event) {
+        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
+    }
+
     Component.onCompleted: {
+        forceActiveFocus()
         var appsObj = DesktopEntries.applications
         if (appsObj && appsObj.values) {
             allApps = appsObj.values.filter(function(a) { return a && a.name })
