@@ -93,7 +93,7 @@ Rectangle {
 
                         Text {
                             text: isConnected ? "[DISCONNECT]" : "[CONNECT]"
-                            font.family: Theme.fontMono; font.pixelSize: 9
+                            font.family: Theme.fontMono; font.pixelSize: Theme.textSm
                             color: isConnected ? Theme.borderMain : Theme.accentBlue
                             MouseArea {
                                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor

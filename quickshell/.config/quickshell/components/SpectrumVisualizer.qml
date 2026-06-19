@@ -42,11 +42,11 @@ Item {
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height * Math.min(0.6, Math.max(0.02, spectrum.bands[index] * 1.2))
+                    height: parent.height * Math.min(1.0, Math.max(0.03, spectrum.bands[index] * 1.8))
                     anchors.bottom: parent.bottom
                     radius: 1
                     color: Theme.accentBlue
-                    opacity: 0.15 + 0.12 * spectrum.bands[index]
+                    opacity: 0.2 + 0.15 * spectrum.bands[index]
                 }
             }
         }

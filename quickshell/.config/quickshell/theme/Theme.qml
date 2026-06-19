@@ -21,8 +21,8 @@ QtObject {
     readonly property int borderThin: 1
     readonly property int barHeight: 28
     readonly property int padding: 12
-    readonly property int textSm: 9
-    readonly property int textMd: 10
+    readonly property int textSm: 11
+    readonly property int textMd: 11
     readonly property int textLg: 11
     readonly property int animDur: 140
 

@@ -67,12 +67,6 @@ RowLayout {
         }
     }
 
-    Text {
-        text: taskRoot.pinnedApps.length > 0 ? "\u2502" : ""
-        font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted
-        Layout.alignment: Qt.AlignVCenter
-    }
-
     Repeater {
         model: Quickshell.windows && Quickshell.windows.length > 0 ? Quickshell.windows : []
 

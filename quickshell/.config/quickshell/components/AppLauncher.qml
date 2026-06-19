@@ -117,7 +117,7 @@ Rectangle {
             text: "CTRL+N/J DN | CTRL+P/K UP | ENTER LAUNCH | ESC CLOSE"
             color: Theme.fgMuted
             font.family: Theme.fontMono
-            font.pixelSize: 8
+            font.pixelSize: Theme.textSm
         }
 
         Text {
@@ -181,7 +181,7 @@ Rectangle {
                         }
                         color: index === launcher.selectedIndex ? Theme.accentBlue : Theme.fgMuted
                         font.family: Theme.fontMono
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.textSm
                         Layout.fillWidth: true
                         elide: Text.ElideRight
                     }

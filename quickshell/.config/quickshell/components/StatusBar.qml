@@ -19,22 +19,26 @@ RowLayout {
         spacing: 4
         Layout.leftMargin: 8
         clip: true
+        Layout.alignment: Qt.AlignVCenter
 
         Text {
             text: "\u25c8 NAVI_OS"
             font.family: Theme.fontMono; font.pixelSize: 11; font.bold: true
             color: Theme.accentBlue
+            Layout.alignment: Qt.AlignVCenter
         }
 
-        TaskTracker { Layout.fillHeight: true }
+        TaskTracker { Layout.fillHeight: true; Layout.alignment: Qt.AlignVCenter }
 
         Text {
             text: Services.FocusedWindow.title !== ""
-                ? "[" + Services.FocusedWindow.title.substring(0, 28) + "]"
-                : ""
+                ? "[" + Services.FocusedWindow.title.substring(0, 20) + "]"
+                : "[ DESKTOP ]"
             font.family: Theme.fontMono; font.pixelSize: 11
-            color: Theme.fgMuted; elide: Text.ElideRight
-            visible: Services.FocusedWindow.title !== ""
+            color: Services.FocusedWindow.title !== "" ? Theme.fgMuted : Theme.fgMuted
+            elide: Text.ElideRight
+            Layout.alignment: Qt.AlignVCenter
+            Layout.maximumWidth: 200
         }
     }
 
@@ -57,7 +61,7 @@ RowLayout {
     RowLayout {
         Layout.preferredWidth: parent.width * 0.44
         Layout.fillHeight: true; spacing: 3; Layout.rightMargin: 10
-        Layout.alignment: Qt.AlignRight
+        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
         MouseArea {
             Layout.fillHeight: true; width: btLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
@@ -70,26 +74,29 @@ RowLayout {
         }
 
         MouseArea {
-            Layout.fillHeight: true; width: batLabel.implicitWidth + batBar.width + 6; cursorShape: Qt.PointingHandCursor
+            id: batArea
+            Layout.fillHeight: true; cursorShape: Qt.PointingHandCursor
             onClicked: bar.sysClicked()
+            implicitWidth: batLabel.implicitWidth + batBar.width + 20
             RowLayout {
-                id: batRow; spacing: 2; anchors.verticalCenter: parent.verticalCenter
+                spacing: 4; anchors.verticalCenter: parent.verticalCenter
                 Text {
                     id: batLabel
-                    text: {
-                        var c = root.batteryCapacity
-                        var meter = c >= 75 ? "\u2588" : c >= 50 ? "\u2586" : c >= 25 ? "\u2584" : "\u2582"
-                        return "[ " + meter + " ] " + root.batteryCapacity + "%"
-                    }
+                    text: root.batteryStatus + " " + Theme.blockMeter(root.batteryCapacity)
                     font.family: Theme.fontMono; font.pixelSize: 11
-                    color: root.batteryCapacity <= 15 ? Theme.accentRed : root.batteryCharging ? Theme.accentGreen : Theme.fgNormal
+                    color: root.batteryCharging ? Theme.accentGreen : root.batteryCapacity <= 15 ? Theme.accentRed : Theme.fgNormal
                 }
                 Rectangle {
-                    id: batBar; width: 18; height: 5; color: Theme.borderMain; visible: !root.batteryCharging
+                    id: batBar
+                    width: 60; height: 10
+                    color: Theme.borderMain
+                    radius: 1
                     Rectangle {
                         width: parent.width * Math.min(1, Math.max(0, root.batteryCapacity / 100))
                         height: parent.height
-                        color: root.batteryCapacity <= 15 ? Theme.accentRed : Theme.accentBlue
+                        color: root.batteryCharging ? Theme.accentGreen : root.batteryCapacity <= 15 ? Theme.accentRed : Theme.accentBlue
+                        radius: 1
+                        Behavior on width { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
                     }
                 }
             }
@@ -98,14 +105,15 @@ RowLayout {
         Text {
             text: "[" + root.keyboardLayout + "]"
             font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgMuted
+            Layout.alignment: Qt.AlignVCenter
         }
 
         MouseArea {
-            Layout.fillHeight: true; Layout.preferredWidth: wifiLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
+            Layout.fillHeight: true; Layout.preferredWidth: wiredLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
             onClicked: bar.wifiClicked()
             Text {
-                id: wifiLabel; anchors.verticalCenter: parent.verticalCenter
-                text: "WIFI [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID)
+                id: wiredLabel; anchors.verticalCenter: parent.verticalCenter
+                text: "WIRED [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID)
                 font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal
             }
         }
@@ -121,6 +129,7 @@ RowLayout {
 
         Text {
             text: root.currentTimestamp; font.family: Theme.fontMono; font.pixelSize: 11; color: Theme.fgNormal
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 }

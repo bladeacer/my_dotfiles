@@ -12,6 +12,8 @@ ShellRoot {
 
     property string currentTimestamp: "0000-00-00 // 00:00:00"
     property string mediaMetadata: "TRACK // IDLE"
+    property string mediaAlbum: ""
+    property string mediaComposer: ""
     property string mediaStatus: "stopped"
     property string mediaArtUrl: ""
     property int batteryCapacity: 0
@@ -74,7 +76,7 @@ ShellRoot {
             "echo \"POS:$(playerctl position 2>/dev/null || echo 0)\"; " +
             "echo \"BT:$([ $(bluetoothctl devices Connected 2>/dev/null | wc -l) -gt 0 ] && echo UP || echo DOWN)\"; " +
             "echo \"WIFI:$(nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'NO:DISCONNECTED:0')\"; " +
-            "echo \"MEDIA:$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}' 2>/dev/null)\"; " +
+            "echo \"MEDIA:$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}|{{ xesam:album }}|{{ xesam:composer }}' 2>/dev/null)\"; " +
             "echo \"VOL:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}' || echo 0)\"; " +
             "echo \"BRIGHT:$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%' || echo 0)\"; " +
             "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\""
@@ -88,11 +90,11 @@ ShellRoot {
                         var c = parseInt(v)
                         if (!isNaN(c)) batteryCapacity = c
                         var pct = v !== "" && v !== "--" ? v + "%" : "--%"
-                        batteryStatus = "BAT // " + (batteryCharging ? "+ " : "") + pct
+                        batteryStatus = (batteryCharging ? "[+]" : "[-]") + " BAT " + pct
                     } else if (t.startsWith("PWR:")) {
                         batteryCharging = t.substring(4).trim().toLowerCase() === "charging"
                         var pct = batteryCapacity >= 0 ? batteryCapacity + "%" : "--%"
-                        batteryStatus = "BAT // " + (batteryCharging ? "+ " : "") + pct
+                        batteryStatus = (batteryCharging ? "[+]" : "[-]") + " BAT " + pct
                     } else if (t.startsWith("POS:")) {
                         var pos = parseFloat(t.substring(4))
                         if (!isNaN(pos)) mediaPosition = Math.round(pos)
@@ -109,7 +111,9 @@ ShellRoot {
                         mediaArtUrl = seg[2] ? seg[2].replace("file://", "") : ""
                         if (seg.length >= 4 && seg[3]) { var raw = parseInt(seg[3]); mediaLength = (!isNaN(raw) && raw > 0) ? Math.round(raw / 1000000) : 1 }
                         else { mediaLength = 1 }
-                    } else { mediaMetadata = "TRACK // IDLE"; mediaStatus = "stopped"; mediaArtUrl = ""; mediaLength = 1 }
+                        mediaAlbum = seg.length >= 5 && seg[4] ? seg[4].toUpperCase() : ""
+                        mediaComposer = seg.length >= 6 && seg[5] ? seg[5].toUpperCase() : ""
+                    } else { mediaMetadata = "TRACK // IDLE"; mediaStatus = "stopped"; mediaArtUrl = ""; mediaLength = 1; mediaAlbum = ""; mediaComposer = "" }
                 } else if (t.startsWith("VOL:")) {
                     var v = parseFloat(t.substring(4))
                     if (!isNaN(v)) currentVolume = Math.min(v, 1.0)
@@ -198,11 +202,27 @@ ShellRoot {
                 Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: Qt.callLater(function(){ togglePopup(wifiLoader) }); onOpenBtRequested: Qt.callLater(function(){ togglePopup(btLoader) }) }
 
                 ShaderEffect {
-                    anchors.fill: parent; opacity: 0.3
-                    property real time: 0
+                    id: waveShader
+                    anchors.fill: parent; opacity: 0; visible: false
+                    property real sweep: -0.3
                     fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/tidal.frag.qsb"
                     layer.enabled: true; layer.samples: 4
-                    NumberAnimation on time { from: 0; to: 6.28; duration: 4000; loops: Animation.Infinite }
+
+                    Component.onCompleted: Qt.callLater(waveAnim.restart)
+
+                    SequentialAnimation {
+                        id: waveAnim
+                        onStarted: { waveShader.visible = true; waveShader.opacity = 0 }
+                        ParallelAnimation {
+                            NumberAnimation { target: waveShader; property: "sweep"; from: -0.3; to: 1.3; duration: 3000; easing.type: Easing.InOutSine }
+                            SequentialAnimation {
+                                NumberAnimation { target: waveShader; property: "opacity"; from: 0; to: 0.7; duration: 400 }
+                                PauseAnimation { duration: 1800 }
+                                NumberAnimation { target: waveShader; property: "opacity"; from: 0.7; to: 0; duration: 800 }
+                            }
+                        }
+                        onFinished: { waveShader.visible = false }
+                    }
                 }
             }
         }
@@ -217,7 +237,7 @@ ShellRoot {
             WlrLayershell.exclusiveZone: -1
             anchors.top: true
             margins.top: 28
-            implicitWidth: 450; implicitHeight: 98
+            implicitWidth: 450; implicitHeight: 130
             color: "transparent"
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg

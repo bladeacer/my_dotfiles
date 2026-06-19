@@ -21,7 +21,7 @@ Rectangle {
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
-                if (text && text.trim() !== "") blueRoseText = ansi24ToHtml(text)
+                if (text && text.trim() !== "") blueRoseText = ansiToHtml(text)
             }
         }
     }
@@ -36,7 +36,7 @@ Rectangle {
 
     Component.onCompleted: roseReader.running = true
 
-    function ansi24ToHtml(input) {
+    function ansiToHtml(input) {
         if (!input) return ""
         var lines = input.split("\n")
         var out = []
@@ -52,19 +52,19 @@ Rectangle {
             while (pos < safe.length) {
                 var escIdx = safe.indexOf("\x1b", pos)
                 if (escIdx < 0) {
-                    html += ansiEscapeText(safe.substring(pos), fg, bg, rev)
+                    html += ansiSpan(safe.substring(pos), fg, bg, rev)
                     break
                 }
 
                 if (escIdx > pos) {
-                    html += ansiEscapeText(safe.substring(pos, escIdx), fg, bg, rev)
+                    html += ansiSpan(safe.substring(pos, escIdx), fg, bg, rev)
                 }
 
-                var mEnd = safe.indexOf("m", escIdx + 1)
-                if (mEnd < 0) { html += safe.substring(escIdx); break }
+                var seqEnd = findAnsiEnd(safe, escIdx + 1)
+                if (seqEnd < 0) { html += safe.substring(escIdx); break }
 
-                var seq = safe.substring(escIdx, mEnd + 1)
-                pos = mEnd + 1
+                var seq = safe.substring(escIdx, seqEnd + 1)
+                pos = seqEnd + 1
 
                 if (seq === "\x1b[0m" || seq === "\x1b[m") {
                     if (html.length > 0 && html.lastIndexOf("</span>") !== html.length - 7) html += "</span>"
@@ -73,7 +73,7 @@ Rectangle {
                     rev = true
                 } else if (seq === "\x1b[27m") {
                     rev = false
-                } else if (seq.indexOf("?25") >= 0) {
+                } else if (seq.indexOf("?25") >= 0 || seq.indexOf("?12") >= 0) {
                     continue
                 } else {
                     var nums = []
@@ -96,17 +96,26 @@ Rectangle {
         return out.join("<br/>")
     }
 
-    function ansiEscapeText(text, fg, bg, rev) {
+    function findAnsiEnd(str, start) {
+        var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        for (var i = start; i < str.length; i++) {
+            if (letters.indexOf(str[i]) >= 0) return i
+        }
+        return -1
+    }
+
+    function ansiSpan(text, fg, bg, rev) {
         if (!text) return ""
+        var display = text.replace(/ /g, "\u00a0")
         var useFg = rev ? bg : fg
         var useBg = rev ? fg : bg
         if (useFg || useBg) {
             var style = ""
             if (useFg) style += "color:#" + useFg[1].toString(16).padStart(2,"0") + useFg[2].toString(16).padStart(2,"0") + useFg[3].toString(16).padStart(2,"0") + ";"
             if (useBg) style += "background:#" + useBg[1].toString(16).padStart(2,"0") + useBg[2].toString(16).padStart(2,"0") + useBg[3].toString(16).padStart(2,"0") + ";"
-            return "<span style=\"" + style + "\">" + text + "</span>"
+            return "<span style=\"" + style + "\">" + display + "</span>"
         }
-        return text
+        return display
     }
 
     function confirmThen(action) {
@@ -360,7 +369,7 @@ Rectangle {
                         Text {
                             anchors.centerIn: parent
                             text: modelData
-                            font.family: Theme.fontMono; font.pixelSize: 8
+                            font.family: Theme.fontMono; font.pixelSize: Theme.textSm
                             color: selectedTab === index ? Theme.fgNormal : Theme.fgMuted
                         }
                         MouseArea {

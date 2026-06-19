@@ -43,7 +43,7 @@ Rectangle {
             Layout.fillWidth: true; spacing: 0
             Text {
                 text: "\u250c\u2500\u2500 [ LAYER_AUDIO // CORE_STATE ]"
-                font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+                font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.accentBlue
                 Layout.alignment: Qt.AlignVCenter
             }
             Rectangle {
@@ -51,7 +51,7 @@ Rectangle {
                 color: Theme.accentBlue; Layout.alignment: Qt.AlignVCenter
             }
             Text {
-                text: "\u2500\u2500\u2510"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
+                text: "\u2500\u2500\u2510"; font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.accentBlue
                 Layout.alignment: Qt.AlignVCenter
             }
         }
@@ -71,7 +71,7 @@ Rectangle {
                 }
                 Text {
                     anchors.centerIn: parent; text: "NO_ART"
-                    font.family: Theme.fontMono; font.pixelSize: 7; color: Theme.fgMuted
+                    font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted
                     visible: root.mediaArtUrl === ""
                 }
             }
@@ -80,16 +80,30 @@ Rectangle {
                 Layout.fillWidth: true; spacing: 3
 
                 Text {
-                    text: "  " + root.mediaMetadata; elide: Text.ElideRight
-                    font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgNormal
+                    text: root.mediaMetadata; elide: Text.ElideRight
+                    font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgNormal
                     Layout.fillWidth: true
                 }
 
                 RowLayout {
+                    visible: root.mediaAlbum !== "" || root.mediaComposer !== ""
+                    Layout.fillWidth: true; spacing: 4
+                    Text {
+                        text: root.mediaAlbum !== "" ? root.mediaAlbum : root.mediaComposer
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted
+                        elide: Text.ElideRight; Layout.fillWidth: true
+                    }
+                    Text {
+                        text: root.mediaComposer !== "" && root.mediaAlbum !== "" ? "// " + root.mediaComposer : ""
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted
+                    }
+                }
+
+                RowLayout {
                     Layout.fillWidth: true; spacing: 4; Layout.rightMargin: 4
-                    Text { text: fmtTime(root.mediaPosition); font.family: Theme.fontMono; font.pixelSize: 7; color: Theme.fgMuted }
+                    Text { text: fmtTime(root.mediaPosition); font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
                     Rectangle {
-                        Layout.fillWidth: true; height: 3; color: Theme.borderMain
+                        Layout.fillWidth: true; height: 4; color: Theme.borderMain
                         Rectangle {
                             height: parent.height; color: Theme.accentBlue
                             width: parent.width * Math.min(1.0, Math.max(0.0, root.mediaPosition / Math.max(1, root.mediaLength)))
@@ -97,30 +111,36 @@ Rectangle {
                         }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: function(m) { mediaCard.scrubTo(m.x / width) } }
                     }
-                    Text { text: fmtTime(root.mediaLength); font.family: Theme.fontMono; font.pixelSize: 7; color: Theme.fgMuted }
+                    Text { text: fmtTime(root.mediaLength); font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
                 }
 
                 RowLayout {
                     spacing: 8
-                    Text { text: "<< PREV"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdPrev.running = false; cmdPrev.running = true } } }
                     Text {
-                        text: root.mediaStatus === "playing" ? "\u258c\u258c" : "\u25b6"
-                        font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.accentBlue
+                        text: "<< PREV"; font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgNormal
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdPrev.running = false; cmdPrev.running = true } }
+                    }
+                    Text {
+                        text: root.mediaStatus === "playing" ? "\u258c\u258c PAUSE" : "\u25b6 PLAY"
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.accentBlue
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true; pollStatus.running = false; pollStatus.running = true } }
                     }
-                    Text { text: "NEXT >>"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdNext.running = false; cmdNext.running = true } } }
+                    Text {
+                        text: "NEXT >>"; font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgNormal
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdNext.running = false; cmdNext.running = true } }
+                    }
                 }
             }
         }
 
         RowLayout {
             Layout.fillWidth: true; spacing: 0
-            Text { text: "\u2514\u2500\u2500"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
+            Text { text: "\u2514\u2500\u2500"; font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
             Rectangle {
                 Layout.fillWidth: true; Layout.preferredHeight: 1
                 color: Theme.fgMuted; Layout.alignment: Qt.AlignVCenter
             }
-            Text { text: "\u2500\u2500\u2518"; font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted }
+            Text { text: "\u2500\u2500\u2518"; font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
         }
     }
 }
