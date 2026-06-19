@@ -123,6 +123,7 @@ Rectangle {
 
     signal closeRequested()
     signal openWifiRequested()
+    signal openBtRequested()
 
     Keys.onPressed: function(event) {
         if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
@@ -137,19 +138,19 @@ Rectangle {
 
         // Blue Rose ASCII art panel
         Rectangle {
-            Layout.preferredWidth: 280
-            Layout.minimumWidth: 80
+            Layout.preferredWidth: 340
+            Layout.minimumWidth: 120
             Layout.fillHeight: true
-            Layout.minimumHeight: 80
+            Layout.minimumHeight: 100
             color: Qt.rgba(0, 0, 0, 0.25)
             border.color: Theme.borderMain
             border.width: 1
             clip: true
 
             Flickable {
-                anchors.fill: parent
+                anchors.fill: parent; anchors.margins: 6
                 contentWidth: artText.implicitWidth; contentHeight: artText.implicitHeight
-                flickableDirection: Flickable.VerticalFlick
+                flickableDirection: Flickable.HorizontalAndVerticalFlick
                 clip: true
 
                 Text {
@@ -275,15 +276,18 @@ Rectangle {
                     Text {
                         text: "WIRED_SYS // " + (root.activeWifiSSID === "DISCONNECTED" ? "NULL" : root.activeWifiSSID)
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgNormal
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { closeRequested(); openWifiRequested() } }
                     }
                     Text {
                         text: "LINK_METR [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + root.wifiSignalStrength + "%"
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd; color: Theme.fgMuted
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { closeRequested(); openWifiRequested() } }
                     }
                     Text {
                         text: "BT_LINK // " + root.btStatus
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                         color: root.btStatus.includes("UP") ? Theme.accentBlue : Theme.fgMuted
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { closeRequested(); openBtRequested() } }
                     }
                 }
 

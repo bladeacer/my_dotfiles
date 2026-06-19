@@ -54,9 +54,10 @@ Rectangle {
         }
 
         RowLayout {
-            Layout.fillWidth: true; spacing: 8
+            Layout.fillWidth: true; spacing: 6
 
             Rectangle {
+                Layout.leftMargin: 4
                 width: 50; height: 50
                 color: Qt.rgba(1, 1, 1, 0.05)
                 border.color: Theme.fgMuted; border.width: 1
@@ -82,7 +83,7 @@ Rectangle {
                 }
 
                 RowLayout {
-                    Layout.fillWidth: true; spacing: 4
+                    Layout.fillWidth: true; spacing: 4; Layout.rightMargin: 4
                     Text { text: fmtTime(root.mediaPosition); font.family: Theme.fontMono; font.pixelSize: 7; color: Theme.fgMuted }
                     Rectangle {
                         Layout.fillWidth: true; height: 3; color: Theme.borderMain
@@ -102,7 +103,7 @@ Rectangle {
                     Text {
                         text: root.mediaStatus === "playing" ? "\u258c\u258c" : "\u25b6"
                         font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.accentBlue
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true } }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdToggle.running = false; cmdToggle.running = true; root.refreshMediaStatus() } }
                     }
                     Text { text: "NEXT >>"; font.family: Theme.fontMono; font.pixelSize: 8; color: Theme.fgNormal; MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { cmdNext.running = false; cmdNext.running = true } } }
                 }

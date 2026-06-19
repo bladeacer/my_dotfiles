@@ -126,6 +126,10 @@ ShellRoot {
         }
     }
 
+    function refreshMediaStatus() {
+        mediaPipe.running = false; mediaPipe.running = true
+    }
+
     PanelWindow {
         WlrLayershell.layer: WlrLayer.Background
         WlrLayershell.focusable: WlrKeyboardFocus.None
@@ -165,6 +169,8 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: "transparent"
                 border.color: Theme.accentBlue; border.width: 1
+                focus: true
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { launcherLoader.active = false; event.accepted = true } }
                 Components.AppLauncher { anchors.fill: parent; onCloseRequested: launcherLoader.active = false }
             }
         }
@@ -184,13 +190,17 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
+                layer.enabled: true; layer.samples: 4
+
+                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: Qt.callLater(function(){ togglePopup(wifiLoader) }); onOpenBtRequested: Qt.callLater(function(){ togglePopup(btLoader) }) }
+
                 ShaderEffect {
-                    anchors.fill: parent; opacity: 0.5
+                    anchors.fill: parent; opacity: 0.3
                     property real time: 0
                     fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/tidal.frag.qsb"
+                    layer.enabled: true; layer.samples: 4
                     NumberAnimation on time { from: 0; to: 6.28; duration: 4000; loops: Animation.Infinite }
                 }
-                Components.SystemControlCenter { anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: Qt.callLater(function(){ togglePopup(wifiLoader) }) }
             }
         }
     }
@@ -209,6 +219,8 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
+                focus: true
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { mediaHUDLoader.active = false; event.accepted = true } }
                 Components.MediaHUD { anchors.fill: parent; onCloseRequested: mediaHUDLoader.active = false }
             }
         }
@@ -225,10 +237,13 @@ ShellRoot {
             anchors.right: true
             margins.top: 28; margins.right: 10
             implicitWidth: 380; implicitHeight: wifiWidget.implicitHeight
+            Behavior on implicitHeight { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
             color: "transparent"
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
+                focus: true
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { wifiLoader.active = false; event.accepted = true } }
                 Components.WifiWidget { id: wifiWidget; anchors.fill: parent; onCloseRequested: wifiLoader.active = false }
             }
         }
@@ -249,6 +264,8 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
+                focus: true
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { btLoader.active = false; event.accepted = true } }
                 Components.BluetoothControlCenter { anchors.fill: parent; onCloseRequested: btLoader.active = false }
             }
         }

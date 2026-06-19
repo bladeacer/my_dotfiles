@@ -29,27 +29,23 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-        spacing: 1
+        spacing: 2
 
         Repeater {
             model: 24
 
-            delegate: Item {
+            delegate: Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 3
+                Layout.preferredWidth: 6
+                color: "transparent"
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height
-                    color: Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.04)
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: parent.height * Math.min(1.0, Math.max(0.02, spectrum.bands[index]))
+                    height: parent.height * Math.min(1.0, Math.max(0.03, spectrum.bands[index] * 1.8))
                     anchors.bottom: parent.bottom
+                    radius: 1
                     color: Theme.accentBlue
-                    opacity: 0.12
+                    opacity: 0.2 + 0.15 * spectrum.bands[index]
                 }
             }
         }

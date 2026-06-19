@@ -22,8 +22,6 @@ Rectangle {
         if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
     }
 
-    Behavior on implicitHeight { NumberAnimation { duration: Theme.animDur; easing.type: Easing.OutCubic } }
-
     ColumnLayout {
         anchors.fill: parent; spacing: 0
 
