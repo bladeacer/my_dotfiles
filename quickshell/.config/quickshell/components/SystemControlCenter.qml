@@ -151,25 +151,20 @@ Rectangle {
             Layout.minimumWidth: 120
             Layout.fillHeight: true
             Layout.minimumHeight: 100
-            color: Qt.rgba(0, 0, 0, 0.25)
+            color: "transparent"
             border.color: Theme.borderMain
             border.width: 1
             clip: true
 
-            Flickable {
-                anchors.fill: parent; clip: true
-                contentWidth: artText.implicitWidth; contentHeight: artText.implicitHeight
-                boundsBehavior: Flickable.StopAtBounds
-                ScrollBar.horizontal: ScrollBar { policy: ScrollBar.AsNeeded }
-                Text {
-                    id: artText
-                    text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
-                    textFormat: Text.RichText
-                    font.family: Theme.fontMono
-                    font.pixelSize: 6
-                    lineHeight: 1.0
-                    color: Theme.accentBlue
-                }
+            Text {
+                id: artText
+                anchors.centerIn: parent
+                text: blueRoseText !== "" ? blueRoseText : formatBlueRoseFallback()
+                textFormat: Text.RichText
+                font.family: Theme.fontMono
+                font.pixelSize: 6
+                lineHeight: 1.0
+                color: Theme.accentBlue
             }
         }
 

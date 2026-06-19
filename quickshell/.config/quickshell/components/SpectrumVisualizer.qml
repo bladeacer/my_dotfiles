@@ -9,7 +9,7 @@ Item {
     clip: true
 
     property var bands: []
-    property int barCount: 48
+    property int barCount: 24
 
     Process {
         id: cavaProc
@@ -37,7 +37,7 @@ Item {
 
             delegate: Rectangle {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 8
+                Layout.preferredWidth: 12
                 color: "transparent"
 
                 Rectangle {

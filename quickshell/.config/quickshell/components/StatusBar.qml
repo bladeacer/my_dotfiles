@@ -32,13 +32,13 @@ RowLayout {
 
         Text {
             text: Services.FocusedWindow.title !== ""
-                ? "[" + Services.FocusedWindow.title.substring(0, 20) + "]"
+                ? Services.FocusedWindow.title
                 : "[ DESKTOP ]"
             font.family: Theme.fontMono; font.pixelSize: 11
-            color: Services.FocusedWindow.title !== "" ? Theme.fgMuted : Theme.fgMuted
+            color: Theme.fgMuted
             elide: Text.ElideRight
             Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 200
+            Layout.maximumWidth: 280
         }
     }
 
@@ -65,6 +65,7 @@ RowLayout {
 
         MouseArea {
             Layout.fillHeight: true; width: btLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
+            Layout.alignment: Qt.AlignVCenter
             onClicked: bar.btClicked()
             Text {
                 id: btLabel; anchors.verticalCenter: parent.verticalCenter
@@ -76,6 +77,7 @@ RowLayout {
         MouseArea {
             id: batArea
             Layout.fillHeight: true; cursorShape: Qt.PointingHandCursor
+            Layout.alignment: Qt.AlignVCenter
             onClicked: bar.sysClicked()
             implicitWidth: batLabel.implicitWidth + batBar.width + 20
             RowLayout {
@@ -110,6 +112,7 @@ RowLayout {
 
         MouseArea {
             Layout.fillHeight: true; Layout.preferredWidth: wiredLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
+            Layout.alignment: Qt.AlignVCenter
             onClicked: bar.wifiClicked()
             Text {
                 id: wiredLabel; anchors.verticalCenter: parent.verticalCenter
@@ -120,6 +123,7 @@ RowLayout {
 
         MouseArea {
             Layout.fillHeight: true; width: sysLabel.implicitWidth + 4; cursorShape: Qt.PointingHandCursor
+            Layout.alignment: Qt.AlignVCenter
             onClicked: bar.sysClicked()
             Text {
                 id: sysLabel; anchors.verticalCenter: parent.verticalCenter
