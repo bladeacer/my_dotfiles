@@ -6,9 +6,7 @@ import "../theme"
 
 Rectangle {
     id: mediaCard
-    color: Theme.widgetBg
-    border.color: Theme.borderMain
-    border.width: 1
+    color: "transparent"
 
     Process { id: cmdPrev; command: ["playerctl", "previous"] }
     Process { id: cmdToggle; command: ["playerctl", "play-pause"] }
@@ -35,8 +33,7 @@ Rectangle {
         anchors.fill: parent; anchors.margins: 8; spacing: 4
 
         Text {
-            text: "\u250c\u2500\u2500 [ LAYER_AUDIO // CORE_STATE ]" +
-                  "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510"
+            text: Theme.frameHeader("LAYER_AUDIO // CORE_STATE")
             font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.accentBlue
         }
 
@@ -47,7 +44,6 @@ Rectangle {
                 width: 50; height: 50
                 color: Qt.rgba(1, 1, 1, 0.05)
                 border.color: Theme.fgMuted; border.width: 1
-
                 Image {
                     anchors.fill: parent; fillMode: Image.PreserveAspectCrop; cache: false
                     source: root.mediaArtUrl !== "" ? "file://" + root.mediaArtUrl : ""
@@ -94,7 +90,7 @@ Rectangle {
         }
 
         Text {
-            text: "\u2514" + "\u2500".repeat(40) + "\u2518"
+            text: Theme.frameFooter()
             font.family: Theme.fontMono; font.pixelSize: 9; color: Theme.fgMuted
         }
     }

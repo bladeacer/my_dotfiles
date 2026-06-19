@@ -35,9 +35,10 @@ QtObject {
     }
 
     function frameHeader(label) {
-        var pad = 40 - label.length
+        var inner = "\u2500\u2500 [ " + label + " ]"
+        var pad = 42 - inner.length
         if (pad < 0) pad = 0
-        return "\u250c\u2500\u2500 [ " + label + " ]" + "\u2500".repeat(pad) + "\u2510"
+        return "\u250c" + inner + "\u2500".repeat(pad) + "\u2510"
     }
 
     function frameFooter() {
