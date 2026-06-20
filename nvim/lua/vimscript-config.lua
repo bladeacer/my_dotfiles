@@ -170,6 +170,4 @@ nnoremap <silent> <leader>a <cmd>lua vim.lsp.buf.code_action()<CR>
 let g:move_normal_option = 1
 vmap aj <Plug>MoveBlockCountLinesDown
 vmap ak <Plug>MoveBlockCountLinesUp
-
-autocmd FileType ada setlocal shiftwidth=3 ts=3 softtabstop=3 expandtab
 ]])
