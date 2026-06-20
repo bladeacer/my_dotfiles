@@ -18,7 +18,7 @@
     "quickshell-docs": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/.config/quickshell"],
-      "enabled": true
+      "enabled": false
     }
   }
 }
