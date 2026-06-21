@@ -5,3 +5,4 @@
 .DS_Store
 *.bak
 quickshell_compiled_docs.md
+quickshell/lookas-bridge/target

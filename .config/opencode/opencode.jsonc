@@ -15,10 +15,5 @@
       "command": ["repowise", "mcp", "--transport", "stdio"],
       "enabled": false
     },
-    "quickshell-docs": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/.config/quickshell"],
-      "enabled": false
-    }
   }
 }

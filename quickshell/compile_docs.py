@@ -44,8 +44,8 @@ def preprocess_docs(docs_dir, output_file):
     print(f"Successfully compiled documentation into: {output_file}")
 
 if __name__ == "__main__":
-    docs_directory = "../Desktop/projects/quickshell-docs"
-    output_master_file = "quickshell_compiled_docs.md"
+    docs_directory = "../../Desktop/projects/quickshell-docs"
+    output_master_file = "./docs/quickshell_compiled_docs.md"
     
     if os.path.exists(docs_directory):
         preprocess_docs(docs_directory, output_master_file)

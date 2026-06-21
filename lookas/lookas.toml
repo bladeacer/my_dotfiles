@@ -1,0 +1,41 @@
+# ── Lookas (lookas-bridge) configuration ──────────────────────
+# All fields optional; defaults shown in comments.
+# See https://github.com/rccyx/lookas
+
+# Lowest frequency in Hz to render (10–1000). Below this, energy is ignored.
+fmin = 30.0
+
+# Highest frequency in Hz to render (1000–24000). Above this, energy is ignored.
+fmax = 16000.0
+
+# FFT window size (512–4096, power of two). Larger = more frequency detail
+# but more latency. 2048 is a good balance for music.
+fft_size = 2048
+
+# Target milliseconds per frame (8–50). 16 ≈ 60 fps, 8 ≈ 120 fps, 33 ≈ 30 fps.
+frame_ms = 16
+
+# Time constant for spectral decay in seconds (0.01–0.20). Lower = faster
+# decay (bars drop quicker). Higher = longer sustain (smoother tail-off).
+# Attack is always instant regardless of this value.
+tau_spec = 0.08
+
+# Noise gate threshold in dB (-80 to -30). Less negative = more aggressive
+# gating (only loud sounds pass). More negative = more sensitive (silent
+# noise still registered). Set to -80 for always-open.
+gate_db = -55.0
+
+# Lateral energy diffusion (0–1). 0 = each bar independent; 1 = entire
+# spectrum moves as a solid block. Controls how much energy bleeds into
+# neighbouring bars, creating fluid motion.
+flow_k = 0.15
+
+# Spring stiffness (10–200). Higher = bars snap faster to target values.
+# Lower = sluggish, lazy movement.
+spr_k = 80.0
+
+# Spring damping ratio (0.1–2.0).
+#   <1  = underdamped (bouncy, overshoot)
+#   =1  = critically damped (fastest no-overshoot)
+#   >1  = overdamped (sluggish, no bounce)
+spr_zeta = 1.0

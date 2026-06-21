@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "quickshell-docs": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/my_dotfiles/quickshell/docs"],
+      "enabled": true
+    }
+  }
+}

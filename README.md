@@ -45,7 +45,8 @@ shader effects.
 - EndeavourOS / Arch Linux with KDE Plasma 6 (Wayland)
 - Quickshell: Qt Quick Wayland shell
 - Departure Mono Nerd Font Mono: global monospace font
-- `cava`: audio spectrum visualizer
+- `lookas` (via `quickshell/lookas-bridge`): perception-aligned spectrum visualiser
+- Rust toolchain (for building `lookas-bridge`)
 - Standard CLI tools: `wpctl`, `brightnessctl`, `nmcli`, `playerctl`,
   `bluetoothctl`, `fcitx5-remote`
 
@@ -78,6 +79,19 @@ The setup script will:
 2. Stow all dotfiles to their proper locations
 3. Set up navishell autostart
 
+### Building lookas-bridge
+
+```bash
+# Requires: Rust toolchain
+cd quickshell/lookas-bridge
+cargo build --release
+```
+
+The bridge pipes 77 mel-scaled, A-weighted, spring-damped bar heights to
+the QML canvas at 60 fps (bar count computed from screen width via
+bar- and gap-width ratios; 77 at typical desktop resolutions). Config via `~/.config/lookas.toml` (see
+[lookas docs](https://github.com/rccyx/lookas)).
+
 ### Manual stow
 
 ```bash
@@ -106,6 +120,8 @@ you know what you are doing.
   status indicators, panel layout strategies, interactive matrix patterns
 - [LainOS-ricer-arch](https://codeberg.org/LainOS/LainOS-ricer-arch): Copland
   OS logo and theme inspiration
+- [lookas](https://github.com/rccyx/lookas): Perception-aligned audio spectrum
+  visualiser (used as analysis engine for the background visualiser)
 
 ## License
 
