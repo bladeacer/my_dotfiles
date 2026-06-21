@@ -13,6 +13,27 @@ Item {
     property int barCount: Math.floor(1 / (barWidthRatio + gapWidthRatio))
     property real barPx: parent.width * barWidthRatio
     property real gapPx: parent.width * gapWidthRatio
+    property real adjustmentOffset: 0
+    property string screenName: ""
+    property var calibrations: ({})
+
+    FileView {
+        id: calFile
+        path: Qt.resolvedUrl("../calibrations.json")
+        blockLoading: true
+    }
+
+    Component.onCompleted: {
+        calFile.reload()
+        var txt = calFile.text()
+        if (txt) {
+            try { calibrations = JSON.parse(txt) }
+            catch (e) { calibrations = ({}) }
+        }
+        var a = []
+        for (var i = 0; i < barCount; i++) a.push(0)
+        bands = a
+    }
 
     Process {
         id: lookasProc
@@ -34,7 +55,11 @@ Item {
     Row {
         id: barRow
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: parent.height * 181/360 - 294
+        anchors.bottomMargin: (
+            calibrations[screenName] ??
+            calibrations[String(parent.height)] ??
+            parent.height * 101/318 - 5.3491
+        ) + adjustmentOffset
         anchors.horizontalCenter: parent.horizontalCenter
         height: parent.height * 800/1800
         spacing: gapPx
@@ -48,11 +73,12 @@ Item {
 
                 Rectangle {
                     width: parent.width
-                    height: parent.height * Math.min(0.85, Math.max(0.01, spectrum.bands[index] * 1.2))
+                    property real val: spectrum.bands[index] || 0
+                    height: parent.height * Math.min(0.85, Math.max(0.01, val * 1.2))
                     anchors.bottom: parent.bottom
                     radius: 1
                     color: Theme.accentBlue
-                    opacity: 0.2 + 0.4 * spectrum.bands[index]
+                    opacity: 0.2 + 0.4 * val
                 }
             }
         }

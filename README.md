@@ -89,8 +89,10 @@ cargo build --release
 
 The bridge pipes 77 mel-scaled, A-weighted, spring-damped bar heights to
 the QML canvas at 60 fps (bar count computed from screen width via
-bar- and gap-width ratios; 77 at typical desktop resolutions). Config via `~/.config/lookas.toml` (see
-[lookas docs](https://github.com/rccyx/lookas)).
+bar- and gap-width ratios; 77 at typical desktop resolutions).
+
+Config via `~/.config/lookas.toml`, stowed under `lookas` here.
+(see [lookas docs](https://github.com/rccyx/lookas)).
 
 ### Manual stow
 

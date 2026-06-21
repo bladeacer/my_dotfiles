@@ -139,13 +139,19 @@ ShellRoot {
     function openWifiFromSys() { sysLoader.active = false; togglePopup(wifiLoader) }
     function openBtFromSys() { sysLoader.active = false; togglePopup(btLoader) }
 
-    PanelWindow {
-        WlrLayershell.layer: WlrLayer.Background
-        WlrLayershell.focusable: WlrKeyboardFocus.None
-        anchors { top: true; left: true; right: true; bottom: true }
-        color: "transparent"
+    Variants {
+        model: Quickshell.screens
 
-        Components.SpectrumVisualizer { anchors.fill: parent; opacity: 0.8 }
+        PanelWindow {
+            property var modelData
+            screen: modelData
+            WlrLayershell.layer: WlrLayer.Background
+            WlrLayershell.focusable: WlrKeyboardFocus.None
+            anchors { top: true; left: true; right: true; bottom: true }
+            color: "transparent"
+
+            Components.SpectrumVisualizer { anchors.fill: parent; opacity: 0.8; screenName: modelData.name }
+        }
     }
 
     PanelWindow {

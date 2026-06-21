@@ -1,0 +1,8 @@
+AppLauncher 1.0 AppLauncher.qml
+BluetoothControlCenter 1.0 BluetoothControlCenter.qml
+MediaHUD 1.0 MediaHUD.qml
+SpectrumVisualizer 1.0 SpectrumVisualizer.qml
+StatusBar 1.0 StatusBar.qml
+SystemControlCenter 1.0 SystemControlCenter.qml
+TaskTracker 1.0 TaskTracker.qml
+WifiWidget 1.0 WifiWidget.qml

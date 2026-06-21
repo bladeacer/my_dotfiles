@@ -82,20 +82,32 @@ class CanvasWidget(QWidget):
         self._drag_start_adj = 0.0
 
     # ---- geometry helpers ----
-    def _bar_rect(self, w, h, off):
-        bottom_y = h - off
-        ah = h * self.BAR_AREA_RATIO
-        top_y = bottom_y - ah
-        pad = w * 0.02
-        return (int(pad), int(top_y), int(w - 2 * pad), int(ah))
+    BAR_WIDTH_RATIO = (28/2879 + 20/2559) / 2    # ≈ 0.0087706
+    GAP_WIDTH_RATIO = (13/2879 + 10/2559) / 2    # ≈ 0.0042116
+    BAR_COUNT = int(1 / (BAR_WIDTH_RATIO + GAP_WIDTH_RATIO))  # 77
+
+    def _bar_dimensions(self, w, h, off):
+        """Return (x_start, y_baseline, bar_w, gap, total_w, bar_h_max)."""
+        bar_w = w * self.BAR_WIDTH_RATIO
+        gap = w * self.GAP_WIDTH_RATIO
+        total_w = self.BAR_COUNT * bar_w + (self.BAR_COUNT - 1) * gap
+        x_start = (w - total_w) / 2
+        y_base = h - off
+        bar_h_max = h * self.BAR_AREA_RATIO * 0.85  # matches QML Math.min(0.85, …)
+        return (x_start, y_base, bar_w, gap, total_w, bar_h_max)
+
+    # ---- hit-test: anywhere in the bar row bounds ----
+    def _hit_test(self, x, y, w, h, off):
+        xs, yb, bw, gap, tw, _ = self._bar_dimensions(w, h, off)
+        bar_area_top = yb - h * self.BAR_AREA_RATIO
+        return (xs <= x <= xs + tw and bar_area_top <= y <= yb)
 
     # ---- mouse ----
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             w, h = self.width(), self.screen_h
             off = state.offset_for(h)
-            rx, ry, rw, rh = self._bar_rect(w, h, off)
-            if rx <= event.x() <= rx + rw and ry <= event.y() <= ry + rh:
+            if self._hit_test(event.x(), event.y(), w, h, off):
                 self._dragging = True
                 self._drag_start_y = event.y()
                 self._drag_start_adj = state.get_adj(h)
@@ -114,10 +126,8 @@ class CanvasWidget(QWidget):
         else:
             w, h = self.width(), self.screen_h
             off = state.offset_for(h)
-            rx, ry, rw, rh = self._bar_rect(w, h, off)
             self.setCursor(Qt.OpenHandCursor
-                           if rx <= event.x() <= rx + rw
-                           and ry <= event.y() <= ry + rh
+                           if self._hit_test(event.x(), event.y(), w, h, off)
                            else Qt.ArrowCursor)
 
     def mouseReleaseEvent(self, event):
@@ -133,38 +143,48 @@ class CanvasWidget(QWidget):
 
         w, h = self.width(), self.screen_h
         off = state.offset_for(h)
-        rx, ry, rw, rh = self._bar_rect(w, h, off)
-        bl_y = int(h - off)
+        xs, yb, bw, gap, tw, bmax_h = self._bar_dimensions(w, h, off)
+        yb_int = int(yb)
 
+        # dim bg
         p.fillRect(0, 0, w, h, QColor(0, 0, 0, 50))
-        p.fillRect(rx, ry, rw, rh, QColor(132, 160, 198, 55))
 
-        pen = QPen(QColor(132, 160, 198), 2)
+        # ---- draw individual bars (simulating the spectrum) ----
+        for i in range(self.BAR_COUNT):
+            # Vary bar heights for visual reference (fake spectrum)
+            frac = 0.3 + 0.6 * ((i % 7) / 7.0)  # sawtooth-ish pattern
+            bar_h = max(int(bmax_h * frac), 1)
+            bx = int(xs + i * (bw + gap))
+            by = yb_int - bar_h
+
+            p.fillRect(bx, by, int(bw), bar_h, QColor(132, 160, 198, 120))
+            p.fillRect(bx, yb_int - 1, int(bw), 1, QColor(132, 160, 198, 180))
+
+        # ---- baseline guide ----
+        pen = QPen(QColor(226, 120, 120), 3)
         p.setPen(pen)
-        p.drawRect(rx, ry, rw, rh)
+        p.drawLine(int(xs), yb_int, int(xs + tw), yb_int)
 
-        pen.setColor(QColor(226, 120, 120))
-        pen.setWidth(4)
-        p.setPen(pen)
-        p.drawLine(rx + 4, bl_y, rx + rw - 4, bl_y)
-
+        # ---- small grab indicators on baseline ----
         pen.setWidth(1)
         p.setPen(pen)
-        for cx in (rx + rw // 3, rx + rw * 2 // 3):
+        for cx_i in (int(xs + tw // 3), int(xs + tw * 2 // 3)):
             for dy in (-4, 4):
-                p.drawLine(cx - 6, bl_y + dy, cx, bl_y)
-                p.drawLine(cx + 6, bl_y + dy, cx, bl_y)
+                p.drawLine(cx_i - 6, yb_int + dy, cx_i, yb_int)
+                p.drawLine(cx_i + 6, yb_int + dy, cx_i, yb_int)
 
+        # ---- info overlay ----
         p.setPen(QColor(198, 200, 209))
         font = QFont("monospace", 11)
         p.setFont(font)
         adj = state.get_adj(h)
-        lines = [
+        for i, line in enumerate([
             self.label,
             f"offset = {off:.1f} px  (adj = {adj:+.1f})",
-            "[drag the bar, Enter to save]",
-        ]
-        for i, line in enumerate(lines):
+            f"{self.BAR_COUNT} bars, "
+            f"bar={bw:.1f}px  gap={gap:.1f}px",
+            "[drag bars, Enter to save]",
+        ]):
             p.drawText(20, 30 + i * 18, line)
 
 
