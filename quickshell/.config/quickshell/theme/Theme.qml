@@ -14,6 +14,7 @@ QtObject {
     readonly property color accentRed:   Qt.rgba(226/255, 120/255, 120/255, 1.0)
     readonly property color accentOrange:Qt.rgba(226/255, 164/255, 120/255, 1.0)
     readonly property color accentPurple:Qt.rgba(119/255, 89/255, 180/255, 1.0)
+    readonly property color accentPink:  Qt.rgba(190/255, 130/255, 160/255, 1.0)
     readonly property color selectionBg: Qt.rgba(69/255, 75/255, 104/255, 1.0)
     readonly property color widgetBg:    Qt.rgba(30/255, 33/255, 50/255, 0.92)
     readonly property color borderMain:  Qt.rgba(132/255, 160/255, 198/255, 0.18)

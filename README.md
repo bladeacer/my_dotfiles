@@ -47,6 +47,7 @@ shader effects.
 - Departure Mono Nerd Font Mono: global monospace font
 - `lookas` (via `quickshell/lookas-bridge`): perception-aligned spectrum visualiser
 - Rust toolchain (for building `lookas-bridge`)
+- `kdotool`: KDE window enumeration and focus tracking (AUR)
 - Standard CLI tools: `wpctl`, `brightnessctl`, `nmcli`, `playerctl`,
   `bluetoothctl`, `fcitx5-remote`
 
@@ -124,6 +125,43 @@ you know what you are doing.
   OS logo and theme inspiration
 - [lookas](https://github.com/rccyx/lookas): Perception-aligned audio spectrum
   visualiser (used as analysis engine for the background visualiser)
+
+## Development & Testing
+
+Run `make help` (or just `make`) to see all available targets:
+
+```
+$ make
+Usage: make <target>
+  help           Show this help (default)
+  calibrate      Run screen calibration
+  shell          Start navishell
+  test           Run all tests (bash + python)
+  test-bash      Run telemetry pipe unit tests (bash)
+  test-py        Run save-offset unit tests (pytest)
+  bridge-release Build lookas-bridge in release mode
+  setup          Run full setup script
+```
+
+Before deploying QML changes, run all tests:
+
+```bash
+make test       # bash + python tests
+make test-bash  # telemetry pipe tests only
+make test-py    # save-offset unit tests only
+```
+
+`make` (default) prints a help screen listing all targets.
+
+The bash tests validate every command in `shell.qml`'s telemetry pipe
+(battery, wifi, media, volume, brightness, keyboard layout, focus tracking)
+produces the expected output format. Run `make test-bash` before restarting
+the shell to catch regressions.
+
+The focus tracking test uses `kdotool` + `qdbus` to query the active KDE
+window via `org.kde.KWin.getWindowInfo`. See `shell.qml` for the telemetry
+pipe integration and `components/TaskTracker.qml` for the KDE window
+enumeration fallback.
 
 ## License
 

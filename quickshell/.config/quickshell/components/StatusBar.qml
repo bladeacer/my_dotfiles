@@ -23,21 +23,22 @@ RowLayout {
         Text {
             text: "\u25c8 NAVI_OS"
             font.family: Theme.fontMono; font.pixelSize: 11; font.bold: true
-            color: Theme.accentBlue
+            color: Theme.fgNormal
             Layout.alignment: Qt.AlignVCenter
         }
 
         TaskTracker { Layout.fillHeight: true; Layout.alignment: Qt.AlignVCenter }
 
         Text {
-            text: Services.FocusedWindow.title !== ""
-                ? ">> " + Services.FocusedWindow.title
-                : ">> DESKTOP"
+            text: root.focusedTitle !== ""
+            ? "FOCUS // " + root.focusedAppId.split(".").pop()
+            // + " // " + root.focusedTitle
+            : "FOCUS // *_*"
             font.family: Theme.fontMono; font.pixelSize: 11
-            color: Services.FocusedWindow.title !== "" ? Theme.accentBlue : Theme.fgMuted
+            color: root.focusedTitle !== "" ? Theme.accentPurple : Theme.fgMuted
             elide: Text.ElideRight
             Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 280
+            Layout.maximumWidth: 360
         }
     }
 
@@ -59,7 +60,7 @@ RowLayout {
 
     RowLayout {
         Layout.preferredWidth: parent.width * 0.44
-        Layout.fillHeight: true; spacing: 4; Layout.rightMargin: 10
+        Layout.fillHeight: true; spacing: 8; Layout.rightMargin: 12
         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
         Item {
@@ -113,7 +114,7 @@ RowLayout {
                 id: wiredLabel; anchors.verticalCenter: parent.verticalCenter
                 text: "WIRED [" + Theme.blockMeter(root.wifiSignalStrength) + "] " + (root.activeWifiSSID === "DISCONNECTED" ? "NONE" : root.activeWifiSSID)
                 font.family: Theme.fontMono; font.pixelSize: 11
-                color: root.activeWifiSSID === "DISCONNECTED" ? Theme.fgMuted : Theme.accentBlue
+                color: root.activeWifiSSID === "DISCONNECTED" ? Theme.fgMuted : Theme.accentPink
             }
         }
 

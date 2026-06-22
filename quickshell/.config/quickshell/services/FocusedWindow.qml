@@ -1,18 +1,17 @@
 pragma Singleton
 import QtQuick
-import Quickshell
+import Quickshell.Wayland
 
 Singleton {
-    readonly property QtObject activeWindow: {
-        var wins = Quickshell.windows
-        if (!wins) return null
-        for (var i = 0; i < wins.length; i++) {
-            if (wins[i].active || wins[i].focused) return wins[i]
-        }
-        return null
-    }
+    id: fws
 
-    readonly property string title: activeWindow ? activeWindow.title : ""
-    readonly property string appId: activeWindow ? activeWindow.appId : ""
-    readonly property string wmClass: activeWindow ? activeWindow.wmClass : ""
+    readonly property var _w: typeof ToplevelManager !== 'undefined' ? ToplevelManager.activeToplevel : null
+
+    // Set externally by shell.qml telemetry handler (KDE fallback)
+    property string _kdeTitle: ""
+    property string _kdeAppId: ""
+
+    readonly property string title: _w && typeof _w.title === 'string' && _w.title !== "" ? _w.title : _kdeTitle
+    readonly property string appId: _w && typeof _w.appId === 'string' && _w.appId !== "" ? _w.appId : _kdeAppId
+    readonly property string wmClass: _w && typeof _w.wmClass === 'string' && _w.wmClass !== "" ? _w.wmClass : _kdeAppId
 }

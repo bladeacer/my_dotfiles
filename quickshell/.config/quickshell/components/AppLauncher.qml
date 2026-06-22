@@ -25,6 +25,7 @@ Rectangle {
     property bool loading: true
 
     Component.onCompleted: {
+        Qt.callLater(function() { searchField.forceActiveFocus() })
         forceActiveFocus()
         var appsObj = DesktopEntries.applications
         if (appsObj && appsObj.values) {

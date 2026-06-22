@@ -4,37 +4,35 @@ import Quickshell
 import Quickshell.Io
 
 Singleton {
-    property bool wifiEnabled: false
     property bool connected: false
     property string activeSSID: "DISCONNECTED"
     property int activeStrength: 0
     property var nearbyNetworks: []
     property string _rawBuffer: ""
 
-    // Active connection scanner
     Process {
         id: activeScan
         command: ["bash", "-c", "nmcli -t -f ACTIVE,SSID,SIGNAL dev wifi 2>/dev/null | grep '^yes' || echo 'no:disconnected:0'"]
-        running: true
         stdout: SplitParser {
             onRead: (line) => {
                 var parts = line.trim().split(":")
                 if (parts.length < 3) return
                 if (parts[0] === "yes") {
-                    wifiEnabled = true
                     connected = true
                     activeSSID = (parts[1] || "").toUpperCase()
                     activeStrength = parseInt(parts[2]) || 0
+                } else {
+                    connected = false
+                    activeSSID = "DISCONNECTED"
+                    activeStrength = 0
                 }
             }
         }
     }
 
-    // Network list scanner
     Process {
         id: listScan
         command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL dev wifi list 2>/dev/null | head -30"]
-        running: true
         stdout: SplitParser {
             onRead: (line) => {
                 if (line.trim() === "") return
@@ -48,12 +46,7 @@ Singleton {
                 for (var i = 0; i < lines.length; i++) {
                     var p = lines[i].split(":")
                     if (p.length >= 2 && p[0]) {
-                        nets.push({
-                            ssid: p[0],
-                            strength: parseInt(p[1]) || 0,
-                            security: p[2] || "",
-                            active: p[0].toUpperCase() === activeSSID
-                        })
+                        nets.push({ ssid: p[0], strength: parseInt(p[1]) || 0, security: p[2] || "" })
                     }
                 }
                 nearbyNetworks = nets
@@ -63,14 +56,25 @@ Singleton {
     }
 
     Timer {
+        interval: 2000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: { activeScan.running = false; activeScan.running = true }
+    }
+
+    Timer {
         interval: 10000
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: {
-            activeScan.running = false; activeScan.running = true
-            listScan.running = false; listScan.running = true
-        }
+        onTriggered: { listScan.running = false; listScan.running = true }
+    }
+
+    function updateActiveData(ssid, strength) {
+        connected = ssid !== "DISCONNECTED" && ssid !== ""
+        activeSSID = ssid
+        activeStrength = strength || 0
     }
 
     function connectToNetwork(ssid) {

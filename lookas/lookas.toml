@@ -3,10 +3,10 @@
 # See https://github.com/rccyx/lookas
 
 # Lowest frequency in Hz to render (10–1000). Below this, energy is ignored.
-fmin = 30.0
+fmin = 20.0
 
 # Highest frequency in Hz to render (1000–24000). Above this, energy is ignored.
-fmax = 16000.0
+fmax = 20000.0
 
 # FFT window size (512–4096, power of two). Larger = more frequency detail
 # but more latency. 2048 is a good balance for music.

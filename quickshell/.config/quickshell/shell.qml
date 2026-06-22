@@ -22,6 +22,8 @@ ShellRoot {
     property string btStatus: "BT // DOWN"
     property string activeWifiSSID: "DISCONNECTED"
     property int wifiSignalStrength: 0
+    property string focusedTitle: ""
+    property string focusedAppId: ""
     property int mediaPosition: 0
     property int mediaLength: 1
     property real currentVolume: 0.0
@@ -79,7 +81,16 @@ ShellRoot {
             "echo \"MEDIA:$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}|{{ xesam:album }}|{{ xesam:composer }}' 2>/dev/null)\"; " +
             "echo \"VOL:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}' || echo 0)\"; " +
             "echo \"BRIGHT:$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%' || echo 0)\"; " +
-            "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\""
+            "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\"" +
+            "; WIN=$(kdotool getactivewindow 2>/dev/null);" +
+            " if [ -n \"$WIN\" ]; then" +
+            " INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1);" +
+            " TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //');" +
+            " APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //');" +
+            " if [ -n \"$APP\" ] && [ \"$APP\" != \"plasmashell\" ]; then" +
+            " echo \"FOCUS_TITLE:$TITLE\";" +
+            " echo \"FOCUS_APP:$APP\";" +
+            " fi; fi"
         ]
         running: true
         stdout: SplitParser {
@@ -90,11 +101,11 @@ ShellRoot {
                         var c = parseInt(v)
                         if (!isNaN(c)) batteryCapacity = c
                         var pct = v !== "" && v !== "--" ? v + "%" : "--%"
-                        batteryStatus = (batteryCharging ? "[+]" : "[-]") + " BAT " + pct
+                        batteryStatus = (batteryCharging ? "[+]" : (batteryCapacity <= 15 ? "[!]" : "[-]")) + " BAT " + pct
                     } else if (t.startsWith("PWR:")) {
                         batteryCharging = t.substring(4).trim().toLowerCase() === "charging"
                         var pct = batteryCapacity >= 0 ? batteryCapacity + "%" : "--%"
-                        batteryStatus = (batteryCharging ? "[+]" : "[-]") + " BAT " + pct
+                        batteryStatus = (batteryCharging ? "[+]" : (batteryCapacity <= 15 ? "[!]" : "[-]")) + " BAT " + pct
                     } else if (t.startsWith("POS:")) {
                         var pos = parseFloat(t.substring(4))
                         if (!isNaN(pos)) mediaPosition = Math.round(pos)
@@ -102,8 +113,8 @@ ShellRoot {
                         btStatus = "BT // " + t.substring(3).trim().toUpperCase()
                     } else if (t.startsWith("WIFI:")) {
                     var seg = t.substring(5).split(":")
-                    if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]) }
-                    else { activeWifiSSID = "DISCONNECTED"; wifiSignalStrength = 0 }
+                    if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]); Services.WifiService.connected = true; Services.WifiService.activeSSID = seg[1].toUpperCase(); Services.WifiService.activeStrength = parseInt(seg[2]) }
+                    else { activeWifiSSID = "DISCONNECTED"; wifiSignalStrength = 0; Services.WifiService.connected = false; Services.WifiService.activeSSID = "DISCONNECTED"; Services.WifiService.activeStrength = 0 }
                 } else if (t.startsWith("MEDIA:")) {
                     var seg = t.substring(6).split("|")
                     if (seg.length >= 3 && seg[0] !== "") {
@@ -120,6 +131,12 @@ ShellRoot {
                 } else if (t.startsWith("BRIGHT:")) {
                     var p = parseInt(t.substring(7))
                     if (!isNaN(p)) currentBrightness = Math.min(Math.max(p / 100.0, 0.0), 1.0)
+                } else if (t.startsWith("FOCUS_TITLE:")) {
+                    focusedTitle = t.substring(12)
+                    Services.FocusedWindow._kdeTitle = focusedTitle
+                } else if (t.startsWith("FOCUS_APP:")) {
+                    focusedAppId = t.substring(10)
+                    Services.FocusedWindow._kdeAppId = focusedAppId
                 } else if (t.startsWith("KB:")) {
                     var k = t.substring(3).trim()
                     if (k !== "") keyboardLayout = k.toUpperCase()

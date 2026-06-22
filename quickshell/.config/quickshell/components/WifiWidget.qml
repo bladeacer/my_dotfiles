@@ -73,8 +73,11 @@ Rectangle {
             spacing: 2; visible: wifiCard.expanded; clip: true
 
             delegate: Rectangle {
+                id: netDelegate
+                required property var modelData
                 width: networkList.width; height: 30
-                color: modelData.active ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
+                property bool isActive: modelData && WifiService.activeSSID !== "" && modelData.ssid.toUpperCase() === WifiService.activeSSID
+                color: isActive ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
                 border.color: rowMouse.containsMouse ? Theme.accentBlue : "transparent"
                 border.width: 1
 
@@ -82,22 +85,22 @@ Rectangle {
                     anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8
 
                     Text {
-                        text: (modelData.active ? "\u00bb " : "\u00b7 ") + modelData.ssid
-                        color: modelData.active ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
+                        text: (isActive ? "\u00bb " : "\u00b7 ") + (modelData ? modelData.ssid : "")
+                        color: isActive ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                         Layout.fillWidth: true; elide: Text.ElideRight
                     }
 
                     Text {
-                        text: Theme.blockMeter(modelData.strength)
-                        color: modelData.active ? Theme.accentBlue : Theme.fgMuted
+                        text: Theme.blockMeter(modelData ? modelData.strength : 0)
+                        color: isActive ? Theme.accentBlue : Theme.fgMuted
                         font.family: Theme.fontMono; font.pixelSize: Theme.textSm
                     }
                 }
 
                 MouseArea {
                     id: rowMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                    onClicked: WifiService.connectToNetwork(modelData.ssid)
+                    onClicked: { if (modelData) WifiService.connectToNetwork(modelData.ssid) }
                 }
             }
         }
