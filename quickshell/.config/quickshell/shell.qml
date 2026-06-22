@@ -229,7 +229,7 @@ ShellRoot {
                 border.color: Theme.accentBlue; border.width: 1
                 layer.enabled: true; layer.samples: 4
 
-                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys; onOpenBtRequested: openBtFromSys }
+                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys(); onOpenBtRequested: openBtFromSys() }
 
                 ShaderEffect {
                     id: waveShader

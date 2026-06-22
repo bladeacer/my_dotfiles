@@ -105,11 +105,19 @@ Singleton {
         }
     }
 
-    // ── Connection actions (via property triggers, not function calls) ──
+    // ── Connect process ──
+    Process {
+        id: connectProcess
+        command: []
+        running: false
+    }
+
+    // ── Connection trigger ──
     onConnectPendingChanged: {
         if (connectPending > 0 && connectTarget !== "") {
-            var p = Quickshell.createProcess(["nmcli", "dev", "wifi", "connect", connectTarget])
-            p.running = true
+            connectProcess.command = ["bash", "-c", "nmcli dev wifi connect \"" + connectTarget.replace(/"/g, "\\\"") + "\""]
+            connectProcess.running = false
+            connectProcess.running = true
             connectPending = 0
         }
     }
