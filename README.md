@@ -17,25 +17,31 @@ In this repository, you can find the dotfiles I use.
 - KDE Plasma configs: Background shortcuts and panel exclusion rules
 - `navishell`: Custom Qt Quick Wayland shell with KDE Plasma 6 integration
 
-### Blue Rose Logo
+---
 
-The neovim startpage renders a blue rose ANSI art at `logo/blue_rose`.
-The `navishell` status bar also displays a braille rendering of Copland OS logo.
+## About navishell
 
+`navishell` is a custom Lain-themed (Serial Experiments Lain) Quickshell inspired
+setup built with QML components: app launcher, system controls, media HUD,
+task bar, overlay panels, background spectrum visualizer, and animated
+shader effects.
+
+Pairing with Iceberg Dark and Departure Mono felt suitable, that being said this
+is not purely a Lain inspired rice. There are plenty of blue roses
+and the wallpaper is not too similar to the vibes by purely Lain inspired rices.
+
+Since KDE is used, mouse usage is possible and sometimes expected.
+> Until I have key binds for everything in the rice itself.
+
+### Logo Usage
+
+The fastfetch and neovim startpage renders a blue rose ANSI art at `logo/blue_rose`.
+The `navishell` system controls also displays a braille rendering of Copland OS logo.
 
 ## Palette
 
 Iceberg Dark. See [iceberg.vim](https://github.com/cocopon/iceberg.vim) for more 
 details on the original colours scheme.
-
----
-
-## About navishell
-
-`navishell` is a custom Lain-themed (Serial Experiments Lain) Quickshell setup built with
-QML components: app launcher, system controls, media HUD,
-task bar, overlay panels, background spectrum visualizer, and animated
-shader effects.
 
 
 ### Requirements for navishell
@@ -60,10 +66,11 @@ shader effects.
 | `Meta+Space` | Toggle app launcher |
 | `Meta+S` | Toggle system control centre |
 | `Escape` | Close all popups |
-| `Ctrl+N` / `J` | Next item |
-| `Ctrl+P` / `K` | Previous item |
-| `H` / `L` | Tab switch (sys control) |
+| `Ctrl+N` | Next item |
+| `Ctrl+P` | Previous item |
 | `Enter` | Execute / launch |
+
+<!-- | `H` / `L` | Tab switch (sys control) | -->
 
 `navishell` is a work in progress, expect breaking changes.
 
@@ -85,6 +92,9 @@ The setup script will:
 
 ### Building lookas-bridge
 
+tldr; lookas is cava but more accurate. This bridge is so that we can
+interface with the `lookas` library itself.
+
 ```bash
 # Requires: Rust toolchain
 cd quickshell/lookas-bridge
@@ -95,8 +105,8 @@ The bridge pipes 77 mel-scaled, A-weighted, spring-damped bar heights to
 the QML canvas at 60 fps (bar count computed from screen width via
 bar- and gap-width ratios; 77 at typical desktop resolutions).
 
-Config via `~/.config/lookas.toml`, stowed under `lookas` here.
-(see [lookas docs](https://github.com/rccyx/lookas)).
+Config via [`./lookas/lookas.toml`](./lookas/lookas.toml), stowed under `lookas` here.
+see [lookas docs](https://github.com/rccyx/lookas).
 
 ### Manual calibration
 
@@ -173,21 +183,41 @@ enumeration fallback.
 
 ## Credits
 
+### Typography
+
 - [Departure Mono](https://www.departuremono.com/): Primary monospace font
-  used
+  used. Licensed under the SIL Open Font License.
 - [Maple Mono](https://github.com/subframe7536/Maple-font): CJK fallback font
-  for Chinese/Japanese/Korean glyphs
-- [IcebergDark](https://github.com/gkeep/iceberg-dark): Colour palette
+  for Chinese/Japanese/Korean glyphs. Licensed under the SIL Open Font License.
+
+### Colours
+
+- [IcebergDark](https://github.com/gkeep/iceberg-dark): Colour palette.
+Licensed under the MIT License.
 - [iceberg.vim](https://github.com/cocopon/iceberg.vim): Original Iceberg colour
-  scheme
+  scheme. Licensed under the MIT License.
+
+### Dotfiles
+
 - [Persona-Quickshell](https://github.com/Yujonpradhananga/Persona-Quickshell):
-  Layout concepts, GLSL shaders, fluid animation patterns
-- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell): System
-  status indicators, panel layout strategies, interactive matrix patterns
-- [LainOS-ricer-arch](https://codeberg.org/LainOS/LainOS-ricer-arch): Copland
-  OS logo and theme inspiration
+  Referenced for layout concepts, GLSL shaders, fluid animation patterns
+Licensed under the MIT License.
+
+- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell): Referenced
+for System status indicators, panel layout strategies, interactive matrix patterns.
+Licensed under the MIT License.
+
+- [LainOS-ricer-arch](https://codeberg.org/LainOS/LainOS-ricer-arch): 
+Referenced for ASCII Copland OS logo. License not indicated.
+
+### Dependencies
+
+- [Quickshell](https://git.outfoxxed.me/quickshell/quickshell) Widget
+configuration in QML. Licensed under LGPLv3 License.
+
 - [lookas](https://github.com/rccyx/lookas): Perception-aligned audio spectrum
-  visualiser (used as analysis engine for the background visualiser)
+  visualiser (used as analysis engine for the background visualiser).
+  Licensed under the MIT License.
 
 ## License
 

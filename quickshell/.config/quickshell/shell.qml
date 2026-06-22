@@ -228,33 +228,15 @@ ShellRoot {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                layer.enabled: true; layer.samples: 4
                 Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { sysLoader.active = false; event.accepted = true } }
 
                 Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys(); onOpenBtRequested: openBtFromSys() }
 
                 ShaderEffect {
-                    id: waveShader
-                    anchors.fill: parent; opacity: 0; visible: false
-                    property real sweep: -0.3
-                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/tidal.frag.qsb"
-                    layer.enabled: true; layer.samples: 4
-
-                    Component.onCompleted: Qt.callLater(waveAnim.restart)
-
-                    SequentialAnimation {
-                        id: waveAnim
-                        onStarted: { waveShader.visible = true; waveShader.opacity = 0 }
-                        ParallelAnimation {
-                            NumberAnimation { target: waveShader; property: "sweep"; from: -0.3; to: 1.3; duration: 1800; easing.type: Easing.InOutSine }
-                            SequentialAnimation {
-                                NumberAnimation { target: waveShader; property: "opacity"; from: 0; to: 0.8; duration: 300 }
-                                PauseAnimation { duration: 1000 }
-                                NumberAnimation { target: waveShader; property: "opacity"; from: 0.8; to: 0; duration: 500 }
-                            }
-                        }
-                        onFinished: { waveShader.visible = false }
-                    }
+                    anchors.fill: parent
+                    opacity: 1.0
+                    property real time: 0
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/cyber_classic.frag.qsb"
                 }
             }
         }
@@ -277,6 +259,17 @@ ShellRoot {
                 focus: true
                 Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { mediaHUDLoader.active = false; event.accepted = true } }
                 Components.MediaHUD { anchors.fill: parent; onCloseRequested: mediaHUDLoader.active = false }
+
+                ShaderEffect {
+                    anchors.fill: parent
+                    opacity: 1.0
+                    property real time: 0
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/fluid_dream.frag.qsb"
+                    NumberAnimation on time {
+                        from: 0; to: 10000; duration: 10000000
+                        running: true; loops: Animation.Infinite
+                    }
+                }
             }
         }
     }
@@ -300,6 +293,17 @@ ShellRoot {
                 focus: true
                 Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { wifiLoader.active = false; event.accepted = true } }
                 Components.WifiWidget { id: wifiWidget; anchors.fill: parent; onCloseRequested: wifiLoader.active = false }
+
+                ShaderEffect {
+                    anchors.fill: parent
+                    opacity: 1.0
+                    property real time: 0
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/digital_rose.frag.qsb"
+                    NumberAnimation on time {
+                        from: 0; to: 10000; duration: 10000000
+                        running: true; loops: Animation.Infinite
+                    }
+                }
             }
         }
     }
@@ -322,6 +326,13 @@ ShellRoot {
                 focus: true
                 Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { btLoader.active = false; event.accepted = true } }
                 Components.BluetoothControlCenter { anchors.fill: parent; onCloseRequested: btLoader.active = false }
+
+                ShaderEffect {
+                    anchors.fill: parent
+                    opacity: 1.0
+                    property real time: 0
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/iceberg_chill.frag.qsb"
+                }
             }
         }
     }

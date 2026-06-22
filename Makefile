@@ -1,7 +1,7 @@
 QS_BIN := $(shell command -v qs 2>/dev/null || command -v quickshell 2>/dev/null || echo quickshell)
 QS_DIR := $(shell pwd)/quickshell
 
-.PHONY: default help calibrate shell test test-bash test-py bridge-release setup
+.PHONY: default help calibrate shell shader test test-bash test-py bridge-release setup
 
 default: help
 
@@ -12,11 +12,18 @@ help:
 	@echo "  help           Show this help (default)"
 	@echo "  calibrate      Run screen calibration"
 	@echo "  shell          Start navishell"
+	@echo "  shader         Compile GLSL shaders in quickshell/.config/quickshell/shaders"
 	@echo "  test           Run all tests (bash + python)"
 	@echo "  test-bash      Run telemetry pipe unit tests (bash)"
 	@echo "  test-py        Run save-offset unit tests (pytest)"
 	@echo "  bridge-release Build lookas-bridge in release mode"
 	@echo "  setup          Run full setup script"
+
+shader:
+	@echo "Compiling shaders"
+	@for f in $(QS_DIR)/.config/quickshell/shaders/*.frag; do \
+		qsb --qt6 "$$f" -o "$${f%.frag}.frag.qsb"; \
+	done
 
 calibrate:
 	@echo "Running calibration"
