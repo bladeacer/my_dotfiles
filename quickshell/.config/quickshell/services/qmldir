@@ -1,2 +1,2 @@
-FocusedWindow 1.0 FocusedWindow.qml
-WifiService 1.0 WifiService.qml
+singleton FocusedWindow 1.0 FocusedWindow.qml
+singleton WifiService 1.0 WifiService.qml

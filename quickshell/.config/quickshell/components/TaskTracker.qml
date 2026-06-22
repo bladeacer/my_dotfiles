@@ -101,7 +101,7 @@ RowLayout {
                     if (sep > 0) {
                         var appId = lines[i].substring(0, sep)
                         var title = lines[i].substring(sep + 1)
-                        if (appId && appId !== "plasmashell") {
+                        if (appId && appId.toLowerCase().indexOf("plasmashell") === -1) {
                             counts[appId] = (counts[appId] || 0) + 1
                             if (taskRoot.pinnedApps.indexOf(appId) === -1) {
                                 list.push({ appId: appId, title: title, activated: true })

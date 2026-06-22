@@ -51,9 +51,16 @@ fi
 
 # --- Media metadata ---
 echo "--- MEDIA ---"
-MEDIA=$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}|{{ xesam:album }}|{{ xesam:composer }}' 2>/dev/null)
+MEDIA=$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}|{{ xesam:album }}|{{ xesam:composer }}' 2>/dev/null || echo "")
 echo "  output: MEDIA:${MEDIA:-(empty)}"
-[[ -n "$MEDIA" || $? -eq 0 ]] && pass "MEDIA" || fail "MEDIA not empty or error"
+# Empty is valid (no players running), non-empty with pipes is valid
+if [ -z "$MEDIA" ]; then
+    pass "MEDIA (no players)"
+elif [[ "$MEDIA" == *"|"* ]]; then
+    pass "MEDIA (metadata)"
+else
+    fail "MEDIA=$MEDIA"
+fi
 
 # --- Volume ---
 echo "--- VOL ---"

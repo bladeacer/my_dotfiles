@@ -17,8 +17,6 @@ In this repository, you can find the dotfiles I use.
 - KDE Plasma configs: Background shortcuts and panel exclusion rules
 - `navishell`: Custom Qt Quick Wayland shell with KDE Plasma 6 integration
 
-- `hyprland [DEPRECATED]`: Legacy compositor configurations
-
 ### Blue Rose Logo
 
 The neovim startpage renders a blue rose ANSI art at `logo/blue_rose`.
@@ -44,7 +42,11 @@ shader effects.
 
 - EndeavourOS / Arch Linux with KDE Plasma 6 (Wayland)
 - Quickshell: Qt Quick Wayland shell
-- Departure Mono Nerd Font Mono: global monospace font
+- Departure Mono Nerd Font Mono: primary monospace font for the status bar
+- Maple Mono: CJK fallback for Chinese/Japanese/Korean glyphs
+  (see [Maple-font](https://github.com/subframe7536/Maple-font))
+> Installed separately via GitHub releases, AUR package is not recommended by maintainer.
+
 - `lookas` (via `quickshell/lookas-bridge`): perception-aligned spectrum visualiser
 - Rust toolchain (for building `lookas-bridge`)
 - `kdotool`: KDE window enumeration and focus tracking (AUR)
@@ -72,7 +74,8 @@ shader effects.
 ```bash
 git clone https://codeberg.org/bladeacer/my_dotfiles.git ~/my_dotfiles
 cd ~/my_dotfiles
-./setup.sh
+chmod +x setup.sh
+./setup.sh # or make setup
 ```
 
 The setup script will:
@@ -129,20 +132,6 @@ you know what you are doing.
 
 ---
 
-## Credits
-
-- [IcebergDark](https://github.com/gkeep/iceberg-dark): Colour palette
-- [iceberg.vim](https://github.com/cocopon/iceberg.vim): Original Iceberg colour
-  scheme
-- [Persona-Quickshell](https://github.com/Yujonpradhananga/Persona-Quickshell):
-  Layout concepts, GLSL shaders, fluid animation patterns
-- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell): System
-  status indicators, panel layout strategies, interactive matrix patterns
-- [LainOS-ricer-arch](https://codeberg.org/LainOS/LainOS-ricer-arch): Copland
-  OS logo and theme inspiration
-- [lookas](https://github.com/rccyx/lookas): Perception-aligned audio spectrum
-  visualiser (used as analysis engine for the background visualiser)
-
 ## Development & Testing
 
 Run `make help` (or just `make`) to see all available targets:
@@ -180,6 +169,26 @@ window via `org.kde.KWin.getWindowInfo`. See `shell.qml` for the telemetry
 pipe integration and `components/TaskTracker.qml` for the KDE window
 enumeration fallback.
 
+---
+
+## Credits
+
+- [Departure Mono](https://www.departuremono.com/): Primary monospace font
+  used
+- [Maple Mono](https://github.com/subframe7536/Maple-font): CJK fallback font
+  for Chinese/Japanese/Korean glyphs
+- [IcebergDark](https://github.com/gkeep/iceberg-dark): Colour palette
+- [iceberg.vim](https://github.com/cocopon/iceberg.vim): Original Iceberg colour
+  scheme
+- [Persona-Quickshell](https://github.com/Yujonpradhananga/Persona-Quickshell):
+  Layout concepts, GLSL shaders, fluid animation patterns
+- [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell): System
+  status indicators, panel layout strategies, interactive matrix patterns
+- [LainOS-ricer-arch](https://codeberg.org/LainOS/LainOS-ricer-arch): Copland
+  OS logo and theme inspiration
+- [lookas](https://github.com/rccyx/lookas): Perception-aligned audio spectrum
+  visualiser (used as analysis engine for the background visualiser)
+
 ## License
 
-Unlicence, see [LICENSE](./LICENSE)
+Unlicence, see [LICENSE](./LICENSE).

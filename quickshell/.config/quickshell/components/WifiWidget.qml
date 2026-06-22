@@ -8,7 +8,7 @@ import "../theme"
 Rectangle {
     id: wifiCard
     implicitWidth: 380
-    implicitHeight: expanded ? Math.min(networkList.contentHeight + 80, 480) : 64
+    implicitHeight: expanded ? 480 : 64
     clip: true
     color: Theme.widgetBg
     border.color: expanded ? Theme.accentBlue : Theme.borderMain
@@ -30,7 +30,10 @@ Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 56
 
             RowLayout {
-                anchors.fill: parent; anchors.margins: 12; spacing: 12
+                anchors.left: parent.left; anchors.right: refreshBtn.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 12; anchors.rightMargin: 6
+                spacing: 12
 
                 Text {
                     text: WifiService.connected ? "\u25b0" : "\u2591"
@@ -55,20 +58,31 @@ Rectangle {
                     color: wifiCard.expanded ? Theme.accentBlue : Theme.fgMuted
                     font.family: Theme.fontMono; font.pixelSize: Theme.textSm
                 }
+            }
 
-                Text {
-                    text: "\u21bb"
-                    color: Theme.fgMuted
-                    font.family: Theme.fontMono; font.pixelSize: Theme.textSm
-                    MouseArea {
-                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                        onClicked: WifiService.refreshScan()
-                    }
+            // Refresh button — separate hitbox on the right edge
+            Text {
+                id: refreshBtn
+                text: "\u65b0"
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 12
+                color: Theme.fgMuted
+                font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                MouseArea {
+                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                    onClicked: WifiService.refreshPending = 1
                 }
             }
 
+            // Collapse/expand — covers everything except the refresh button
             MouseArea {
-                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: refreshBtn.left
+                anchors.rightMargin: 4
+                cursorShape: Qt.PointingHandCursor
                 onClicked: wifiCard.expanded = !wifiCard.expanded
             }
         }
@@ -84,11 +98,8 @@ Rectangle {
             spacing: 2; visible: wifiCard.expanded; clip: true
 
             delegate: Rectangle {
-                id: netDelegate
-                required property var modelData
                 width: networkList.width; height: 30
-                property bool isActive: modelData && WifiService.activeSSID !== "" && modelData.ssid.toUpperCase() === WifiService.activeSSID
-                color: isActive ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
+                color: modelData && modelData.active ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
                 border.color: rowMouse.containsMouse ? Theme.accentBlue : "transparent"
                 border.width: 1
 
@@ -96,8 +107,8 @@ Rectangle {
                     anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8
 
                     Text {
-                        text: (isActive ? "\u00bb " : "\u00b7 ") + (modelData ? modelData.ssid : "")
-                        color: isActive ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
+                        text: (modelData && modelData.active ? "\u00bb " : "\u00b7 ") + (modelData ? modelData.ssid : "")
+                        color: modelData && modelData.active ? Theme.accentBlue : (rowMouse.containsMouse ? Theme.fgNormal : Theme.fgMuted)
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                         Layout.fillWidth: true; elide: Text.ElideRight
                     }
@@ -111,7 +122,7 @@ Rectangle {
 
                     Text {
                         text: Theme.blockMeter(modelData ? modelData.strength : 0)
-                        color: isActive ? Theme.accentBlue : Theme.fgMuted
+                        color: modelData && modelData.active ? Theme.accentBlue : Theme.fgMuted
                         font.family: Theme.fontMono; font.pixelSize: Theme.textSm
                     }
                 }
@@ -119,8 +130,9 @@ Rectangle {
                 MouseArea {
                     id: rowMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (modelData && !isActive) {
-                            WifiService.connectToNetwork(modelData.ssid)
+                        if (modelData && !modelData.active) {
+                            WifiService.connectTarget = modelData.ssid
+                            WifiService.connectPending = 1
                         }
                     }
                 }

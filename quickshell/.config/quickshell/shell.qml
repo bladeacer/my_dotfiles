@@ -88,7 +88,7 @@ ShellRoot {
             "INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1); " +
             "TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //'); " +
             "APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //'); " +
-            "if [ -n \"$APP\" ] && [ \"$APP\" != \"plasmashell\" ]; then " +
+            "if [ -n \"$APP\" ] && ! echo \"$APP\" | grep -qi 'plasmashell'; then " +
             "echo \"FOCUS_TITLE:$TITLE\"; " +
             "echo \"FOCUS_APP:$APP\"; " +
             "fi; " +
@@ -117,7 +117,7 @@ ShellRoot {
                         btStatus = "BT // " + t.substring(3).trim().toUpperCase()
                     } else if (t.startsWith("WIFI:")) {
                     var seg = t.substring(5).split(":")
-                    if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]); Services.WifiService.connected = true; Services.WifiService.activeSSID = seg[1].toUpperCase(); Services.WifiService.activeStrength = parseInt(seg[2]) }
+                    if (seg.length >= 3 && seg[0] === "yes") { activeWifiSSID = seg[1].toUpperCase(); wifiSignalStrength = parseInt(seg[2]) || 0; Services.WifiService.connected = true; Services.WifiService.activeSSID = seg[1].toUpperCase(); Services.WifiService.activeStrength = parseInt(seg[2]) || 0 }
                     else { activeWifiSSID = "DISCONNECTED"; wifiSignalStrength = 0; Services.WifiService.connected = false; Services.WifiService.activeSSID = "DISCONNECTED"; Services.WifiService.activeStrength = 0 }
                 } else if (t.startsWith("MEDIA:")) {
                     var seg = t.substring(6).split("|")
@@ -139,8 +139,16 @@ ShellRoot {
                     focusedTitle = t.substring(12)
                     Services.FocusedWindow._kdeTitle = focusedTitle
                 } else if (t.startsWith("FOCUS_APP:")) {
-                    focusedAppId = t.substring(10)
-                    Services.FocusedWindow._kdeAppId = focusedAppId
+                    var app = t.substring(10)
+                    if (app.toLowerCase().indexOf("plasmashell") === -1) {
+                        focusedAppId = app
+                        Services.FocusedWindow._kdeAppId = app
+                    } else {
+                        focusedAppId = ""
+                        focusedTitle = ""
+                        Services.FocusedWindow._kdeAppId = ""
+                        Services.FocusedWindow._kdeTitle = ""
+                    }
                 } else if (t.startsWith("KB:")) {
                     var k = t.substring(3).trim()
                     if (k !== "") keyboardLayout = k.toUpperCase()
