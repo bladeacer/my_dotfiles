@@ -25,19 +25,21 @@ sudo pacman -S --needed --noconfirm \
     exit 1
 }
 
-# Quickshell from AUR
-if ! pacman -Qs quickshell >/dev/null 2>&1; then
-    echo "==> Installing quickshell (AUR)..."
-    for helper in paru yay; do
-        if command -v "$helper" >/dev/null 2>&1; then
-            "$helper" -S --noconfirm quickshell >/dev/null 2>&1 && break
+# AUR packages
+for pkg in quickshell kdotool; do
+    if ! pacman -Qs "$pkg" >/dev/null 2>&1; then
+        echo "==> Installing $pkg (AUR)..."
+        for helper in paru yay; do
+            if command -v "$helper" >/dev/null 2>&1; then
+                "$helper" -S --noconfirm "$pkg" >/dev/null 2>&1 && break
+            fi
+        done
+        if ! pacman -Qs "$pkg" >/dev/null 2>&1; then
+            echo "WARNING: $pkg not found. Install from AUR manually:"
+            echo "  paru -S $pkg  # or yay -S $pkg"
         fi
-    done
-    if ! pacman -Qs quickshell >/dev/null 2>&1; then
-        echo "WARNING: quickshell not found. Install from AUR manually:"
-        echo "  paru -S quickshell  # or yay -S quickshell"
     fi
-fi
+done
 
 # ── Stow everything ──
 echo ""

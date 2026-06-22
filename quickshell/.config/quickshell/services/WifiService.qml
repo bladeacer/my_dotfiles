@@ -32,7 +32,7 @@ Singleton {
 
     Process {
         id: listScan
-        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL dev wifi list 2>/dev/null | head -30"]
+        command: ["bash", "-c", "nmcli -t -f SSID,SIGNAL,SECURITY dev wifi list 2>/dev/null | head -30"]
         stdout: SplitParser {
             onRead: (line) => {
                 if (line.trim() === "") return
@@ -46,7 +46,8 @@ Singleton {
                 for (var i = 0; i < lines.length; i++) {
                     var p = lines[i].split(":")
                     if (p.length >= 2 && p[0]) {
-                        nets.push({ ssid: p[0], strength: parseInt(p[1]) || 0, security: p[2] || "" })
+                        var sec = p.length >= 3 ? p[2] : ""
+                        nets.push({ ssid: p[0], strength: parseInt(p[1]) || 0, security: sec })
                     }
                 }
                 nearbyNetworks = nets
@@ -75,6 +76,11 @@ Singleton {
         connected = ssid !== "DISCONNECTED" && ssid !== ""
         activeSSID = ssid
         activeStrength = strength || 0
+    }
+
+    function refreshScan() {
+        listScan.running = false
+        listScan.running = true
     }
 
     function connectToNetwork(ssid) {

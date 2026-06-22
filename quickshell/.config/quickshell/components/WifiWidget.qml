@@ -8,7 +8,7 @@ import "../theme"
 Rectangle {
     id: wifiCard
     implicitWidth: 380
-    implicitHeight: expanded ? 480 : 64
+    implicitHeight: expanded ? Math.min(networkList.contentHeight + 80, 480) : 64
     clip: true
     color: Theme.widgetBg
     border.color: expanded ? Theme.accentBlue : Theme.borderMain
@@ -25,6 +25,7 @@ Rectangle {
     ColumnLayout {
         anchors.fill: parent; spacing: 0
 
+        // ── Header ──
         Item {
             Layout.fillWidth: true; Layout.preferredHeight: 56
 
@@ -53,6 +54,16 @@ Rectangle {
                     text: wifiCard.expanded ? "[-] COLLAPSE" : "[+] EXPAND"
                     color: wifiCard.expanded ? Theme.accentBlue : Theme.fgMuted
                     font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                }
+
+                Text {
+                    text: "\u21bb"
+                    color: Theme.fgMuted
+                    font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: WifiService.refreshScan()
+                    }
                 }
             }
 
@@ -92,6 +103,13 @@ Rectangle {
                     }
 
                     Text {
+                        text: modelData && modelData.security ? modelData.security : ""
+                        color: Theme.fgMuted
+                        font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                        visible: modelData && modelData.security !== ""
+                    }
+
+                    Text {
                         text: Theme.blockMeter(modelData ? modelData.strength : 0)
                         color: isActive ? Theme.accentBlue : Theme.fgMuted
                         font.family: Theme.fontMono; font.pixelSize: Theme.textSm
@@ -100,7 +118,11 @@ Rectangle {
 
                 MouseArea {
                     id: rowMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                    onClicked: { if (modelData) WifiService.connectToNetwork(modelData.ssid) }
+                    onClicked: {
+                        if (modelData && !isActive) {
+                            WifiService.connectToNetwork(modelData.ssid)
+                        }
+                    }
                 }
             }
         }

@@ -73,6 +73,7 @@ ShellRoot {
     Process {
         id: telemetryPipe
         command: ["bash", "-c",
+            "while true; do " +
             "echo \"BAT:$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo --)\"; " +
             "echo \"PWR:$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo Unknown)\"; " +
             "echo \"POS:$(playerctl position 2>/dev/null || echo 0)\"; " +
@@ -81,16 +82,19 @@ ShellRoot {
             "echo \"MEDIA:$(playerctl metadata --format '{{ artist }} - {{ title }}|{{ status }}|{{ mpris:artUrl }}|{{ mpris:length }}|{{ xesam:album }}|{{ xesam:composer }}' 2>/dev/null)\"; " +
             "echo \"VOL:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}' || echo 0)\"; " +
             "echo \"BRIGHT:$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%' || echo 0)\"; " +
-            "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\"" +
-            "; WIN=$(kdotool getactivewindow 2>/dev/null);" +
-            " if [ -n \"$WIN\" ]; then" +
-            " INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1);" +
-            " TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //');" +
-            " APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //');" +
-            " if [ -n \"$APP\" ] && [ \"$APP\" != \"plasmashell\" ]; then" +
-            " echo \"FOCUS_TITLE:$TITLE\";" +
-            " echo \"FOCUS_APP:$APP\";" +
-            " fi; fi"
+            "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\"; " +
+            "WIN=$(kdotool getactivewindow 2>/dev/null); " +
+            "if [ -n \"$WIN\" ]; then " +
+            "INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1); " +
+            "TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //'); " +
+            "APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //'); " +
+            "if [ -n \"$APP\" ] && [ \"$APP\" != \"plasmashell\" ]; then " +
+            "echo \"FOCUS_TITLE:$TITLE\"; " +
+            "echo \"FOCUS_APP:$APP\"; " +
+            "fi; " +
+            "fi; " +
+            "sleep 0.5; " +
+            "done"
         ]
         running: true
         stdout: SplitParser {
@@ -145,14 +149,7 @@ ShellRoot {
         }
     }
 
-    Timer {
-        interval: 2000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: { telemetryPipe.running = false; telemetryPipe.running = true }
-    }
 
-    function refreshMediaStatus() {
-        telemetryPipe.running = false; telemetryPipe.running = true
-    }
     function openWifiFromSys() { sysLoader.active = false; togglePopup(wifiLoader) }
     function openBtFromSys() { sysLoader.active = false; togglePopup(btLoader) }
 

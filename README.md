@@ -95,6 +95,23 @@ bar- and gap-width ratios; 77 at typical desktop resolutions).
 Config via `~/.config/lookas.toml`, stowed under `lookas` here.
 (see [lookas docs](https://github.com/rccyx/lookas)).
 
+### Manual calibration
+
+The spectrum visualiser offset per screen is stored in
+`~/.config/quickshell/calibrations.json`. To set precise values without
+using the interactive calibration tool, edit the file directly:
+
+```json
+{
+  "HDMI-A-1": 131.0,
+  "eDP-1": 248.5
+}
+```
+
+Each entry maps a screen name to a calibrated position (in pixels).
+After editing, restart the shell. The save-offset tool reads from this
+file (`python3 quickshell/save-offset.py --help` for CLI usage).
+
 ### Manual stow
 
 ```bash
