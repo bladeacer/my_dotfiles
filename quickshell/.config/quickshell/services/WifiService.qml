@@ -14,6 +14,8 @@ Singleton {
     property int refreshPending: 0
     property string connectTarget: ""
     property int connectPending: 0
+    property bool scanning: false
+    property bool connecting: false
 
     // ── Fast active connection check ──
     Process {
@@ -50,6 +52,7 @@ Singleton {
         id: listScan
         command: ["bash", "-c",
             "LC_ALL=C nmcli -t -f ACTIVE,SIGNAL,SSID,SECURITY dev wifi list 2>/dev/null | head -30"]
+        onRunningChanged: { scanning = running }
         stdout: SplitParser {
             onRead: (line) => {
                 if (line.trim() === "") return
@@ -110,6 +113,7 @@ Singleton {
         id: connectProcess
         command: []
         running: false
+        onRunningChanged: { if (!running) connecting = false }
     }
 
     // ── Connection trigger ──
@@ -118,6 +122,7 @@ Singleton {
             connectProcess.command = ["bash", "-c", "nmcli dev wifi connect \"" + connectTarget.replace(/"/g, "\\\"") + "\""]
             connectProcess.running = false
             connectProcess.running = true
+            connecting = true
             connectPending = 0
         }
     }

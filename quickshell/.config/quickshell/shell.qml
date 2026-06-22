@@ -227,7 +227,9 @@ ShellRoot {
             Rectangle {
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
+                focus: true
                 layer.enabled: true; layer.samples: 4
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { sysLoader.active = false; event.accepted = true } }
 
                 Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys(); onOpenBtRequested: openBtFromSys() }
 

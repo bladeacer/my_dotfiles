@@ -58,8 +58,7 @@ Rectangle {
     signal openBtRequested()
 
     Keys.onPressed: function(event) {
-        if (event.key === Qt.Key_Escape) { closeRequested(); event.accepted = true }
-        else if (event.key === Qt.Key_H) { selectedTab = Math.max(0, selectedTab - 1); event.accepted = true }
+        if (event.key === Qt.Key_H) { selectedTab = Math.max(0, selectedTab - 1); event.accepted = true }
         else if (event.key === Qt.Key_L) { selectedTab = Math.min(2, selectedTab + 1); event.accepted = true }
     }
 
@@ -98,7 +97,7 @@ Rectangle {
             spacing: 12
 
             Text {
-                text: Theme.frameHeader("HARDWARE_IO // CONTROL")
+                text: Theme.frameHeader("HARDWARE_IO // CTRL", 54)
                 color: Theme.accentBlue
                 font.family: Theme.fontMono
                 font.pixelSize: 13
@@ -222,7 +221,7 @@ Rectangle {
                     spacing: 6
 
                     Text {
-                        text: Theme.frameHeader("POWER_MATRIX // HALT_SEQUENCE")
+                        text: Theme.frameHeader("PWR_MATRIX // HALT_SEQ", 54)
                         color: Theme.accentRed
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                     }
@@ -231,13 +230,14 @@ Rectangle {
                         columns: 2
                         columnSpacing: 8
                         rowSpacing: 6
+                        Layout.leftMargin: 12
 
                         Repeater {
                             model: [
-                                { label: "HALT",     action: "poweroff", icon: "\u25a0" },
-                                { label: "REBOOT",   action: "reboot",   icon: "\u21bb" },
-                                { label: "SLEEP",    action: "sleep",    icon: "\u23f8" },
-                                { label: "LOGOUT",  action: "logout",   icon: "\u25b6" }
+                                { icon: "切",  action: "poweroff", label: "Halt" },
+                                { icon: "眠",  action: "sleep",    label: "Sleep" },
+                                { icon: "出",  action: "logout",   label: "Logout" },
+                                { icon: "再",  action: "reboot",   label: "Reboot" }
                             ]
 
                             delegate: Rectangle {
@@ -249,7 +249,7 @@ Rectangle {
                                 Text {
                                     anchors.centerIn: parent
                                     text: confirmAction === modelData.action
-                                        ? "CONFIRM " + modelData.label + " ?"
+                                        ? "CONFIRM " + modelData.label + "?"
                                         : modelData.icon + " " + modelData.label
                                     font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                                     color: confirmAction === modelData.action ? Theme.accentRed : Theme.fgNormal
@@ -267,7 +267,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: Theme.frameFooter()
+                        text: Theme.frameFooter(54)
                         color: Theme.fgMuted
                         font.family: Theme.fontMono; font.pixelSize: Theme.textMd
                     }

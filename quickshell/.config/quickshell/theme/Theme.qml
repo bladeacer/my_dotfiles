@@ -35,14 +35,16 @@ QtObject {
         return "\u2591\u2591\u2591\u2591"
     }
 
-    function frameHeader(label) {
+    function frameHeader(label, width) {
         var inner = "\u2500\u2500 [ " + label + " ]"
-        var pad = 42 - inner.length
+        width = width || 42
+        var pad = width - inner.length
         if (pad < 0) pad = 0
         return "\u250c" + inner + "\u2500".repeat(pad) + "\u2510"
     }
 
-    function frameFooter() {
-        return "\u2514" + "\u2500".repeat(42) + "\u2518"
+    function frameFooter(width) {
+        width = width || 42
+        return "\u2514" + "\u2500".repeat(width) + "\u2518"
     }
 }

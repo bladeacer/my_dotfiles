@@ -31,9 +31,9 @@ RowLayout {
 
         Text {
             text: root.focusedTitle !== ""
-            ? "FOCUS // " + root.focusedAppId.split(".").pop()
+            ? "集中 // " + root.focusedAppId.split(".").pop()
             // + " // " + root.focusedTitle
-            : "FOCUS // *_*"
+            : "集中 // *_*"
             font.family: Theme.fontMono; font.pixelSize: 11
             color: root.focusedTitle !== "" ? Theme.accentPurple : Theme.fgMuted
             elide: Text.ElideRight
@@ -83,7 +83,7 @@ RowLayout {
                     id: batLabel
                     text: root.batteryStatus
                     font.family: Theme.fontMono; font.pixelSize: 11
-                    color: root.batteryCharging ? Theme.accentGreen : root.batteryCapacity <= 15 ? Theme.accentRed : Theme.fgNormal
+                    color: root.batteryCharging ? Theme.accentGreen : root.batteryCapacity <= 20 ? Theme.accentRed : Theme.fgNormal
                 }
                 Rectangle {
                     id: batBar

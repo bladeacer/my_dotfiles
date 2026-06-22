@@ -15,6 +15,13 @@ Rectangle {
     border.width: Theme.borderThin
 
     property bool expanded: true
+    property int _spinFrame: 0
+    property var _spinner: ["/", "|", "\\", "-"]
+
+    Timer {
+        interval: 200; running: WifiService.scanning || WifiService.connecting; repeat: true
+        onTriggered: _spinFrame = (_spinFrame + 1) % 4
+    }
 
     signal closeRequested()
 
@@ -30,7 +37,7 @@ Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 56
 
             RowLayout {
-                anchors.left: parent.left; anchors.right: refreshBtn.left
+                anchors.left: parent.left; anchors.right: spinner.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.leftMargin: 12; anchors.rightMargin: 6
                 spacing: 12
@@ -60,10 +67,21 @@ Rectangle {
                 }
             }
 
+            // Spinner — shows during scan
+            Text {
+                id: spinner
+                text: _spinner[_spinFrame]
+                anchors.right: refreshBtn.left; anchors.rightMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                color: Theme.accentBlue
+                font.family: Theme.fontMono; font.pixelSize: Theme.textSm
+                visible: WifiService.scanning || WifiService.connecting
+            }
+
             // Refresh button — separate hitbox on the right edge
             Text {
                 id: refreshBtn
-                text: "\u65b0"
+                text: WifiService.scanning || WifiService.connecting ? "" : "\u65b0"
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: 12
@@ -75,13 +93,12 @@ Rectangle {
                 }
             }
 
-            // Collapse/expand — covers everything except the refresh button
+            // Collapse/expand — covers everything except spinner and refresh
             MouseArea {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.right: refreshBtn.left
-                anchors.rightMargin: 4
+                anchors.right: spinner.left
                 cursorShape: Qt.PointingHandCursor
                 onClicked: wifiCard.expanded = !wifiCard.expanded
             }
