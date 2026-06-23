@@ -9,8 +9,7 @@ layout(std140, binding = 0) uniform buf {
 };
 void main() {
     vec2 uv = qt_TexCoord0;
-    float wave = sin(uv.y * 40.0 + time * 0.8) * cos(uv.x * 35.0 + time * 0.6);
-    float intensity = abs(wave);
-    float alpha = intensity * 0.08 * qt_Opacity;
+    float wave = sin(uv.x * 25.0 + uv.y * 20.0 + time * 0.9) * 0.5 + 0.5;
+    float alpha = wave * 0.08 * qt_Opacity;
     fragColor = vec4(vec3(1.0) * alpha, alpha);
 }

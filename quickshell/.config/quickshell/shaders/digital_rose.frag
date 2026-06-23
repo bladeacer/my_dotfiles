@@ -17,5 +17,6 @@ void main() {
     float g = hash(vec2(floor(time * 0.8), uv.y * 100.0));
     float glitch = step(0.998, g) * 0.08;
     float alpha = (noise + glitch) * qt_Opacity;
-    fragColor = vec4(vec3(1.0) * alpha, alpha);
+    vec3 roseBlue = vec3(0.3, 0.55, 0.85);
+    fragColor = vec4(roseBlue * alpha, alpha);
 }

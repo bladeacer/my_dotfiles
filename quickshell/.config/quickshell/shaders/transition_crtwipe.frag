@@ -11,7 +11,7 @@ layout(std140, binding = 0) uniform buf {
 void main() {
     vec2 uv = qt_TexCoord0;
     float beamY = progress;
-    float reveal = step(uv.y, beamY);
+    float reveal = smoothstep(beamY - 0.005, beamY + 0.005, uv.y);
     float dist = uv.y - beamY;
     float beamGlow = exp(-abs(dist) * 200.0);
     vec3 color = mix(transBgColor.rgb, vec3(0.2, 0.6, 1.0), beamGlow * 0.5);

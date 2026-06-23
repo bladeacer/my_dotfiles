@@ -30,16 +30,26 @@ ShellRoot {
     property real currentBrightness: 0.0
     property string keyboardLayout: "US"
 
+    function closePopupWithTransition(loader) {
+        if (loader.active && loader.item)
+            loader.item.startCloseTransition(function() { loader.active = false })
+        else
+            loader.active = false
+    }
+
     function closeAllPopups() {
-        launcherLoader.active = false
-        sysLoader.active = false
-        mediaHUDLoader.active = false
-        wifiLoader.active = false
-        btLoader.active = false
+        closePopupWithTransition(launcherLoader)
+        closePopupWithTransition(sysLoader)
+        closePopupWithTransition(mediaHUDLoader)
+        closePopupWithTransition(wifiLoader)
+        closePopupWithTransition(btLoader)
     }
 
     function togglePopup(loader) {
-        if (loader.active) { loader.active = false; return }
+        if (loader.active) {
+            closePopupWithTransition(loader)
+            return
+        }
         closeAllPopups()
         loader.active = true
     }
@@ -490,7 +500,7 @@ ShellRoot {
                     property real direction: wifiContainer.transitionDirection
                     property real progress: wifiContainer.transitionProgress
                     property color transBgColor: Theme.widgetBg
-                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_rosebloom.frag.qsb"
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_signallock.frag.qsb"
                 }
 
                 property real transitionProgress: 1
