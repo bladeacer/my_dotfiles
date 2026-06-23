@@ -15,6 +15,6 @@ void main() {
     vec3 color = vec3(0.0);
     color.r += edge * 0.1;
     color.b += edge * 0.1;
-    float alpha = (scanline * 0.06 + edge * 0.03) * qt_Opacity;
+    float alpha = (scanline * 0.10 + edge * 0.05) * qt_Opacity;
     fragColor = vec4(color * alpha, alpha);
 }

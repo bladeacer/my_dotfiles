@@ -158,8 +158,18 @@ ShellRoot {
     }
 
 
-    function openWifiFromSys() { sysLoader.active = false; togglePopup(wifiLoader) }
-    function openBtFromSys() { sysLoader.active = false; togglePopup(btLoader) }
+    function openWifiFromSys() {
+        if (sysLoader.item)
+            sysLoader.item.startCloseTransition(function() { closeAllPopups(); wifiLoader.active = true })
+        else
+            togglePopup(wifiLoader)
+    }
+    function openBtFromSys() {
+        if (sysLoader.item)
+            sysLoader.item.startCloseTransition(function() { closeAllPopups(); btLoader.active = true })
+        else
+            togglePopup(btLoader)
+    }
 
     Variants {
         model: Quickshell.screens
@@ -196,19 +206,73 @@ ShellRoot {
     Component {
         id: launchComp
         PanelWindow {
+            id: launchWindow
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.focusable: WlrKeyboardFocus.OnDemand
             WlrLayershell.exclusiveZone: -1
             anchors.top: true
             margins.top: 28
             implicitWidth: 580; implicitHeight: 420
-            color: Theme.widgetBg
+            color: "transparent"
+
+            function startCloseTransition(callback) {
+                launchContainer.startClose(callback)
+            }
+
             Rectangle {
-                anchors.fill: parent; color: "transparent"
+                id: launchContainer
+                anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { launcherLoader.active = false; event.accepted = true } }
-                Components.AppLauncher { anchors.fill: parent; onCloseRequested: launcherLoader.active = false }
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { launchContainer.startClose(function() { launcherLoader.active = false }); event.accepted = true } }
+                Components.AppLauncher { anchors.fill: parent; onCloseRequested: launchContainer.startClose(function() { launcherLoader.active = false }) }
+
+                ShaderEffect {
+                    visible: launchContainer.playingTransition
+                    anchors.fill: parent
+                    property real progress: launchContainer.transitionProgress
+                    property color transBgColor: Theme.widgetBg
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_dissolve.frag.qsb"
+                }
+
+                property real transitionProgress: 1
+                property bool playingTransition: false
+                property var closeCallback: null
+                property var startClose: function(callback) {
+                    if (launchOpenAnim.running) launchOpenAnim.stop()
+                    closeCallback = callback
+                    playingTransition = true
+                    transitionProgress = 1
+                    launchCloseAnim.start()
+                }
+
+                NumberAnimation on transitionProgress {
+                    id: launchOpenAnim
+                    from: 0; to: 1; duration: 400
+                    easing.type: Easing.OutCubic
+                    onFinished: {
+                        launchContainer.playingTransition = false
+                        launchContainer.transitionProgress = 1
+                    }
+                }
+                NumberAnimation on transitionProgress {
+                    id: launchCloseAnim
+                    from: 1; to: 0; duration: 300
+                    easing.type: Easing.InCubic
+                    onFinished: {
+                        if (launchContainer.closeCallback) {
+                            var cb = launchContainer.closeCallback
+                            launchContainer.closeCallback = null
+                            cb()
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    launchContainer.playingTransition = true
+                    launchContainer.transitionProgress = 0
+                    launchOpenAnim.start()
+                }
             }
         }
     }
@@ -217,6 +281,7 @@ ShellRoot {
     Component {
         id: sysComp
         PanelWindow {
+            id: sysWindow
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.focusable: WlrKeyboardFocus.OnDemand
             WlrLayershell.exclusiveZone: -1
@@ -224,19 +289,72 @@ ShellRoot {
             margins.top: 28
             implicitWidth: 880; implicitHeight: 640
             color: "transparent"
+
+            function startCloseTransition(callback) {
+                sysContainer.startClose(callback)
+            }
+
             Rectangle {
+                id: sysContainer
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { sysLoader.active = false; event.accepted = true } }
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { sysContainer.startClose(function() { sysLoader.active = false }); event.accepted = true } }
 
-                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysLoader.active = false; onOpenWifiRequested: openWifiFromSys(); onOpenBtRequested: openBtFromSys() }
+                Components.SystemControlCenter { id: sysControl; anchors.fill: parent; onCloseRequested: sysContainer.startClose(function() { sysLoader.active = false }); onOpenWifiRequested: openWifiFromSys(); onOpenBtRequested: openBtFromSys() }
 
                 ShaderEffect {
                     anchors.fill: parent
                     opacity: 1.0
                     property real time: 0
                     fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/cyber_classic.frag.qsb"
+                }
+
+                ShaderEffect {
+                    visible: sysContainer.playingTransition
+                    anchors.fill: parent
+                    property real progress: sysContainer.transitionProgress
+                    property color transBgColor: Theme.widgetBg
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_crtwipe.frag.qsb"
+                }
+
+                property real transitionProgress: 1
+                property bool playingTransition: false
+                property var closeCallback: null
+                property var startClose: function(callback) {
+                    if (sysOpenAnim.running) sysOpenAnim.stop()
+                    closeCallback = callback
+                    playingTransition = true
+                    transitionProgress = 1
+                    sysCloseAnim.start()
+                }
+
+                NumberAnimation on transitionProgress {
+                    id: sysOpenAnim
+                    from: 0; to: 1; duration: 350
+                    easing.type: Easing.OutCubic
+                    onFinished: {
+                        sysContainer.playingTransition = false
+                        sysContainer.transitionProgress = 1
+                    }
+                }
+                NumberAnimation on transitionProgress {
+                    id: sysCloseAnim
+                    from: 1; to: 0; duration: 250
+                    easing.type: Easing.InCubic
+                    onFinished: {
+                        if (sysContainer.closeCallback) {
+                            var cb = sysContainer.closeCallback
+                            sysContainer.closeCallback = null
+                            cb()
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    sysContainer.playingTransition = true
+                    sysContainer.transitionProgress = 0
+                    sysOpenAnim.start()
                 }
             }
         }
@@ -246,6 +364,7 @@ ShellRoot {
     Component {
         id: mediaHUDComp
         PanelWindow {
+            id: mediaHUDWindow
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.focusable: WlrKeyboardFocus.None
             WlrLayershell.exclusiveZone: -1
@@ -253,12 +372,18 @@ ShellRoot {
             margins.top: 28
             implicitWidth: 450; implicitHeight: 130
             color: "transparent"
+
+            function startCloseTransition(callback) {
+                mediaHUDContainer.startClose(callback)
+            }
+
             Rectangle {
+                id: mediaHUDContainer
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { mediaHUDLoader.active = false; event.accepted = true } }
-                Components.MediaHUD { anchors.fill: parent; onCloseRequested: mediaHUDLoader.active = false }
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { mediaHUDContainer.startClose(function() { mediaHUDLoader.active = false }); event.accepted = true } }
+                Components.MediaHUD { anchors.fill: parent; onCloseRequested: mediaHUDContainer.startClose(function() { mediaHUDLoader.active = false }) }
 
                 ShaderEffect {
                     anchors.fill: parent
@@ -270,6 +395,53 @@ ShellRoot {
                         running: true; loops: Animation.Infinite
                     }
                 }
+
+                ShaderEffect {
+                    visible: mediaHUDContainer.playingTransition
+                    anchors.fill: parent
+                    property real progress: mediaHUDContainer.transitionProgress
+                    property color transBgColor: Theme.widgetBg
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_fade.frag.qsb"
+                }
+
+                property real transitionProgress: 1
+                property bool playingTransition: false
+                property var closeCallback: null
+                property var startClose: function(callback) {
+                    if (mediaOpenAnim.running) mediaOpenAnim.stop()
+                    closeCallback = callback
+                    playingTransition = true
+                    transitionProgress = 1
+                    mediaCloseAnim.start()
+                }
+
+                NumberAnimation on transitionProgress {
+                    id: mediaOpenAnim
+                    from: 0; to: 1; duration: 500
+                    easing.type: Easing.OutCubic
+                    onFinished: {
+                        mediaHUDContainer.playingTransition = false
+                        mediaHUDContainer.transitionProgress = 1
+                    }
+                }
+                NumberAnimation on transitionProgress {
+                    id: mediaCloseAnim
+                    from: 1; to: 0; duration: 350
+                    easing.type: Easing.InCubic
+                    onFinished: {
+                        if (mediaHUDContainer.closeCallback) {
+                            var cb = mediaHUDContainer.closeCallback
+                            mediaHUDContainer.closeCallback = null
+                            cb()
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    mediaHUDContainer.playingTransition = true
+                    mediaHUDContainer.transitionProgress = 0
+                    mediaOpenAnim.start()
+                }
             }
         }
     }
@@ -278,6 +450,7 @@ ShellRoot {
     Component {
         id: wifiComp
         PanelWindow {
+            id: wifiWindow
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.focusable: WlrKeyboardFocus.OnDemand
             WlrLayershell.exclusiveZone: -1
@@ -287,12 +460,18 @@ ShellRoot {
             implicitWidth: 380; implicitHeight: wifiWidget.implicitHeight
             Behavior on implicitHeight { NumberAnimation { duration: 60; easing.type: Easing.OutCubic } }
             color: "transparent"
+
+            function startCloseTransition(callback) {
+                wifiContainer.startClose(callback)
+            }
+
             Rectangle {
+                id: wifiContainer
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { wifiLoader.active = false; event.accepted = true } }
-                Components.WifiWidget { id: wifiWidget; anchors.fill: parent; onCloseRequested: wifiLoader.active = false }
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { wifiContainer.startClose(function() { wifiLoader.active = false }); event.accepted = true } }
+                Components.WifiWidget { id: wifiWidget; anchors.fill: parent; onCloseRequested: wifiContainer.startClose(function() { wifiLoader.active = false }) }
 
                 ShaderEffect {
                     anchors.fill: parent
@@ -304,6 +483,57 @@ ShellRoot {
                         running: true; loops: Animation.Infinite
                     }
                 }
+
+                ShaderEffect {
+                    visible: wifiContainer.playingTransition
+                    anchors.fill: parent
+                    property real direction: wifiContainer.transitionDirection
+                    property real progress: wifiContainer.transitionProgress
+                    property color transBgColor: Theme.widgetBg
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_rosebloom.frag.qsb"
+                }
+
+                property real transitionProgress: 1
+                property real transitionDirection: 1.0
+                property bool playingTransition: false
+                property var closeCallback: null
+                property var startClose: function(callback) {
+                    if (wifiOpenAnim.running) wifiOpenAnim.stop()
+                    transitionDirection = 0.0
+                    closeCallback = callback
+                    playingTransition = true
+                    transitionProgress = 1
+                    wifiCloseAnim.start()
+                }
+
+                NumberAnimation on transitionProgress {
+                    id: wifiOpenAnim
+                    from: 0; to: 1; duration: 350
+                    easing.type: Easing.OutCubic
+                    onFinished: {
+                        wifiContainer.playingTransition = false
+                        wifiContainer.transitionProgress = 1
+                    }
+                }
+                NumberAnimation on transitionProgress {
+                    id: wifiCloseAnim
+                    from: 1; to: 0; duration: 250
+                    easing.type: Easing.InCubic
+                    onFinished: {
+                        if (wifiContainer.closeCallback) {
+                            var cb = wifiContainer.closeCallback
+                            wifiContainer.closeCallback = null
+                            cb()
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    wifiContainer.playingTransition = true
+                    wifiContainer.transitionDirection = 1.0
+                    wifiContainer.transitionProgress = 0
+                    wifiOpenAnim.start()
+                }
             }
         }
     }
@@ -312,6 +542,7 @@ ShellRoot {
     Component {
         id: btComp
         PanelWindow {
+            id: btWindow
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.focusable: WlrKeyboardFocus.OnDemand
             WlrLayershell.exclusiveZone: -1
@@ -320,18 +551,71 @@ ShellRoot {
             margins.top: 28; margins.right: 120
             implicitWidth: 300; implicitHeight: 350
             color: "transparent"
+
+            function startCloseTransition(callback) {
+                btContainer.startClose(callback)
+            }
+
             Rectangle {
+                id: btContainer
                 anchors.fill: parent; color: Theme.widgetBg
                 border.color: Theme.accentBlue; border.width: 1
                 focus: true
-                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { btLoader.active = false; event.accepted = true } }
-                Components.BluetoothControlCenter { anchors.fill: parent; onCloseRequested: btLoader.active = false }
+                Keys.onPressed: function(event) { if (event.key === Qt.Key_Escape) { btContainer.startClose(function() { btLoader.active = false }); event.accepted = true } }
+                Components.BluetoothControlCenter { anchors.fill: parent; onCloseRequested: btContainer.startClose(function() { btLoader.active = false }) }
 
                 ShaderEffect {
                     anchors.fill: parent
                     opacity: 1.0
                     property real time: 0
                     fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/iceberg_chill.frag.qsb"
+                }
+
+                ShaderEffect {
+                    visible: btContainer.playingTransition
+                    anchors.fill: parent
+                    property real progress: btContainer.transitionProgress
+                    property color transBgColor: Theme.widgetBg
+                    fragmentShader: "file:///home/data/my_dotfiles/quickshell/.config/quickshell/shaders/transition_crtwipe.frag.qsb"
+                }
+
+                property real transitionProgress: 1
+                property bool playingTransition: false
+                property var closeCallback: null
+                property var startClose: function(callback) {
+                    if (btOpenAnim.running) btOpenAnim.stop()
+                    closeCallback = callback
+                    playingTransition = true
+                    transitionProgress = 1
+                    btCloseAnim.start()
+                }
+
+                NumberAnimation on transitionProgress {
+                    id: btOpenAnim
+                    from: 0; to: 1; duration: 400
+                    easing.type: Easing.OutCubic
+                    onFinished: {
+                        btContainer.playingTransition = false
+                        btContainer.transitionProgress = 1
+                    }
+                }
+                NumberAnimation on transitionProgress {
+                    id: btCloseAnim
+                    from: 1; to: 0; duration: 300
+                    easing.type: Easing.InCubic
+                    onFinished: {
+                        if (btContainer.closeCallback) {
+                            var cb = btContainer.closeCallback
+                            btContainer.closeCallback = null
+                            cb()
+                        }
+                    }
+                }
+
+                Component.onCompleted: {
+                    btContainer.playingTransition = true
+                    btContainer.transitionProgress = 0
+                    btOpenAnim.start()
                 }
             }
         }

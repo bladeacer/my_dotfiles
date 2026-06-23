@@ -5,13 +5,16 @@ layout(binding = 0) uniform sampler2D qt_Texture0;
 layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
-    float time;
+    float progress;
+    vec4 transBgColor;
 };
 void main() {
     vec2 uv = qt_TexCoord0;
-    vec2 center = uv - 0.5;
-    float vignette = dot(center, center);
-    vec3 color = vec3(0.03, 0.01, 0.06);
-    float alpha = (0.03 + vignette * 0.25) * qt_Opacity;
+    float beamY = progress;
+    float reveal = step(uv.y, beamY);
+    float dist = uv.y - beamY;
+    float beamGlow = exp(-abs(dist) * 200.0);
+    vec3 color = mix(transBgColor.rgb, vec3(0.2, 0.6, 1.0), beamGlow * 0.5);
+    float alpha = 1.0 - reveal;
     fragColor = vec4(color * alpha, alpha);
 }
