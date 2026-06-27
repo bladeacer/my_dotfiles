@@ -10,7 +10,7 @@ IntensityAmount=
 IntensityEffect=
 
 [ColorEffects:Inactive]
-ChangeSelectionColor=
+ChangeSelectionColor=true
 Color=
 ColorAmount=
 ColorEffect=

@@ -29,6 +29,7 @@ hidecursorEnabled=true
 mouseclickEnabled=true
 shakecursorEnabled=false
 sheetEnabled=true
+translucencyEnabled=true
 
 [Tiling][5ab615c5-e2a0-4e52-bfdf-56c612024756][35c9ad4d-232f-417e-8f5d-07f818f803b5]
 padding=4
