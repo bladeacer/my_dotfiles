@@ -6,3 +6,5 @@
 *.bak
 quickshell_compiled_docs.md
 quickshell/lookas-bridge/target
+__pycache__
+.pytest_cache

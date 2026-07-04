@@ -29,7 +29,6 @@ hidecursorEnabled=true
 mouseclickEnabled=true
 shakecursorEnabled=false
 sheetEnabled=true
-translucencyEnabled=true
 
 [Tiling][5ab615c5-e2a0-4e52-bfdf-56c612024756][35c9ad4d-232f-417e-8f5d-07f818f803b5]
 padding=4
@@ -70,7 +69,7 @@ tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"wi
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Wayland]
-InputMethod[$e]=/usr/share/applications/fcitx5-wayland-launcher.desktop
+InputMethod[$e]=/usr/share/applications/org.fcitx.Fcitx5.desktop
 VirtualKeyboardEnabled=true
 
 [Windows]

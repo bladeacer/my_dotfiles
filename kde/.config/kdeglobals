@@ -126,7 +126,7 @@ Sort directories first=true
 Sort hidden files last=false
 Sort reversed=false
 Speedbar Width=144
-View Style=Simple
+View Style=DetailTree
 
 [KScreen]
 ScreenScaleFactors=eDP-1=1;HDMI-A-1=1;
