@@ -27,9 +27,9 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][1][General]
-changedPositions={"desktop:/my_obsidian_vault":["2048x864,2133x900,1694x1059,1646x1029,2560x1080","0","2"],"desktop:/projects":["2048x864,2133x900,1694x1059,1646x1029,2560x1080","0","1"]}
+changedPositions={"desktop:/my_obsidian_vault":["2560x1080,1646x1029,1694x1059,2048x864,2133x900","0","2"],"desktop:/projects":["2560x1080,1646x1029,1694x1059,2048x864,2133x900","0","1"]}
 lastResolution=2133x900
-positions={"1646x1029":["1","15","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/courses","0","0","desktop:/ai","0","3"],"1694x1059":["1","15","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/my_obsidian_vault","0","2","desktop:/courses","0","0"],"2048x864":["1","18","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"],"2133x900":["1","19","desktop:/ai","0","3","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/courses","0","0"],"2560x1080":["1","23","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"]}
+positions={"1646x1029":["1","15","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/courses","0","0","desktop:/ai","0","3"],"1694x1059":["1","15","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/my_obsidian_vault","0","2","desktop:/courses","0","0"],"2048x864":["1","18","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"],"2133x900":["1","19","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/my_obsidian_vault","0","2","desktop:/courses","0","0"],"2560x1080":["1","23","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"]}
 sortMode=-1
 
 [Containments][1][Wallpaper][luisbocanegra.smart.video.wallpaper.reborn][General]
@@ -303,4 +303,4 @@ AppletOrder=62;4;59;63;65;64;48;61;67;53;68;8;66
 
 [ScreenMapping]
 itemsOnDisabledScreens=0,a0912522-973a-4afd-8f93-833df34bb6a7,3,desktop:/projects,desktop:/my_obsidian_vault,desktop:/courses
-screenMapping=desktop:/projects,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/my_obsidian_vault,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/ai,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/courses,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e
+screenMapping=desktop:/my_obsidian_vault,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/projects,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/courses,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/ai,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e

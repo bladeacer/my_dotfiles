@@ -71,11 +71,11 @@
 			"key": "",
 			"keyColor": "green"
 		},
-		{
-			"type": "font",
-			"key": "",
-			"keyColor": "green"
-		},
+		// {
+		// 	"type": "font",
+		// 	"key": "",
+		// 	"keyColor": "green"
+		// },
 		{
 			"type": "disk",
 			"key": "",
