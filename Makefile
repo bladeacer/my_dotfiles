@@ -44,8 +44,8 @@ test-bash:
 	@bash tests/telemetry_test.sh
 
 test-py:
-	@echo "Running save-offset unit tests"
-	@cd $(QS_DIR) && python3 -m pytest test_save_offset.py -v 2>/dev/null || python3 test_save_offset.py -v
+	@echo "Running unit tests"
+	@cd $(QS_DIR) && python3 -m pytest test_save_offset.py test_theme_colors.py -v 2>/dev/null || python3 -m pytest test_save_offset.py test_theme_colors.py -v
 
 setup:
 	@echo "Running setup"

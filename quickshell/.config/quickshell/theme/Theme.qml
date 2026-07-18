@@ -38,7 +38,11 @@ QtObject {
             if (!v) return null
             var parts = v.split(",")
             if (parts.length !== 3) return null
-            return Qt.rgba(parseInt(parts[0])/255, parseInt(parts[1])/255, parseInt(parts[2])/255, 1.0)
+            var r = parseInt(parts[0])
+            var g = parseInt(parts[1])
+            var b = parseInt(parts[2])
+            if (isNaN(r) || isNaN(g) || isNaN(b)) return null
+            return Qt.rgba(r/255, g/255, b/255, 1.0)
         }
 
         try {
@@ -75,6 +79,7 @@ QtObject {
         accentRedDim    = Qt.rgba(accentRed.r, accentRed.g, accentRed.b, 0.15)
         accentBlueGhost = Qt.rgba(accentBlue.r, accentBlue.g, accentBlue.b, 0.08)
         fgGhost         = Qt.rgba(1, 1, 1, 0.05)
+
     }
 
     function blockMeter(val) {

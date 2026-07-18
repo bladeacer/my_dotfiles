@@ -72,17 +72,35 @@ ShellRoot {
     Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
 
     Process {
-        id: kdeThemeLoader
+        id: kdeThemeUpdater
         command: ["python3", "-c",
-            "import configparser,json,os; " +
-            "p=os.path.expanduser('~/.config/kdeglobals'); " +
-            "if not os.path.exists(p): exit(0); " +
-            "c=configparser.ConfigParser(); " +
-            "c.optionxform=str; c.read(p); " +
-            "d={}; " +
-            "for s in ['Colors:Window','Colors:Selection','Colors:Header','Colors:View','Colors:Button']: " +
-            "  if s in c: d[s]=dict(c[s]); " +
-            "print(json.dumps(d))"
+            "import configparser,json,os;" +
+            "p=os.path.expanduser('~/.config/kdeglobals');" +
+            "c=configparser.ConfigParser();c.optionxform=str;c.read(p);" +
+            "d={s:dict(c[s]) for s in " +
+            "['Colors:Window','Colors:Selection','Colors:Header','Colors:View','Colors:Button']" +
+            " if s in c};print(json.dumps(d))"
+        ]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => Theme.applyKdeColors(line)
+        }
+    }
+
+    Process {
+        id: kdeThemeWatcher
+        command: ["bash", "-c",
+            "PY() { python3 -c 'import configparser,json,os;" +
+            "p=os.path.expanduser(\"~/.config/kdeglobals\");" +
+            "c=configparser.ConfigParser();c.optionxform=str;c.read(p);" +
+            "d={s:dict(c[s]) for s in " +
+            "[\"Colors:Window\",\"Colors:Selection\",\"Colors:Header\",\"Colors:View\",\"Colors:Button\"]" +
+            " if s in c};print(json.dumps(d))'; }; " +
+            "if command -v inotifywait >/dev/null 2>&1; then " +
+            "  while inotifywait -qq -e close_write \"$HOME/.config/kdeglobals\" 2>/dev/null; do PY; done; " +
+            "else " +
+            "  while sleep 5; do PY; done; " +
+            "fi"
         ]
         running: true
         stdout: SplitParser {
