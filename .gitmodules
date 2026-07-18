@@ -1,0 +1,3 @@
+[submodule "colors_kde/kde"]
+	path = colors_kde/kde
+	url = https://github.com/flexcyon/kde
