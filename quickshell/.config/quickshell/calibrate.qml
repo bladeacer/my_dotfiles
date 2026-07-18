@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
 import "components" as Components
+import "theme"
 
 Item {
     id: root
@@ -60,7 +61,7 @@ Item {
             focusable: true
             WlrLayershell.layer: WlrLayer.Overlay
             anchors { top: true; left: true; right: true; bottom: true }
-            color: "#00000000"
+            color: "transparent"
 
             Components.SpectrumVisualizer {
                 id: vis
@@ -111,14 +112,14 @@ Item {
                 width: hudText.width + 40
                 height: hudText.height + 30
                 radius: 6
-                color: "#cc161821"
-                border.color: "#84a0c6"
+                color: Theme.widgetBg
+                border.color: Theme.accentBlue
                 border.width: 1
 
                 Text {
                     id: hudText
                     anchors.centerIn: parent
-                    color: "#c6c8d1"
+                    color: Theme.fgNormal
                     font.family: "Departure Mono Nerd Font Mono"
                     font.pixelSize: 11
                     lineHeight: 1.6

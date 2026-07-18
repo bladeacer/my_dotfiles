@@ -242,7 +242,7 @@ Rectangle {
 
                             delegate: Rectangle {
                                 implicitWidth: 180; height: 44
-                                color: confirmAction === modelData.action ? Qt.rgba(Theme.accentRed.r, Theme.accentRed.g, Theme.accentRed.b, 0.15) : "transparent"
+                                color: confirmAction === modelData.action ? Theme.accentRedDim : "transparent"
                                 border.color: confirmAction === modelData.action ? Theme.accentRed : Theme.borderMain
                                 border.width: 1
 

@@ -71,6 +71,25 @@ ShellRoot {
     Shortcut { sequence: "Meta+S"; onActivated: togglePopup(sysLoader) }
     Shortcut { sequence: "Escape"; onActivated: closeAllPopups() }
 
+    Process {
+        id: kdeThemeLoader
+        command: ["python3", "-c",
+            "import configparser,json,os; " +
+            "p=os.path.expanduser('~/.config/kdeglobals'); " +
+            "if not os.path.exists(p): exit(0); " +
+            "c=configparser.ConfigParser(); " +
+            "c.optionxform=str; c.read(p); " +
+            "d={}; " +
+            "for s in ['Colors:Window','Colors:Selection','Colors:Header','Colors:View','Colors:Button']: " +
+            "  if s in c: d[s]=dict(c[s]); " +
+            "print(json.dumps(d))"
+        ]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => Theme.applyKdeColors(line)
+        }
+    }
+
     Timer {
         interval: 1000; running: true; repeat: true; triggeredOnStart: true
         onTriggered: {

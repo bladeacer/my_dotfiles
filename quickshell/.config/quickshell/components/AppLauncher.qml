@@ -141,7 +141,7 @@ Rectangle {
             delegate: Rectangle {
                 width: appList.width
                 height: 30
-                color: index === launcher.selectedIndex ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.1) : "transparent"
+                color: index === launcher.selectedIndex ? Theme.accentBlueDim : "transparent"
                 border.color: index === launcher.selectedIndex ? Theme.accentBlue : "transparent"
                 border.width: index === launcher.selectedIndex ? 1 : 0
 
@@ -169,7 +169,7 @@ Rectangle {
 
                     Text {
                         text: "\u2502"
-                        color: Qt.rgba(Theme.borderMain.r, Theme.borderMain.g, Theme.borderMain.b, 0.3)
+                        color: Theme.borderSubdued
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.textMd
                     }

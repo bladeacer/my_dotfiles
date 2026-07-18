@@ -116,7 +116,7 @@ Rectangle {
 
             delegate: Rectangle {
                 width: networkList.width; height: 30
-                color: modelData && modelData.active ? Qt.rgba(Theme.accentBlue.r, Theme.accentBlue.g, Theme.accentBlue.b, 0.08) : "transparent"
+                color: modelData && modelData.active ? Theme.accentBlueGhost : "transparent"
                 border.color: rowMouse.containsMouse ? Theme.accentBlue : "transparent"
                 border.width: 1
 

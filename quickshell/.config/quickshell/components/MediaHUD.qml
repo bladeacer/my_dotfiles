@@ -62,7 +62,7 @@ Rectangle {
             Rectangle {
                 Layout.leftMargin: 8
                 width: 50; height: 50
-                color: Qt.rgba(1, 1, 1, 0.05)
+                color: Theme.fgGhost
                 border.color: Theme.fgMuted; border.width: 1
                 Image {
                     anchors.fill: parent; fillMode: Image.PreserveAspectCrop; cache: false
