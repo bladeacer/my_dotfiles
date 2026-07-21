@@ -321,8 +321,11 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
+require("options")
+require("keymaps")
+require("highlights")
+require("autocmds")
 require("startpage")
-require("vimscript-config")
 require("dict")
 
 vim.api.nvim_create_autocmd("BufEnter", {
