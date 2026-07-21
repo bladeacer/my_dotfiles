@@ -73,7 +73,6 @@ require("lazy").setup({
   },
 
   { 'ap/vim-css-color' },
-  { 'junegunn/goyo.vim' },
 
   {
     'sphamba/smear-cursor.nvim',

@@ -1,6 +1,5 @@
 call plug#begin()
       Plug 'ap/vim-css-color'
-      Plug 'junegunn/goyo.vim'
       Plug 'tpope/vim-commentary'
       Plug 'tpope/vim-sensible'
       Plug 'itchyny/lightline.vim'
@@ -195,28 +194,6 @@ hi manSubSection term=underline cterm=underline gui=underline ctermfg=green guif
 
 set ts=8
 
-nnoremap <silent> <leader>g :Goyo<CR>
-
-function! s:goyo_enter()
-      if executable('tmux') && strlen($TMUX)
-            set nonumber
-            set norelativenumber
-            silent !tmux set status off
-            silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-      endif
-endfunction
-
-function! s:goyo_leave()
-      if executable('tmux') && strlen($TMUX)
-            set number
-            set relativenumber
-            silent !tmux set status on
-            silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-      endif
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 nnoremap <silent> <Leader>r :History<CR>
 nnoremap <silent> <Leader>v :so ~/.vimrc<CR>

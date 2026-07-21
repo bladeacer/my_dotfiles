@@ -1,173 +1,137 @@
+if vim.g.neovide then
+  vim.opt.guifont = "CaskaydiaCove Nerd Font Mono:h11"
+  vim.g.neovide_cursor_animation_length = 0.05
+  vim.g.neovide_cursor_trail_size = 0.4
+end
+
+vim.cmd.colorscheme("iceberg")
+
+vim.opt.termguicolors = true
+vim.opt.background = "dark"
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.spell = true
+vim.opt.spelllang = "en_gb"
+vim.opt.smartcase = true
+vim.opt.foldcolumn = "2"
+vim.opt.mouse = "a"
+
+vim.keymap.set("n", "<tab>", ">>", { silent = true })
+vim.keymap.set("n", "<s-tab>", "<<", { silent = true })
+vim.keymap.set("v", "<tab>", ">", { silent = true })
+vim.keymap.set("v", "<s-tab>", "<", { silent = true })
+
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+vim.opt.pumheight = 10
+vim.opt.showmatch = true
+vim.opt.laststatus = 2
+vim.opt.omnifunc = "syntaxcomplete#Complete"
+vim.opt.showmode = false
+vim.opt.ignorecase = true
+vim.opt.wildmenu = true
+vim.opt.errorbells = false
+vim.opt.belloff = "all"
+vim.opt.redrawtime = 10000
+
+vim.keymap.set("n", "x", '"_x')
+
+vim.api.nvim_set_hl(0, "SpellBad", { ctermfg = "lightred", ctermbg = "none" })
+vim.api.nvim_set_hl(0, "SpellCap", { ctermfg = "lightcyan", ctermbg = "none" })
+vim.api.nvim_set_hl(0, "SpellLocal", { ctermfg = "lightyellow", ctermbg = "none" })
+vim.api.nvim_set_hl(0, "SpellRare", { ctermfg = "lightgrey", ctermbg = "none" })
+
+vim.cmd("iabbrev 1i <Esc>cc-<Space>")
+vim.cmd("iabbrev 2i <Esc>cc<Tab>-<Space>")
+vim.cmd("iabbrev 3i <Esc>cc<Tab><Tab>-<Space>")
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*.md",
+  callback = function()
+    vim.keymap.set("n", "<leader>2#", "I##<Space>", { buffer = true })
+    vim.keymap.set("n", "<leader>3#", "I###<Space>", { buffer = true })
+    vim.keymap.set("n", "<leader>4#", "I####<Space>", { buffer = true })
+    vim.keymap.set("n", "<leader>5#", "I#####<Space>", { buffer = true })
+    vim.keymap.set("n", "<leader>6#", "I######<Space>", { buffer = true })
+
+    vim.cmd("iabbrev 2# ##")
+    vim.cmd("iabbrev 3# ###")
+    vim.cmd("iabbrev 4# ####")
+    vim.cmd("iabbrev 5# #####")
+    vim.cmd("iabbrev 6# ######")
+  end,
+})
+
+vim.keymap.set("n", "<leader>n", ":bnext<CR>", { silent = true })
+vim.keymap.set("n", "<leader>p", ":bprevious<CR>", { silent = true })
+vim.keymap.set("n", "<leader>d", ":bdelete<CR>", { silent = true })
+
+vim.keymap.set("n", "}", "}zz")
+vim.keymap.set("n", "{", "{zz")
+vim.keymap.set("n", "%", "%zz")
+vim.keymap.set("n", "n", "nzz")
+vim.keymap.set("n", "N", "Nzz")
+vim.keymap.set("n", "<leader>=", "gg=G2<C-O>zz", { silent = true })
+vim.keymap.set("n", "<leader>l", "<Esc>:set number! relativenumber!<CR>", { silent = true })
+
+vim.opt.complete = ".,k,w,b"
+vim.opt.shortmess:append("c")
+
+vim.keymap.set("n", "<leader>f", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
+vim.keymap.set("n", "<leader>r", "<cmd>lua require('fzf-lua').oldfiles()<CR>", { silent = true })
+vim.g.fzf_preview_window = { 'right:60%', 'ctrl-/' }
+
+vim.keymap.set("n", "<leader>t", ":NvimTreeToggle<CR>", { silent = true })
+
+vim.keymap.set("n", "<leader>i", ":Lazy install<CR>", { silent = true })
+vim.keymap.set("n", "<leader>c", ":Lazy clean<CR>", { silent = true })
+
 vim.cmd([[
-" --- Neovide Graphic Specifics ---
-if exists("g:neovide")
-      " Arch usually expects the full upstream 'CaskaydiaCove Nerd Font Mono'
-      set guifont=CaskaydiaCove\ Nerd\ Font\ Mono:h11
-      
-      let g:neovide_cursor_animation_length = 0.05
-      let g:neovide_cursor_trail_size = 0.4
-endif
-
-colorscheme iceberg
-
-" --- Core Vim Options ---
-set termguicolors
-set background=dark
-set expandtab
-set shiftwidth=2
-set tabstop=2
-set spell spelllang=en_gb
-set smartcase
-set foldcolumn=2
-set mouse=a
-
-" --- Core Keyboard Remaps ---
-nnoremap <silent> <tab> >>
-nnoremap <silent> <s-tab> <<
-vnoremap <silent> <tab> >
-vnoremap <silent> <s-tab> <
-
-set autoindent
-set smartindent
-set pumheight=10
-set showmatch
-set laststatus=2
-set omnifunc=syntaxcomplete#Complete
-
-set noshowmode
-set ignorecase
-set wildmenu
-set number relativenumber
-set noerrorbells
-set belloff=all
-set re=0
-set redrawtime=10000
-" set clipboard+=unnamedplus
-
-" Delete character without register yank
-nnoremap x "_x
-
-highlight SpellBad ctermfg=lightred ctermbg=none
-highlight SpellCap ctermfg=lightcyan ctermbg=none
-highlight SpellLocal ctermfg=lightyellow ctermbg=none
-highlight SpellRare ctermfg=lightgrey ctermbg=none
-
-iabbrev 1i <Esc>cc-<Space>
-iabbrev 2i <Esc>cc<Tab>-<Space>
-iabbrev 3i <Esc>cc<Tab><Tab>-<Space>
-
-" --- Markdown Navigation Remaps ---
-autocmd bufenter *.md nnoremap <leader>2# <Esc>I##<Space>
-autocmd bufenter *.md nnoremap <leader>3# <Esc>I###<Space>
-autocmd bufenter *.md nnoremap <leader>4# <Esc>I####<Space>
-autocmd bufenter *.md nnoremap <leader>5# <Esc>I#####<Space>
-autocmd bufenter *.md nnoremap <leader>6# <Esc>I######<Space>
-
-autocmd bufenter *.md iabbrev 2# ##
-autocmd bufenter *.md iabbrev 3# ###
-autocmd bufenter *.md iabbrev 4# ####
-autocmd bufenter *.md iabbrev 5# #####
-autocmd bufenter *.md iabbrev 6# ######
-
-" --- Buffer Control Remaps ---
-nnoremap <silent> <leader>n :bnext<CR>
-nnoremap <silent> <leader>p :bprevious<CR>
-nnoremap <silent> <leader>d :bdelete<CR>
-
-nnoremap } }zz
-nnoremap { {zz
-nnoremap % %zz
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap <silent> <leader>= gg=G2<C-O>zz
-nnoremap <silent> <leader>l <Esc>:set number! relativenumber!<CR>
-
-set cpt=.,k,w,b
-set shortmess+=c
-
-nnoremap <silent> <leader>f <cmd>lua require('fzf-lua').files()<CR>
-nnoremap <silent> <leader>r <cmd>lua require('fzf-lua').oldfiles()<CR>
-let g:fzf_preview_window = ['right:60%', 'ctrl-/']
-
-nnoremap <silent> <leader>t :NvimTreeToggle<CR>
-
-" --- lazy.nvim Global Shortcuts ---
-nnoremap <silent> <leader>i :Lazy install<CR>
-nnoremap <silent> <leader>c :Lazy clean<CR>
-
-" --- DrChip's Man Page Improvements ---
-syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
-syn match manSectionNumber "^\s\+[0-9]\+\.[0-9]*" contained
-syn region manDQString start='[^a-zA-Z"]"[^", )]'lc=1 end='"' contains=manSQString
-syn region manSQString start="[ \t]'[^', )]"lc=1 end="'"
-syn region manSQString start="^'[^', )]"lc=1 end="'"
-syn region manBQString start="[^a-zA-Z`]`[^`, )]"lc=1 end="[`']"
-syn region manBQSQString start="``[^),']" end="''"
-syn match manBulletZone transparent "^\s\+o\s" contains=manBullet
-syn case match
-syn keyword manBullet contained o
-syn match manBullet contained "\[+*]"
-syn match manSubSectionStart "^\*" skipwhite nextgroup=manSubSection
-syn match manSubSection ".*$" contained
-
-hi link manSectionNumber Number
-hi link manDQString String
-hi link manSQString String
-hi link manBQString String
-hi link manBQSQString String
-hi link manBullet Special
-hi manSubSectionStart term=NONE cterm=NONE gui=NONE ctermfg=black ctermbg=black guifg=navyblue guibg=navyblue
-hi manSubSection term=underline cterm=underline gui=underline ctermfg=green guifg=green
-
-set ts=8
-
-" --- Goyo + Tmux Status Line Interactions ---
-nnoremap <silent> <leader>g :Goyo<CR>
-
-function! s:goyo_enter()
-      if executable('tmux') && strlen($TMUX)
-            set nonumber
-            set norelativenumber
-            silent !tmux set status off
-            silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-      endif
-endfunction
-
-function! s:goyo_leave()
-      if executable('tmux') && strlen($TMUX)
-            set number
-            set relativenumber
-            silent !tmux set status on
-            silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-      endif
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-" Modern config reload target
-nnoremap <silent> <Leader>v :so ~/.config/nvim/init.lua<CR>
-
-set completeopt=menu,menuone,noselect,preview
-set updatetime=300
-
-imap <script><silent> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>
-imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>
-let g:SuperTabMappingForward = '<s-tab>'
-let g:SuperTabMappingBackward = '<tab>'
-
-" Replaces your old CoC [g and ]g diagnostic jumps
-nnoremap <silent> [g <cmd>lua vim.diagnostic.jump({ count = -1 })<CR>
-nnoremap <silent> ]g <cmd>lua vim.diagnostic.jump({ count = 1 })<CR>
-
-" Standard Native LSP definitions (Jump to definition & hover docs)
-nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K  <cmd>lua vim.lsp.buf.hover()<CR>
-
-" Replaces your old CoC leader code actions mapping
-nnoremap <silent> <leader>a <cmd>lua vim.lsp.buf.code_action()<CR>
-
-let g:move_normal_option = 1
-vmap aj <Plug>MoveBlockCountLinesDown
-vmap ak <Plug>MoveBlockCountLinesUp
+  syn match manSectionHeading "^\s\+[0-9]\+\.[0-9.]*\s\+[A-Z].*$" contains=manSectionNumber
+  syn match manSectionNumber "^\s\+[0-9]\+\.[0-9]*" contained
+  syn region manDQString start='[^a-zA-Z"]"[^", )]'lc=1 end='"' contains=manSQString
+  syn region manSQString start="[ \t]'[^', )]"lc=1 end="'"
+  syn region manSQString start="^'[^', )]"lc=1 end="'"
+  syn region manBQString start="[^a-zA-Z`]`[^`, )]"lc=1 end="[`']"
+  syn region manBQSQString start="``[^),']" end="''"
+  syn match manBulletZone transparent "^\s\+o\s" contains=manBullet
+  syn case match
+  syn keyword manBullet contained o
+  syn match manBullet contained "\[+*]"
+  syn match manSubSectionStart "^\*" skipwhite nextgroup=manSubSection
+  syn match manSubSection ".*$" contained
 ]])
+
+vim.api.nvim_set_hl(0, "manSectionNumber", { link = "Number" })
+vim.api.nvim_set_hl(0, "manDQString", { link = "String" })
+vim.api.nvim_set_hl(0, "manSQString", { link = "String" })
+vim.api.nvim_set_hl(0, "manBQString", { link = "String" })
+vim.api.nvim_set_hl(0, "manBQSQString", { link = "String" })
+vim.api.nvim_set_hl(0, "manBullet", { link = "Special" })
+vim.api.nvim_set_hl(0, "manSubSectionStart", { ctermfg = "black", ctermbg = "black", fg = "navyblue", bg = "navyblue" })
+vim.api.nvim_set_hl(0, "manSubSection", { underline = true, ctermfg = "green", fg = "green" })
+
+vim.opt.tabstop = 8
+
+vim.keymap.set("n", "<Leader>v", ":so ~/.config/nvim/init.lua<CR>", { silent = true })
+
+vim.opt.completeopt = { "menu", "menuone", "noselect", "preview" }
+vim.opt.updatetime = 300
+
+vim.cmd("imap <script><silent> <Plug>SuperTabForward <c-r>=SuperTab('n')<cr>")
+vim.cmd("imap <script><silent> <Plug>SuperTabBackward <c-r>=SuperTab('p')<cr>")
+vim.g.SuperTabMappingForward = '<s-tab>'
+vim.g.SuperTabMappingBackward = '<tab>'
+
+vim.keymap.set("n", "[g", "<cmd>lua vim.diagnostic.jump({ count = -1 })<CR>", { silent = true })
+vim.keymap.set("n", "]g", "<cmd>lua vim.diagnostic.jump({ count = 1 })<CR>", { silent = true })
+
+vim.keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { silent = true })
+vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", { silent = true })
+
+vim.keymap.set("n", "<leader>a", "<cmd>lua vim.lsp.buf.code_action()<CR>", { silent = true })
+
+vim.g.move_normal_option = 1
+vim.keymap.set("v", "aj", "<Plug>MoveBlockCountLinesDown")
+vim.keymap.set("v", "ak", "<Plug>MoveBlockCountLinesUp")
