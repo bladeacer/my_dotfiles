@@ -13,10 +13,10 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
-vim.opt.rtp:prepend(lazypath)
+vim.o.rtp = lazypath .. "," .. vim.o.rtp
 
-vim.opt.number = true
-vim.opt.relativenumber = true
+vim.o.number = true
+vim.o.relativenumber = true
 
 vim.g.mapleader = ";"
 
@@ -332,8 +332,8 @@ vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
   callback = function()
     if vim.bo.buftype == "" and vim.bo.filetype ~= "NvimTree" then
-      vim.opt.number = true
-      vim.opt.relativenumber = true
+      vim.wo.number = true
+      vim.wo.relativenumber = true
     end
   end,
 })
@@ -341,7 +341,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "json", "jsonc" },
   callback = function()
-    vim.opt_local.conceallevel = 0
+    vim.bo.conceallevel = 0
   end,
 })
 
