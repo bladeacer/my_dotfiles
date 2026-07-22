@@ -341,7 +341,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "json", "jsonc" },
   callback = function()
-    vim.bo.conceallevel = 0
+    vim.wo.conceallevel = 0
   end,
 })
 
