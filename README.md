@@ -2,6 +2,17 @@
 
 In this repository, you can find the dotfiles I use.
 
+## Project status
+
+A constant WIP, moved back to GitHub from Codeberg due to Codeberg's ToS on
+AI assisted code.
+> Note: Dotfiles might not be to your liking, mostly stable but still needs
+polish before I would recommend for others to daily drive as well.
+
+## LLM Usage disclosure
+
+AI assistance was used for this project.
+
 ## Configurations included
 
 - `fastfetch`: Custom blue rose fastfetch
@@ -79,7 +90,7 @@ details on the original colours scheme.
 ## Installation (Arch Linux)
 
 ```bash
-git clone https://codeberg.org/bladeacer/my_dotfiles.git ~/my_dotfiles
+git clone https://github.com/bladeacer/my_dotfiles.git ~/my_dotfiles
 cd ~/my_dotfiles
 chmod +x setup.sh
 ./setup.sh # or make setup
