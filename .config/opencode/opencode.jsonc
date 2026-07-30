@@ -9,6 +9,14 @@
         "HEADROOM_TELEMETRY=off HEADROOM_CODE_AWARE_ENABLED=1 headroom proxy --code-graph --memory & sleep 2 && headroom mcp serve"
       ],
       "enabled": true
+    },
+    "lccst": {
+      "type": "local",
+      "command": [
+        "node",
+        "/home/data/Desktop/projects/lccst/dist/index.js"
+      ],
+      "enabled": true
     }
   }
 }
