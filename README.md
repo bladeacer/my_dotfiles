@@ -30,7 +30,12 @@ AI assistance was used for this project.
 
 ---
 
-## About navishell
+## Navishell
+
+![navishell preview screenshot 1](./media/rice_v3_1.png)
+![navishell preview screenshot 2](./media/rice_v3_2.png)
+
+### About navishell
 
 `navishell` is a custom Lain-themed (Serial Experiments Lain) Quickshell inspired
 setup built with QML components: app launcher, system controls, media HUD,
@@ -206,7 +211,9 @@ enumeration fallback.
 - [IcebergDark](https://github.com/gkeep/iceberg-dark): Colour palette.
 Licensed under the MIT License.
 - [iceberg.vim](https://github.com/cocopon/iceberg.vim): Original Iceberg colour
-  scheme. Licensed under the MIT License.
+scheme. Licensed under the MIT License.
+- [flexcyon-kde](https://github.com/flexcyon/kde): the flexcyon colour scheme,
+ported to KDE. Licensed under the MIT License.
 
 ### Dotfiles
 
