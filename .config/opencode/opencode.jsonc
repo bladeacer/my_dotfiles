@@ -1,5 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "options" : {
+        "baseURL": "http://127.0.0.1:11434/v1"
+      }
+    }
+  },
   "mcp": {
     "headroom": {
       "type": "local",
@@ -18,5 +25,8 @@
       ],
       "enabled": true
     }
-  }
+  },
+  "plugin": [
+    "opencode-omniroute-auth"
+  ]
 }

@@ -240,46 +240,58 @@ pacQii() {
     pacman -Qi | awk '/^Name/{name=$3} /^Installed Size/{print $4$5, name}' | sort -h | rg $(fzf)
 }
 
-conda-init() {
-    # >>> conda initialize >>>
-    # !! Contents within this block are managed by 'conda init' !!
-    __conda_setup="$('/home/data/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-    if [ $? -eq 0 ]; then
-        eval "$__conda_setup"
-    else
-        if [ -f "/home/data/anaconda3/etc/profile.d/conda.sh" ]; then
-            . "/home/data/anaconda3/etc/profile.d/conda.sh"
-        else
-            export PATH="/home/data/anaconda3/bin:$PATH"
-        fi
-    fi
-    unset __conda_setup
-    # <<< conda initialize <<<
-}
+# conda-init() {
+#     # >>> conda initialize >>>
+#     # !! Contents within this block are managed by 'conda init' !!
+#     __conda_setup="$('/home/data/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+#     if [ $? -eq 0 ]; then
+#         eval "$__conda_setup"
+#     else
+#         if [ -f "/home/data/anaconda3/etc/profile.d/conda.sh" ]; then
+#             . "/home/data/anaconda3/etc/profile.d/conda.sh"
+#         else
+#             export PATH="/home/data/anaconda3/bin:$PATH"
+#         fi
+#     fi
+#     unset __conda_setup
+#     # <<< conda initialize <<<
+# }
 
-aion() {
-    pkill -9 ollama 2>/dev/null
+# aion() {
+#     pkill -f "ollama serve" 2>/dev/null || pkill -9 ollama 2>/dev/null
     
-    echo "Launching Ollama (Manual Background Mode)..."
+#     echo "Launching Ollama (Manual Background Mode)..."
 
-    # export OLLAMA_VULKAN=1
-    export OLLAMA_FLASH_ATTENTION=1
-    # export OLLAMA_MAX_VRAM=3221225472
-    # export OLLAMA_NUM_CTX=4096
+#     export OLLAMA_CONTEXT_LENGTH=16384
+    
+#     # Save extra VRAM for the KV cache
+#     export OLLAMA_KV_CACHE_TYPE=q8_0
 
-    # export OLLAMA_KV_CACHE_TYPE=q8_0
-    export OLLAMA_API_BASE="http://127.0.0.1:11434"
-    
-    nohup ollama serve > ~/ollama.log 2>&1 &
-    
-    echo "Ollama is warming up. VRAM limit set to 3GB."
-    sleep 3
-    
-    pgrep -x ollama > /dev/null && echo "Ollama started successfully (PID: $(pgrep -x ollama))"
-}
+#     # Enable Flash Attention & Standard KV Cache
+#     export OLLAMA_FLASH_ATTENTION=1
 
-aioff() {
-    echo "Killing Ollama process..."
-    pkill -9 ollama
-    echo "Ollama stopped."
-}
+#     # Prevent multi-threaded/parallel evaluation split spikes
+#     export OLLAMA_NUM_PARALLEL=1
+
+#     export OLLAMA_API_BASE="http://127.0.0.1:11434"
+    
+#     nohup ollama serve > ~/ollama.log 2>&1 &
+    
+#     echo "Ollama is warming up..."
+#     sleep 3
+    
+#     if pgrep -f "ollama serve" > /dev/null; then
+#         echo "Ollama started successfully (PID: $(pgrep -f "ollama serve" | head -n 1))"
+#         echo "Default Context: 16K | KV Cache: Q8_0 | Flash Attention: On"
+#     else
+#         echo "Failed to start Ollama. Check ~/ollama.log for details."
+#     fi
+# }
+
+# aioff() {
+#     echo "Stopping Ollama process..."
+#     pkill -f "ollama serve" 2>/dev/null || pkill -9 ollama 2>/dev/null
+#     echo "Ollama stopped."
+# }
+
+source /usr/share/nvm/init-nvm.sh
