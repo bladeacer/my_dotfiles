@@ -2,15 +2,19 @@
 background-opacity = 0.85
 background-blur-radius = 20
 
-# Disable window close confirmation dialog
+# Disable window close prompt
 confirm-close-surface = false
 
-# Enable copy-on-select functionality
+# Copy text on select to system clipboard
 copy-on-select = clipboard
 
-# KDE Plasma decoration integration
+window-theme = system
+
+# Force KDE KWin server-side window decorations
 window-decoration = server
-gtk-adwaita = false
+
+# Disable Adwaita GTK window styling
+gtk-wide-tabs = false
 
 # Fonts
 font-family = "DepartureMono Nerd Font Mono"
