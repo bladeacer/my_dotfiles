@@ -219,6 +219,7 @@ export BROWSER=waterfox
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/pnpm/bin:$PATH"
 # export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 # export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 

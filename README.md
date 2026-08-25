@@ -20,7 +20,7 @@ AI assistance was used for this project.
   terminal keybinds, and language specific LSP integrations
 - `vim`: Everyone's favourite terminal text editor, used to daily drive this
 - `tmux`: Terminal window multiplexing
-- `alacritty`: Terminal emulator
+- `ghostty`: Terminal emulator
 - `bash`: Shell aliases and niceties
 - `starship`: Shell prompt config
 - `fcitx5`: Integrated CJK IME configs

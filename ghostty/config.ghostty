@@ -1,0 +1,49 @@
+# Window Appearance
+background-opacity = 0.85
+background-blur-radius = 20
+
+# Disable window close confirmation dialog
+confirm-close-surface = false
+
+# Enable copy-on-select functionality
+copy-on-select = clipboard
+
+# KDE Plasma decoration integration
+window-decoration = server
+gtk-adwaita = false
+
+# Fonts
+font-family = "DepartureMono Nerd Font Mono"
+font-family = "Maple Mono NF CN"
+font-family-bold = "DepartureMono Nerd Font Mono"
+font-family-italic = "CaskaydiaCove Nerd Font Mono"
+font-size = 11
+# adjust-cell-height = 10%
+# adjust-cell-width = 5%
+
+# Colors - Primary
+background = 16171e
+foreground = d1d2d3
+
+# Colors - Normal
+palette = 0=#000000
+palette = 1=#e68e8e
+palette = 2=#83ac8e
+palette = 3=#f5b78a
+palette = 4=#9bb8dc
+palette = 5=#baace2
+palette = 6=#00c5c7
+palette = 7=#c7c7c7
+
+# Colors - Bright
+palette = 8=#676767
+palette = 9=#ff6d67
+palette = 10=#5ff967
+palette = 11=#fefb67
+palette = 12=#6871ff
+palette = 13=#ff76ff
+palette = 14=#5ffdff
+palette = 15=#feffff
+
+# Mouse
+mouse-hide-while-typing = true

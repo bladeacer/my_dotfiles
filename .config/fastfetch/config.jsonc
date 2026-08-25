@@ -101,11 +101,11 @@
 		// 	"key": "├─",
 		// 	"keyColor": "green"
 		// },
-		{
-			"type": "bluetooth",
-			"key": "",
-			"keyColor": "green"
-		},
+		// {
+		// 	"type": "bluetooth",
+		// 	"key": "",
+		// 	"keyColor": "green"
+		// },
 		// {
 		// 	"type": "sound",
 		// 	"key": "╰─",
@@ -117,21 +117,21 @@
 			"key": "",
 			"keyColor": "yellow"
 		},
-		{
-			"type": "cpu",
-			"key": "󰍛",
-			"keyColor": "yellow"
-		},
-		{
-			"type": "gpu",
-			"key": "󰘚",
-			"keyColor": "yellow"
-		},
-		{
-			"type": "display",
-			"key": "󰍹",
-			"keyColor": "yellow"
-		},
+		// {
+		// 	"type": "cpu",
+		// 	"key": "󰍛",
+		// 	"keyColor": "yellow"
+		// },
+		// {
+		// 	"type": "gpu",
+		// 	"key": "󰘚",
+		// 	"keyColor": "yellow"
+		// },
+		// {
+		// 	"type": "display",
+		// 	"key": "󰍹",
+		// 	"keyColor": "yellow"
+		// },
 		// {
 		// 	"type": "wallpaper",
 		// 	"key": "╰─󰸉",
