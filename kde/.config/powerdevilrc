@@ -1,9 +1,15 @@
+[AC][SuspendAndShutdown]
+AutoSuspendAction=0
+
 [Activities][a0912522-973a-4afd-8f93-833df34bb6a7]
 InhibitScreenManagement=false
 InhibitSuspend=false
 
 [Battery][Performance]
 PowerProfile=power-saver
+
+[Battery][SuspendAndShutdown]
+AutoSuspendIdleTimeoutSec=3600
 
 [BatteryManagement]
 BatteryCriticalAction=8
