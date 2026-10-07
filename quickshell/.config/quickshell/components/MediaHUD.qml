@@ -21,6 +21,7 @@ Rectangle {
     Process { id: pollStatus; command: ["playerctl", "status", "--format", "{{ status }}"]; stdout: SplitParser { onRead: (line) => { root.mediaStatus = line.trim().toLowerCase() } } }
 
     function scrubTo(percent) {
+        if (root.mediaPositionStale) return
         var targetSec = Math.round(root.mediaLength * percent)
         if (isNaN(targetSec) || targetSec < 0) targetSec = 0
         if (targetSec > root.mediaLength) targetSec = root.mediaLength
@@ -101,15 +102,28 @@ Rectangle {
 
                 RowLayout {
                     Layout.fillWidth: true; spacing: 4; Layout.rightMargin: 4
-                    Text { text: fmtTime(root.mediaPosition); font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
+                    Text { text: root.mediaPositionStale ? "--:--" : fmtTime(root.mediaPosition); font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
                     Rectangle {
                         Layout.fillWidth: true; height: 4; color: Theme.borderMain
                         Rectangle {
+                            id: progressFill
                             height: parent.height; color: Theme.accentBlue
-                            width: parent.width * Math.min(1.0, Math.max(0.0, root.mediaPosition / Math.max(1, root.mediaLength)))
+                            x: 0
+                            width: root.mediaPositionStale ? parent.width * 0.35 : parent.width * Math.min(1.0, Math.max(0.0, root.mediaPosition / Math.max(1, root.mediaLength)))
                             Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.Linear } }
+                            SequentialAnimation on x {
+                                running: root.mediaPositionStale
+                                loops: Animation.Infinite
+                                NumberAnimation { to: parent.width * 0.65; duration: 1100; easing.type: Easing.InOutQuad }
+                                NumberAnimation { to: 0; duration: 1100; easing.type: Easing.InOutQuad }
+                            }
                         }
-                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: function(m) { mediaCard.scrubTo(m.x / width) } }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: root.mediaPositionStale ? Qt.ArrowCursor : Qt.PointingHandCursor
+                            enabled: !root.mediaPositionStale
+                            onClicked: function(m) { mediaCard.scrubTo(m.x / width) }
+                        }
                     }
                     Text { text: fmtTime(root.mediaLength); font.family: Theme.fontMono; font.pixelSize: Theme.textSm; color: Theme.fgMuted }
                 }

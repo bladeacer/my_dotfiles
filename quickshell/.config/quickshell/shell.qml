@@ -26,6 +26,13 @@ ShellRoot {
     property string focusedAppId: ""
     property int mediaPosition: 0
     property int mediaLength: 1
+    // Set when a "playing" player's reported position stops advancing
+    // (broken MPRIS bridge, e.g. Firefox/YouTube web playback). The HUD then
+    // renders an indeterminate progress bar and disables seeking, since the
+    // player never reports a trustworthy position and ignores SetPosition.
+    property bool mediaPositionStale: false
+    property int stalePosSample: -2
+    property int staleCount: 0
     property real currentVolume: 0.0
     property real currentBrightness: 0.0
     property string keyboardLayout: "US"
@@ -118,6 +125,35 @@ ShellRoot {
             var d = new Date()
             var pad = function(n) { return n.toString().padStart(2, '0') }
             currentTimestamp = d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) + " // " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds())
+        }
+    }
+
+    // Detect players whose reported position does not advance while playing.
+    // A healthy player advances ~1s per second, so its integer position changes
+    // on (almost) every 1s sample. If it stays identical for 4 consecutive
+    // samples while "playing", the position feed is considered stale.
+    Timer {
+        interval: 1000; running: true; repeat: true
+        onTriggered: {
+            if (mediaStatus !== "playing") {
+                staleCount = 0
+                stalePosSample = -2
+                mediaPositionStale = false
+                return
+            }
+            if (stalePosSample === -2) {
+                stalePosSample = mediaPosition
+                staleCount = 0
+                return
+            }
+            if (mediaPosition !== stalePosSample) {
+                stalePosSample = mediaPosition
+                staleCount = 0
+                mediaPositionStale = false
+            } else {
+                staleCount += 1
+                if (staleCount >= 4) mediaPositionStale = true
+            }
         }
     }
 
