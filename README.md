@@ -63,7 +63,7 @@ details on the original colours scheme.
 ### Requirements for navishell
 
 - EndeavourOS / Arch Linux with KDE Plasma 6 (Wayland)
-- Quickshell: Qt Quick Wayland shell
+- Quickshell: Qt Quick Wayland shell (AUR)
 - Departure Mono Nerd Font Mono: primary monospace font for the status bar
 - Maple Mono: CJK fallback for Chinese/Japanese/Korean glyphs
   (see [Maple-font](https://github.com/subframe7536/Maple-font))
@@ -71,9 +71,36 @@ details on the original colours scheme.
 
 - `lookas` (via `quickshell/lookas-bridge`): perception-aligned spectrum visualiser
 - Rust toolchain (for building `lookas-bridge`)
-- `kdotool`: KDE window enumeration and focus tracking (AUR)
+- `kdotool` (AUR): **required** on KDE Plasma for the focused-window
+  indicator and taskbar app tracking. KWin intentionally does not
+  implement the `zwlr-foreign-toplevel-management-v1` protocol
+  ([KDE bug 502647](https://bugs.kde.org/show_bug.cgi?id=502647)),
+  so quickshell's native `ToplevelManager` never reports windows on
+  KWin. `kdotool` drives KWin's scripting API over D-Bus and works
+  for both Wayland-native and XWayland windows.
 - Standard CLI tools: `wpctl`, `brightnessctl`, `nmcli`, `playerctl`,
-  `bluetoothctl`, `fcitx5-remote`
+  `bluetoothctl`, `fcitx5-remote`, `qdbus`
+
+> **No need to build quickshell from source on KDE.** The source build
+> only enables the native `ToplevelManager` plugin, which KWin does
+> not support. The AUR package is sufficient; `kdotool` does the real
+> work. Building from source would register `ToplevelManager` as
+> present-but-empty, which the widget logic handles via data-driven
+> gating (native only wins when it actually reports windows).
+
+#### How window tracking works
+
+- **Focused window** (`services/FocusedWindow.qml`): prefers the native
+  `ToplevelManager.activeToplevel` when it reports a window; otherwise
+  falls back to the `kdotool getactivewindow` + `org.kde.KWin.getWindowInfo`
+  probe emitted by `shell.qml`'s telemetry pipe every 0.5s.
+- **Taskbar apps** (`components/TaskTracker.qml`): a 500ms timer polls
+  `ToplevelManager.toplevels` and only takes over once it actually
+  reports windows (`nativeToplevels` flag); otherwise a 3s timer runs
+  `kdotool search` + `getWindowInfo` to enumerate windows and count
+  them against the pinned-apps list. App identifiers are normalised
+  (lowercased, path/`.desktop` stripped) so Wayland app_ids, WM_CLASS
+  values, and KWin `desktopFile` paths all match the pinned list.
 
 ## Keybinds (navishell)
 

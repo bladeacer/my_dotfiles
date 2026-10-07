@@ -27,9 +27,9 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][1][General]
-changedPositions={"desktop:/my_obsidian_vault":["1694x1059,2133x900,2560x1080,1646x1029,2048x864","0","2"],"desktop:/projects":["1694x1059,2133x900,2560x1080,1646x1029,2048x864","0","1"]}
+changedPositions={"desktop:/my_obsidian_vault":["2048x864,2133x900,1694x1059,1646x1029,2560x1080","0","2"],"desktop:/projects":["2048x864,2133x900,1694x1059,1646x1029,2560x1080","0","1"]}
 lastResolution=2133x900
-positions={"1646x1029":["1","15","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/courses","0","0","desktop:/ai","0","3"],"1694x1059":["1","15","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/my_obsidian_vault","0","2","desktop:/courses","0","0"],"2048x864":["1","18","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"],"2133x900":["1","19","desktop:/ai","0","3","desktop:/projects","0","1","desktop:/my_obsidian_vault","0","2","desktop:/courses","0","0"],"2560x1080":["1","23","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"]}
+positions={"1646x1029":["1","15","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/courses","0","0","desktop:/ai","0","3"],"1694x1059":["1","15","desktop:/courses","0","0","desktop:/my_obsidian_vault","0","2","desktop:/ai","0","3","desktop:/projects","0","1"],"2048x864":["1","18","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"],"2133x900":["1","19","desktop:/projects","0","1","desktop:/courses","0","0","desktop:/my_obsidian_vault","0","2","desktop:/ai","0","3"],"2560x1080":["1","23","desktop:/my_obsidian_vault","0","2","desktop:/projects","0","1","desktop:/ai","0","3","desktop:/courses","0","0"]}
 sortMode=-1
 
 [Containments][1][Wallpaper][luisbocanegra.smart.video.wallpaper.reborn][General]
@@ -77,10 +77,10 @@ UncheckedSlides=/usr/share/wallpapers/EndeavourOS/,/usr/share/wallpapers/Next/,/
 
 [Containments][3]
 activityId=
-formfactor=2
+formfactor=3
 immutability=1
 lastScreen=0
-location=3
+location=6
 plugin=org.kde.panel
 wallpaperplugin=org.kde.image
 
@@ -250,6 +250,10 @@ plugin=org.kde.plasma.notifications
 immutability=1
 plugin=org.kde.plasma.keyboardindicator
 
+[Containments][3][Applets][8][Applets][21][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
+
 [Containments][3][Applets][8][Applets][24]
 immutability=1
 plugin=org.kde.plasma.bluetooth
@@ -302,5 +306,5 @@ shownItems=org.kde.plasma.volume,org.kde.plasma.bluetooth,org.kde.plasma.brightn
 AppletOrder=62;4;59;63;65;64;48;61;67;53;68;8;66
 
 [ScreenMapping]
-itemsOnDisabledScreens=0,a0912522-973a-4afd-8f93-833df34bb6a7,3,desktop:/projects,desktop:/courses,desktop:/my_obsidian_vault
-screenMapping=desktop:/projects,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/my_obsidian_vault,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/courses,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e
+itemsOnDisabledScreens=0,a0912522-973a-4afd-8f93-833df34bb6a7,3,desktop:/my_obsidian_vault,desktop:/projects,desktop:/courses
+screenMapping=desktop:/projects,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/courses,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e,desktop:/my_obsidian_vault,0,434b67fb-3d9e-4dfc-ad0a-7fc2087e223e

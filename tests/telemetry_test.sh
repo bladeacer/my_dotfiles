@@ -81,44 +81,61 @@ KB=$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 
 echo "  output: KB:${KB}"
 [[ -n "$KB" ]] && pass "KB" || fail "KB empty"
 
-# ===== FOCUS (kdotool + KWin D-Bus) =====
+# ===== FOCUS =====
+# On KDE Plasma the focused window comes from
+# kdotool getactivewindow + org.kde.KWin.getWindowInfo.
+# (KWin does not implement zwlr-foreign-toplevel-management-v1,
+# so quickshell's native ToplevelManager never reports on KWin.)
 echo "--- FOCUS ---"
-FOCUS_WIN=$(kdotool getactivewindow 2>/dev/null)
-if [ -n "$FOCUS_WIN" ]; then
-    FOCUS_INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo "$FOCUS_WIN" 2>&1)
-    FOCUS_TITLE=$(echo "$FOCUS_INFO" | grep '^caption:' | sed 's/^caption: //')
-    FOCUS_APP=$(echo "$FOCUS_INFO" | grep '^desktopFile:' | sed 's/^desktopFile: //')
-    if [ -n "$FOCUS_APP" ] && [ "$FOCUS_APP" != "plasmashell" ]; then
-        echo "  output: FOCUS_TITLE:${FOCUS_TITLE}"
-        echo "  output: FOCUS_APP:${FOCUS_APP}"
-        [[ -n "$FOCUS_TITLE" ]] && pass "FOCUS title" || fail "FOCUS_TITLE empty"
-        [[ -n "$FOCUS_APP" ]] && pass "FOCUS app" || fail "FOCUS_APP empty"
+if command -v kdotool >/dev/null 2>&1; then
+    FOCUS_WIN=$(kdotool getactivewindow 2>/dev/null || true)
+    if [ -n "$FOCUS_WIN" ]; then
+        FOCUS_INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo "$FOCUS_WIN" 2>&1 || true)
+        FOCUS_TITLE=$(echo "$FOCUS_INFO" | grep '^caption:' | sed 's/^caption: //')
+        FOCUS_APP=$(echo "$FOCUS_INFO" | grep '^desktopFile:' | sed 's/^desktopFile: //')
+        FOCUS_APP=${FOCUS_APP##*/}
+        FOCUS_APP=${FOCUS_APP%.desktop}
+        if [ -n "$FOCUS_APP" ] && [ "$FOCUS_APP" != "plasmashell" ]; then
+            echo "  output: FOCUS_TITLE:${FOCUS_TITLE}"
+            echo "  output: FOCUS_APP:${FOCUS_APP}"
+            [[ -n "$FOCUS_TITLE" ]] && pass "FOCUS title" || fail "FOCUS_TITLE empty"
+            [[ -n "$FOCUS_APP" ]] && pass "FOCUS app" || fail "FOCUS_APP empty"
+        else
+            echo "  output: (no valid window - desktop focused)"
+            pass "FOCUS (desktop)"
+        fi
     else
-        echo "  output: (no valid window - desktop focused)"
-        pass "FOCUS (desktop)"
+        echo "  output: (no active window)"
+        pass "FOCUS (no window)"
     fi
 else
-    echo "  output: (no active window)"
-    pass "FOCUS (no window)"
+    echo "  output: (kdotool missing)"
+    pass "FOCUS (skipped)"
 fi
 
-# ===== WINDOW ENUMERATION (kdotool + KWin D-Bus) =====
+# ===== WINDOW ENUMERATION =====
+# On KDE Plasma windows are enumerated via
+# kdotool search + org.kde.KWin.getWindowInfo.
 echo "--- WINDOW ENUM ---"
-declare -A WIN_COUNTS
-declare -a WIN_LIST
-# Ensure pipefails don't break
-while read -r id; do
-    [ -z "$id" ] && continue
-    kclass=$(kdotool getwindowclassname "$id" 2>/dev/null)
-    [ "$kclass" = "plasmashell" ] && continue
-    [ -z "$kclass" ] && continue
-    winfo=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo "$id" 2>&1)
-    df=$(echo "$winfo" | grep '^desktopFile:' | sed 's/^desktopFile: //')
-    cap=$(echo "$winfo" | grep '^caption:' | sed 's/^caption: //')
-    [ -n "$df" ] && echo "  $df | $cap"
-done < <(kdotool search "." 2>/dev/null)
-echo "  (enumeration complete)"
-pass "WINDOW ENUM"
+if command -v kdotool >/dev/null 2>&1; then
+    declare -A WIN_COUNTS
+    declare -a WIN_LIST
+    while read -r id; do
+        [ -z "$id" ] && continue
+        kclass=$(kdotool getwindowclassname "$id" 2>/dev/null || true)
+        [ "$kclass" = "plasmashell" ] && continue
+        [ -z "$kclass" ] && continue
+        winfo=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo "$id" 2>&1 || true)
+        df=$(echo "$winfo" | grep '^desktopFile:' | sed 's/^desktopFile: //')
+        cap=$(echo "$winfo" | grep '^caption:' | sed 's/^caption: //')
+        [ -n "$df" ] && echo "  $df | $cap"
+    done < <(kdotool search "." 2>/dev/null)
+    echo "  (enumeration complete)"
+    pass "WINDOW ENUM"
+else
+    echo "  output: (kdotool missing)"
+    pass "WINDOW ENUM (skipped)"
+fi
 
 echo
 echo "=== Results: $PASS passed, $FAIL failed ==="

@@ -30,6 +30,23 @@ ShellRoot {
     property real currentBrightness: 0.0
     property string keyboardLayout: "US"
 
+    // KDE focus probe via kdotool + KWin D-Bus. Always emitted;
+    // services/FocusedWindow.qml prefers the native
+    // ToplevelManager.activeToplevel when it reports a window,
+    // so on compositors with native support this is ignored.
+    readonly property string kdeFocusProbe: (
+        "WIN=$(kdotool getactivewindow 2>/dev/null); " +
+        "if [ -n \"$WIN\" ]; then " +
+        "INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1); " +
+        "TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //'); " +
+        "APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //'); " +
+        "if [ -n \"$APP\" ] && ! echo \"$APP\" | grep -qi 'plasmashell'; then " +
+        "echo \"FOCUS_TITLE:$TITLE\"; " +
+        "echo \"FOCUS_APP:$APP\"; " +
+        "fi; " +
+        "fi; "
+    )
+
     function closePopupWithTransition(loader) {
         if (loader.active && loader.item)
             loader.item.startCloseTransition(function() { loader.active = false })
@@ -117,16 +134,7 @@ ShellRoot {
             "echo \"VOL:$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print $2}' || echo 0)\"; " +
             "echo \"BRIGHT:$(brightnessctl -m 2>/dev/null | cut -d, -f4 | tr -d '%' || echo 0)\"; " +
             "echo \"KB:$(fcitx5-remote -n 2>/dev/null | sed 's/.*-//' | head -1 || setxkbmap -query 2>/dev/null | grep layout | awk '{print toupper($2)}' || echo 'US')\"; " +
-            "WIN=$(kdotool getactivewindow 2>/dev/null); " +
-            "if [ -n \"$WIN\" ]; then " +
-            "INFO=$(qdbus org.kde.KWin /KWin org.kde.KWin.getWindowInfo \"$WIN\" 2>&1); " +
-            "TITLE=$(echo \"$INFO\" | grep '^caption:' | sed 's/^caption: //'); " +
-            "APP=$(echo \"$INFO\" | grep '^desktopFile:' | sed 's/^desktopFile: //'); " +
-            "if [ -n \"$APP\" ] && ! echo \"$APP\" | grep -qi 'plasmashell'; then " +
-            "echo \"FOCUS_TITLE:$TITLE\"; " +
-            "echo \"FOCUS_APP:$APP\"; " +
-            "fi; " +
-            "fi; " +
+            root.kdeFocusProbe +
             "sleep 0.5; " +
             "done"
         ]
@@ -173,7 +181,7 @@ ShellRoot {
                     focusedTitle = t.substring(12)
                     Services.FocusedWindow._kdeTitle = focusedTitle
                 } else if (t.startsWith("FOCUS_APP:")) {
-                    var app = t.substring(10)
+                    var app = t.substring(10).split("/").pop().replace(/\.desktop$/, "")
                     if (app.toLowerCase().indexOf("plasmashell") === -1) {
                         focusedAppId = app
                         Services.FocusedWindow._kdeAppId = app

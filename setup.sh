@@ -25,7 +25,14 @@ sudo pacman -S --needed --noconfirm \
     exit 1
 }
 
-# AUR packages
+# ── Quickshell + kdotool (AUR) ──
+# kdotool is required on KDE Plasma: KWin intentionally
+# does not implement the zwlr-foreign-toplevel-management-v1
+# protocol (KDE bug 502647), so quickshell's native
+# ToplevelManager never reports windows on KWin. kdotool
+# drives KWin's scripting API over D-Bus and works for
+# both Wayland-native and XWayland windows.
+# (Building quickshell from source gains nothing on KDE.)
 for pkg in quickshell kdotool; do
     if ! pacman -Qs "$pkg" >/dev/null 2>&1; then
         echo "==> Installing $pkg (AUR)..."

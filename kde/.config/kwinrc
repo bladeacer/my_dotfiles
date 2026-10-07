@@ -17,6 +17,12 @@ Strength=15
 [Effect-overview]
 BorderActivate=9
 
+[Effect-translucency]
+ComboboxPopups=81
+Dialogs=79
+Inactive=81
+Menus=81
+
 [ModifierOnlyShortcuts]
 Meta=org.kde.runner,/App,,toggle
 
