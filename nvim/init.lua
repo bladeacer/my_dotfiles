@@ -38,6 +38,7 @@ require("lazy").setup({
   { 'raimondi/delimitmate' },
   { 'rlue/vim-barbaric' },
   { 'matze/vim-move' },
+  { 'mfussenegger/nvim-dap' },
 
   {
     'nvim-tree/nvim-tree.lua',

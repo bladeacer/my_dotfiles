@@ -13,6 +13,9 @@ return {
           completeFunctionCalls = true,
         },
       },
+      debugger = {
+        enabled = true
+      }
     })
   end,
 }
