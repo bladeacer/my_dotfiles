@@ -1,4 +1,5 @@
 vim.g.loaded_netrw = 1
+
 vim.g.loaded_netrwPlugin = 1
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -24,6 +25,11 @@ vim.g.mapleader = ";"
 -- 1. LOAD PLUGINS FIRST
 -- ==========================================================================
 require("lazy").setup({
+  ui = {
+    size = { width = 0.8, height = 0.8 },
+    wrap = true,
+  },
+
   { import = "plugins"},
 
   { 'ap/vim-css-color' },
@@ -32,21 +38,6 @@ require("lazy").setup({
   { 'raimondi/delimitmate' },
   { 'rlue/vim-barbaric' },
   { 'matze/vim-move' },
-
-  {
-    'ibhagwan/fzf-lua',
-    config = function()
-      require('fzf-lua').setup({
-        fzf_opts = { ['--color'] = true },
-        winopts = {
-          preview = {
-            layout = 'horizontal',
-            horizontal = 'right:60%',
-          }
-        }
-      })
-    end
-  },
 
   {
     'nvim-tree/nvim-tree.lua',
@@ -61,13 +52,6 @@ require("lazy").setup({
       })
     end
   },
-
-  -- {
-  --   'neovim/nvim-lspconfig',
-  --   lazy = false,
-  --   priority = 900,
-  -- },
-  -- { 'rafamadriz/friendly-snippets' },
 
   {
     'saghen/blink.cmp',
@@ -180,7 +164,6 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-require("options")
 require("keymaps")
 require("highlights")
 require("startpage")
@@ -194,6 +177,8 @@ local autocmd_files = {
 for _, file in ipairs(autocmd_files) do
   require(file)
 end
+
+require("options")
 
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
