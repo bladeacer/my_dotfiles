@@ -296,3 +296,6 @@ pacQii() {
 # }
 
 source /usr/share/nvm/init-nvm.sh
+
+export ANDROID_HOME="/opt/android-sdk"
+export PATH="$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"

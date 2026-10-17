@@ -21,161 +21,12 @@ vim.o.relativenumber = true
 vim.g.mapleader = ";"
 
 -- ==========================================================================
--- COLOR PATCHES: Force menus, windows, and diagnostics to use Iceberg theme
--- ==========================================================================
-vim.api.nvim_create_autocmd("ColorScheme", {
-  pattern = "iceberg",
-  callback = function()
-    local highlights = {
-      -- 1. Fix Lazy.nvim and Floating Documentation UI Backgrounds
-      NormalFloat  = { bg = "#161821", fg = "#c6c8d1" },
-      FloatBorder  = { bg = "#161821", fg = "#444b71" },
-      FloatTitle   = { bg = "#2e3244", fg = "#84a0c6", bold = true },
-
-      -- 2. Fix blink.cmp Popups & Completion Menus
-      BlinkCmpMenu            = { bg = "#1e2132", fg = "#c6c8d1" },
-      BlinkCmpMenuBorder      = { bg = "#1e2132", fg = "#444b71" },
-      BlinkCmpDoc             = { bg = "#161821", fg = "#c6c8d1" },
-      BlinkCmpDocBorder       = { bg = "#161821", fg = "#444b71" },
-
-      -- 3. Highlighting active selections in menus
-      BlinkCmpMenuSelection   = { bg = "#454b68", fg = "#ffffff", bold = true },
-      PmenuSel                = { bg = "#454b68", fg = "#ffffff", bold = true },
-
-      -- 4. DIAGNOSTIC COLORS: Map the warnings/errors to Iceberg's palette
-      DiagnosticError         = { fg = "#e27878" }, -- Iceberg Red
-      DiagnosticWarn          = { fg = "#e2a478" }, -- Iceberg Orange
-      DiagnosticInfo          = { fg = "#84a0c6" }, -- Iceberg Blue
-      DiagnosticHint          = { fg = "#b4be82" }, -- Iceberg Green
-
-      -- Curly underlines inside the code text
-      DiagnosticUnderlineError = { sp = "#e27878", underline = true },
-      DiagnosticUnderlineWarn  = { sp = "#e2a478", underline = true },
-    }
-
-    for group, opts in pairs(highlights) do
-      vim.api.nvim_set_hl(0, group, opts)
-    end
-  end,
-})
-
--- ==========================================================================
 -- 1. LOAD PLUGINS FIRST
 -- ==========================================================================
 require("lazy").setup({
-  {
-    'cocopon/iceberg.vim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd([[colorscheme iceberg]])
-    end
-  },
+  { import = "plugins"},
 
   { 'ap/vim-css-color' },
-
-  {
-    'sphamba/smear-cursor.nvim',
-    opts = {
-      smear_between_buffers = true,
-      smear_between_lines = true,
-      cursor_color = '#84a0c6', -- Matches Iceberg Blue perfectly
-    },
-  },
-
-  -- 2. SMOOTH SCROLLING EMULATION
-  {
-    'karb94/neoscroll.nvim',
-    config = function()
-      require('neoscroll').setup({
-        mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>', 'zt', 'zz', 'zb'},
-        hide_cursor = true,          -- Temporarily hides cursor during fast scrolls
-        stop_eof = true,             -- Stop scroll at end of file
-        easing_function = "quadratic" -- Smooth slow-down effect
-      })
-    end
-  },
-
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      local function coc_status()
-        return vim.fn['coc#status']()
-      end
-
-      local colors = {
-        base_fg     = '#c6c8d1',
-        base_bg     = '#1e2132',
-        edge_bg     = '#3d435c',
-        gradient_bg = '#2e3244',
-        nc_bg       = '#0f1117',
-        normal_bg   = '#454b68',
-        error_bg    = '#e27878',
-        warning_bg  = '#e2a478',
-        insert_bg   = '#84a0c6',
-        replace_bg  = '#e2a478',
-        visual_bg   = '#b4be82',
-        dark_text   = '#161821',
-      }
-
-      local iceberg_dark_palette = {
-        normal = {
-          a = { fg = colors.base_fg, bg = colors.normal_bg, bold = true },
-          b = { fg = colors.base_fg, bg = colors.gradient_bg },
-          c = { fg = colors.base_fg, bg = colors.base_bg },
-        },
-        insert = {
-          a = { fg = colors.dark_text, bg = colors.insert_bg, bold = true },
-          b = { fg = colors.base_fg, bg = colors.gradient_bg },
-        },
-        visual = {
-          a = { fg = colors.dark_text, bg = colors.visual_bg, bold = true },
-          b = { fg = colors.base_fg, bg = colors.gradient_bg },
-        },
-        replace = {
-          a = { fg = colors.dark_text, bg = colors.replace_bg, bold = true },
-          b = { fg = colors.base_fg, bg = colors.gradient_bg },
-        },
-        inactive = {
-          a = { fg = colors.base_fg, bg = colors.nc_bg },
-          b = { fg = colors.base_fg, bg = colors.nc_bg },
-          c = { fg = colors.base_fg, bg = colors.nc_bg },
-        },
-      }
-
-      require('lualine').setup({
-        options = {
-          theme = iceberg_dark_palette,
-          component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
-          icons_enabled = false,
-          globalstatus = false,
-        },
-        sections = {
-          lualine_a = {
-            {
-              'mode',
-              fmt = function(str)
-                local mode_map = {
-                  NORMAL = 'NOR', INSERT = 'INS', REPLACE = 'REP',
-                  ['V-LINE'] = 'VL', ['V-BLOCK'] = 'VB', VISUAL = 'V',
-                  COMMAND = 'CMD', TERMINAL = 'T'
-                }
-                return mode_map[str] or str
-              end
-            }
-          },
-          lualine_b = { 'paste' },
-          lualine_c = { { coc_status }, { 'readonly' }, { 'filename', path = 0 } },
-          lualine_x = { 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress' },
-          lualine_z = { 'location' }
-        },
-      })
-    end
-  },
-
   { 'tpope/vim-commentary' },
   { 'tpope/vim-sensible' },
   { 'raimondi/delimitmate' },
@@ -248,8 +99,16 @@ require("lazy").setup({
       completion = {
         keyword = { range = 'full' },
         list = { max_items = 30 },
-        menu = { auto_show = true },
-        documentation = { auto_show = true },
+        menu = {
+          auto_show = true,
+          winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
+        },
+        documentation = {
+          auto_show = true,
+          window = {
+            winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
+          }
+        },
       },
     },
   },
@@ -324,9 +183,17 @@ vim.diagnostic.config({
 require("options")
 require("keymaps")
 require("highlights")
-require("autocmds")
 require("startpage")
 require("dict")
+
+local autocmd_files = {
+  "autocmds.color-scheme",
+  "autocmds.md-headings"
+}
+
+for _, file in ipairs(autocmd_files) do
+  require(file)
+end
 
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
@@ -334,6 +201,15 @@ vim.api.nvim_create_autocmd("BufEnter", {
     if vim.bo.buftype == "" and vim.bo.filetype ~= "NvimTree" then
       vim.wo.number = true
       vim.wo.relativenumber = true
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client:supports_method("textDocument/documentColor") then
+      vim.lsp.document_color.enable(true, { bufnr = args.buf })
     end
   end,
 })

@@ -1,5 +1,6 @@
 [Daemon]
-Timeout=30
+Autolock=false
+Timeout=0
 
 [Greeter][Wallpaper][org.kde.image][General]
 Image=file:///home/data/my_dotfiles/wallpapers/wallhaven-lake_1920x1080.png
