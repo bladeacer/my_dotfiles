@@ -36,6 +36,10 @@ mouseclickEnabled=true
 shakecursorEnabled=false
 sheetEnabled=true
 
+[Tiling][5ab615c5-e2a0-4e52-bfdf-56c612024756][]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Tiling][5ab615c5-e2a0-4e52-bfdf-56c612024756][35c9ad4d-232f-417e-8f5d-07f818f803b5]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
@@ -49,6 +53,10 @@ padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Tiling][5ab615c5-e2a0-4e52-bfdf-56c612024756][c20ff751-0138-4af7-aed6-d23872445d8a]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][814762a5-3999-4935-b3fe-aec1ebf538c6][]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 

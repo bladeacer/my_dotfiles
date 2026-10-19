@@ -88,6 +88,7 @@ fi
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
+alias ff='fastfetch'
 alias ll='ls -alF'
 alias la='ls -A'
 alias lt='ls --tree --git-ignore --level=2'
@@ -295,8 +296,8 @@ pacQii() {
 #     echo "Ollama stopped."
 # }
 
-source /usr/share/nvm/init-nvm.sh
-
 export ANDROID_HOME="/opt/android-sdk"
 export PATH="$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
 export PATH="/opt/flutter/bin:$PATH"
+export LIBGL_ALWAYS_SOFTWARE=1
+export GALLIUM_DRIVER=llvmpipe

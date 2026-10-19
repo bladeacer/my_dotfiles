@@ -38,3 +38,5 @@ vim.g.fzf_preview_window = { 'right:60%', 'ctrl-/' }
 vim.g.move_normal_option = 1
 vim.g.SuperTabMappingForward = '<s-tab>'
 vim.g.SuperTabMappingBackward = '<tab>'
+
+vim.g.pyindent_open_paren = "shiftwidth()"
