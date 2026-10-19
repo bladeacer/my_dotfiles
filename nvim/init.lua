@@ -25,12 +25,12 @@ vim.g.mapleader = ";"
 -- 1. LOAD PLUGINS FIRST
 -- ==========================================================================
 require("lazy").setup({
+  { import = "plugins" },
+}, {
   ui = {
     size = { width = 0.8, height = 0.8 },
     wrap = true,
   },
-
-  { import = "plugins"},
 })
 
 require("lsp")
