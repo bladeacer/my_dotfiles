@@ -56,7 +56,7 @@ stow_packages=(
     bash nvim tmux vim alacritty
     fontconfig fcitx5 zathura
     colors_kde kde autostart
-    quickshell
+    quickshell plasma_shutdown_fix
 )
 
 for pkg in "${stow_packages[@]}"; do
@@ -67,6 +67,17 @@ for pkg in "${stow_packages[@]}"; do
         }
     fi
 done
+
+# ── Stow system files (SDDM greeter) ──
+# 99-no-virtual-keyboard.conf overrides EndeavourOS's
+# InputMethod=qtvirtualkeyboard in 10-endeavouros.conf, which otherwise
+# pops a full-screen Qt virtual keyboard over the login page.
+if [ -d "$STOW_DIR/sddm" ]; then
+    echo "  stow sddm -> /etc"
+    sudo stow -d "$STOW_DIR" -t /etc sddm 2>/dev/null || {
+        echo "  WARNING: stow sddm failed (may already be linked)"
+    }
+fi
 
 # ── Ensure quickshell autostart ──
 AUTOSTART_DIR="$HOME/.config/autostart"
