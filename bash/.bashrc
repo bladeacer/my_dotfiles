@@ -124,6 +124,7 @@ alias vg='rg --files -g "!node_modules/" | fzf --layout reverse --info inline --
 alias gla='git log --oneline -a'
 alias gcm='git commit -m'
 alias gca='git commit --amend'
+alias gsw='git switch'
 alias grb='git rebase'
 alias gaa='git add -A'
 alias glg='git log --oneline --decorate --all --graph'
