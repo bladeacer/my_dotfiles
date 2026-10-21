@@ -14,7 +14,7 @@ help:
 	@echo "  shell          Start navishell"
 	@echo "  shader         Compile GLSL shaders in quickshell/.config/quickshell/shaders"
 	@echo "  test           Run all tests (bash + python)"
-	@echo "  test-bash      Run telemetry pipe unit tests (bash)"
+	@echo "  test-bash      Run bash unit tests (telemetry + sddm greeter config)"
 	@echo "  test-py        Run save-offset unit tests (pytest)"
 	@echo "  bridge-release Build lookas-bridge in release mode"
 	@echo "  setup          Run full setup script"
@@ -42,6 +42,9 @@ test: test-bash test-py
 test-bash:
 	@echo "Running telemetry pipe tests"
 	@bash tests/telemetry_test.sh
+	@echo ""
+	@echo "Running SDDM greeter config tests"
+	@bash tests/sddm_config_test.sh
 
 test-py:
 	@echo "Running unit tests"
