@@ -1,15 +1,25 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "quickshell-docs": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/Desktop/projects/quickshell-docs"],
-      "enabled": true
+    "servers": {
+      "quickshell-docs": {
+        "type": "local",
+        "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/Desktop/projects/quickshell-docs"]
+      },
+      "quickshell-src": {
+        "type": "local",
+        "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/Desktop/projects/quickshell"]
+      }
+    }
+  },
+  "lsp": {
+    "ada-lsp": {
+      "command": ["ada_language_server"],
+      "extensions": [".ads", ".adb", ".ada"]
     },
-    "quickshell-src": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/data/Desktop/projects/quickshell"],
-      "enabled": true
+    "gpr-lsp": {
+      "command": ["ada_language_server", "--language-gpr"],
+      "extensions": [".gpr"]
     }
   }
 }

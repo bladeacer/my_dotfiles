@@ -25,8 +25,5 @@
       ],
       "enabled": true
     }
-  },
-  "plugin": [
-    "opencode-omniroute-auth"
-  ]
+  }
 }
